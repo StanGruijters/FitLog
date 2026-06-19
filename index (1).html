@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#185FA5"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="FitLog"/>
+<title>FitLog</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<style>
+/* == THEME ==========================================
+   To change accent colour: Ctrl+H → replace #185FA5
+   Light tint: replace #E6F1FB with pale version
+==================================================== */
+:root{
+  --accent:#185FA5;--accent-light:#E6F1FB;--accent-dark:#0C447C;--accent-text:#0C447C;
+  --bg:#F2F4F7;--surface:#FFFFFF;--surface2:#F7F8FA;
+  --border:rgba(0,0,0,.10);--border-mid:rgba(0,0,0,.18);
+  --text:#111;--text2:#555;--text3:#888;
+  --success:#1D9E75;--success-light:#E1F5EE;
+  --warn-light:#FAEEDA;--warn-text:#633806;
+  --danger:#E24B4A;
+  --superset:#7C3AED;--superset-light:#EDE9FE;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text)}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto;position:relative;background:var(--bg)}
+
+/* HEADER */
+.header{background:var(--surface);border-bottom:.5px solid var(--border);padding:env(safe-area-inset-top,0) 16px 0;flex-shrink:0}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 12px}
+.app-title{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.app-title i{color:var(--accent);font-size:22px}
+.header-date{font-size:12px;color:var(--text3)}
+.nav{display:flex}
+.nav-btn{flex:1;padding:10px 4px 12px;background:none;border:none;border-bottom:2.5px solid transparent;font-size:11px;color:var(--text3);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .15s;font-family:inherit}
+.nav-btn i{font-size:20px}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+
+/* PAGES */
+.pages{flex:1;overflow:hidden;position:relative}
+.page{position:absolute;inset:0;overflow-y:auto;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0));display:none}
+.page.active{display:block}
+.section-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+
+/* MUSCLE TABS */
+.muscle-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:14px;scrollbar-width:none}
+.muscle-tabs::-webkit-scrollbar{display:none}
+.mtab{padding:6px 14px;border-radius:20px;border:.5px solid var(--border-mid);background:var(--surface);font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
+.mtab.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+
+/* CARDS */
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:8px}
+
+/* EXERCISE CARD */
+.ex-card{display:flex;align-items:center;gap:10px}
+.ex-card-info{flex:1;min-width:0;cursor:pointer}
+.ex-name{font-size:14px;font-weight:600}
+.ex-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:.5px solid var(--border-mid);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:20px;flex-shrink:0;transition:all .15s}
+.icon-btn.added{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ROUTINE BLOCKS */
+.routine-block{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px}
+.superset-block{background:var(--surface);border:1.5px solid var(--superset);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px}
+.superset-label{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--superset);background:var(--superset-light);padding:3px 8px;border-radius:10px;margin-bottom:8px}
+.block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.block-name{font-size:14px;font-weight:600;flex:1}
+.remove-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:4px}
+.set-input{height:34px;border:.5px solid var(--border-mid);border-radius:var(--r-sm);background:var(--surface2);color:var(--text);font-size:13px;text-align:center;padding:0 4px;font-family:inherit;width:100%}
+.sets-count-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sets-stepper{display:flex;align-items:center;gap:10px}
+.stepper-btn{width:30px;height:30px;border-radius:50%;border:.5px solid var(--border-mid);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent)}
+.stepper-val{font-size:15px;font-weight:700;min-width:24px;text-align:center}
+.pb-hint{font-size:11px;color:var(--accent);background:var(--accent-light);padding:2px 7px;border-radius:8px}
+.divider-line{height:.5px;background:var(--border);margin:10px 0}
+
+/* EMPTY STATES */
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty i{font-size:40px;display:block;margin-bottom:10px;opacity:.35}
+.empty p{font-size:14px;line-height:1.5}
+
+/* BUTTONS */
+.btn-primary{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-md);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary:active{opacity:.85}
+.btn-outline{width:100%;padding:11px;background:none;color:var(--accent);border:1.5px solid var(--accent);border-radius:var(--r-md);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-superset{width:100%;padding:10px;background:none;color:var(--superset);border:1.5px solid var(--superset);border-radius:var(--r-md);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-danger{width:100%;padding:10px;background:none;color:var(--danger);border:1px solid var(--danger);border-radius:var(--r-md);font-size:13px;cursor:pointer;font-family:inherit}
+.start-btn{padding:7px 16px;background:var(--accent);color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px}
+.delete-btn{padding:7px 12px;background:none;color:var(--danger);border:.5px solid var(--danger);border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+
+/* SESSION STATS */
+.session-stats{display:flex;gap:14px;margin-top:6px;flex-wrap:wrap}
+.stat-pill{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.stat-pill i{font-size:14px}
+
+/* PROGRESS */
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.prog-date{font-size:11px;color:var(--text3);width:52px;flex-shrink:0}
+.prog-bar-wrap{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.prog-bar{height:100%;background:var(--accent);border-radius:3px;transition:width .5s ease}
+.prog-val{font-size:12px;font-weight:600;width:48px;text-align:right;color:var(--text)}
+.prog-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 8px;border-radius:8px;font-weight:600}
+.prog-delta.up{background:var(--success-light);color:var(--success)}
+.prog-delta.down{background:#FEE2E2;color:#B91C1C}
+.pr-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 8px;border-radius:10px;background:var(--warn-light);color:var(--warn-text);font-weight:600;margin-left:6px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:none;align-items:flex-end}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0));width:100%;max-height:88vh;overflow-y:auto}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:14px}
+.input-field{width:100%;height:42px;border:.5px solid var(--border-mid);border-radius:var(--r-md);background:var(--surface2);color:var(--text);font-size:15px;padding:0 12px;font-family:inherit;margin-bottom:12px}
+.textarea-field{width:100%;border:.5px solid var(--border-mid);border-radius:var(--r-md);background:var(--surface2);color:var(--text);font-size:14px;padding:10px 12px;font-family:inherit;margin-bottom:12px;min-height:80px;resize:vertical}
+.select-field{width:100%;height:42px;border:.5px solid var(--border-mid);border-radius:var(--r-md);background:var(--surface2);color:var(--text);font-size:15px;padding:0 12px;font-family:inherit;margin-bottom:12px;appearance:none}
+.modal-actions{display:flex;gap:8px}
+.modal-actions .btn-outline,.modal-actions .btn-primary{margin:0;flex:1}
+.field-label{font-size:12px;color:var(--text3);font-weight:600;margin-bottom:6px;display:block}
+.superset-pick{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.ss-pick-row{display:flex;align-items:center;gap:8px}
+.ss-pick-label{font-size:12px;color:var(--superset);font-weight:700;width:56px;flex-shrink:0}
+
+/* FULL SCREEN PANELS */
+.fullscreen{position:fixed;inset:0;background:var(--bg);z-index:80;display:none;flex-direction:column}
+.fullscreen.open{display:flex}
+.fs-header{background:var(--surface);border-bottom:.5px solid var(--border);padding:calc(env(safe-area-inset-top,0) + 14px) 16px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.fs-title{flex:1;font-size:17px;font-weight:700}
+.fs-body{flex:1;overflow-y:auto;padding:16px}
+.fs-footer{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0));background:var(--surface);border-top:.5px solid var(--border);flex-shrink:0}
+
+/* EXERCISE DETAIL */
+.muscle-diagram{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.muscle-figure{flex:1;text-align:center}
+.muscle-figure svg{width:100%;max-width:110px;height:auto}
+.muscle-figure p{font-size:11px;color:var(--text3);margin-top:4px;font-weight:600}
+.instruction-card{background:var(--surface);border-radius:var(--r-lg);padding:14px;margin-bottom:10px}
+.instruction-card h3{font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.step-row{display:flex;gap:10px;margin-bottom:8px;font-size:14px;line-height:1.55}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--accent-light);color:var(--accent-text);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.tips-row{display:flex;gap:8px;margin-bottom:6px;font-size:13px;color:var(--text2);line-height:1.5}
+.tips-row i{color:var(--accent);font-size:16px;flex-shrink:0;margin-top:1px}
+.yt-btn{display:flex;align-items:center;gap:8px;width:100%;padding:12px 14px;background:#FF0000;color:#fff;border:none;border-radius:var(--r-md);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px}
+
+/* WORKOUT SCREEN */
+.workout-timer-chip{background:var(--accent-light);color:var(--accent-text);font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;font-variant-numeric:tabular-nums}
+.check-btn{width:34px;height:34px;border-radius:50%;border:.5px solid var(--border-mid);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text3);transition:all .15s;flex-shrink:0}
+.check-btn.done{background:var(--success);border-color:var(--success);color:#fff}
+.live-input{height:36px;border:.5px solid var(--border-mid);border-radius:var(--r-sm);background:var(--surface2);color:var(--text);font-size:14px;text-align:center;font-family:inherit;width:100%}
+
+/* TOAST */
+#toast{position:fixed;bottom:calc(70px + env(safe-area-inset-bottom,0));left:50%;transform:translateX(-50%) translateY(16px);background:#111;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:all .25s;z-index:300;white-space:nowrap;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* FAB */
+.fab{position:fixed;bottom:calc(76px + env(safe-area-inset-bottom,0));right:20px;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(24,95,165,.35);z-index:40;transition:transform .15s}
+.fab:active{transform:scale(.94)}
+
+.mb8{margin-bottom:8px}
+.mt16{margin-top:16px}
+.mt8{margin-top:8px}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="app-title"><i class="ti ti-barbell"></i>FitLog</div>
+      <span class="header-date" id="today-date"></span>
+    </div>
+    <nav class="nav">
+      <button class="nav-btn active" id="nav-library" onclick="showPage('library')"><i class="ti ti-books"></i>Library</button>
+      <button class="nav-btn" id="nav-routine" onclick="showPage('routine')"><i class="ti ti-list-check"></i>Routine</button>
+      <button class="nav-btn" id="nav-sessions" onclick="showPage('sessions')"><i class="ti ti-calendar"></i>Sessions</button>
+      <button class="nav-btn" id="nav-progress" onclick="showPage('progress')"><i class="ti ti-chart-line"></i>Progress</button>
+    </nav>
+  </div>
+
+  <!-- PAGES -->
+  <div class="pages">
+    <!-- LIBRARY -->
+    <div class="page active" id="page-library">
+      <div class="muscle-tabs" id="muscle-tabs"></div>
+      <div id="exercise-list"></div>
+    </div>
+
+    <!-- ROUTINE -->
+    <div class="page" id="page-routine">
+      <div id="saved-routines-list"></div>
+      <div id="routine-page-empty" class="empty" style="display:none">
+        <i class="ti ti-list-check"></i>
+        <p>No routines yet.<br>Tap + to build your first routine!</p>
+      </div>
+    </div>
+
+    <!-- SESSIONS -->
+    <div class="page" id="page-sessions">
+      <div class="section-title">Recent sessions</div>
+      <div id="sessions-list"></div>
+      <div id="sessions-empty" class="empty" style="display:none">
+        <i class="ti ti-calendar-off"></i>
+        <p>No sessions yet.<br>Start a routine to log your first workout!</p>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="page" id="page-progress">
+      <div class="section-title">Personal records & progression</div>
+      <div id="progress-list"></div>
+      <div id="progress-empty" class="empty" style="display:none">
+        <i class="ti ti-chart-bar-off"></i>
+        <p>Complete sessions to see<br>your progress here</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAB: shown on routine page -->
+<button class="fab" id="fab-new-routine" style="display:none" onclick="startNewRoutine()" aria-label="New routine">
+  <i class="ti ti-plus"></i>
+</button>
+
+<!-- ===============================================
+     ROUTINE BUILDER SCREEN
+=============================================== -->
+<div class="fullscreen" id="builder-screen">
+  <div class="fs-header">
+    <button class="icon-btn" onclick="closeBuilder()" style="border-color:transparent" aria-label="Back"><i class="ti ti-arrow-left"></i></button>
+    <div class="fs-title" id="builder-title">New routine</div>
+  </div>
+  <div class="fs-body" id="builder-body">
+    <!-- name input -->
+    <div style="margin-bottom:14px">
+      <span class="field-label">Routine name</span>
+      <input class="input-field" id="builder-name" placeholder="e.g. Push day, Leg day…" style="margin-bottom:0"/>
+    </div>
+    <!-- muscle filter + exercise picker -->
+    <div class="section-title">Add exercises</div>
+    <div class="muscle-tabs" id="builder-muscle-tabs"></div>
+    <div id="builder-exercise-list"></div>
+    <!-- blocks -->
+    <div class="section-title mt16" style="margin-top:20px">Routine blocks</div>
+    <div id="builder-blocks"></div>
+    <div id="builder-blocks-empty" style="text-align:center;padding:16px;font-size:13px;color:var(--text3)">
+      Select exercises above to add them here
+    </div>
+    <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+      <button class="btn-superset" onclick="openSupersetModal()"><i class="ti ti-layers-intersect"></i> Add superset</button>
+    </div>
+    <div style="height:80px"></div>
+  </div>
+  <div class="fs-footer">
+    <button class="btn-primary" onclick="saveBuilderRoutine()"><i class="ti ti-device-floppy"></i> Save routine</button>
+  </div>
+</div>
+
+<!-- ===============================================
+     EXERCISE DETAIL SCREEN
+=============================================== -->
+<div class="fullscreen" id="detail-screen">
+  <div class="fs-header">
+    <button class="icon-btn" onclick="closeDetail()" style="border-color:transparent" aria-label="Back"><i class="ti ti-arrow-left"></i></button>
+    <div class="fs-title" id="detail-title"></div>
+    <button class="icon-btn added" id="detail-add-btn" onclick="toggleExFromDetail()" aria-label="Add to routine" style="font-size:18px"></button>
+  </div>
+  <div class="fs-body" id="detail-body"></div>
+</div>
+
+<!-- ===============================================
+     WORKOUT SCREEN
+=============================================== -->
+<div class="fullscreen" id="workout-screen">
+  <div class="fs-header">
+    <button class="icon-btn" onclick="closeWorkout()" style="border-color:transparent" aria-label="Close"><i class="ti ti-x"></i></button>
+    <div class="fs-title" id="workout-title"></div>
+    <div class="workout-timer-chip" id="workout-timer">0:00</div>
+  </div>
+  <div class="fs-body" id="workout-body"></div>
+  <div class="fs-footer">
+    <button class="btn-primary" onclick="finishWorkout()"><i class="ti ti-check"></i> Finish workout</button>
+  </div>
+</div>
+
+<!-- ===============================================
+     MODALS
+=============================================== -->
+<!-- Save routine name -->
+<div class="modal-bg" id="save-modal">
+  <div class="modal">
+    <div class="modal-title">Save routine</div>
+    <input class="input-field" id="routine-name-input" placeholder="e.g. Push day, Leg day…"/>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeSaveModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveRoutine()" style="flex:1">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add custom exercise -->
+<div class="modal-bg" id="add-ex-modal">
+  <div class="modal">
+    <div class="modal-title">Add custom exercise</div>
+    <span class="field-label">Exercise name</span>
+    <input class="input-field" id="custom-ex-name" placeholder="e.g. Cable pull-through"/>
+    <span class="field-label">Muscle group</span>
+    <select class="select-field" id="custom-ex-muscle"></select>
+    <span class="field-label">Equipment</span>
+    <input class="input-field" id="custom-ex-equip" placeholder="e.g. Cable, Dumbbell"/>
+    <span class="field-label">Instructions (optional)</span>
+    <textarea class="textarea-field" id="custom-ex-instructions" placeholder="Step-by-step instructions…"></textarea>
+    <span class="field-label">YouTube link (optional)</span>
+    <input class="input-field" id="custom-ex-yt" placeholder="https://youtube.com/watch?v=…"/>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeAddExModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveCustomExercise()" style="flex:1">Add exercise</button>
+    </div>
+  </div>
+</div>
+
+<!-- Superset picker -->
+<div class="modal-bg" id="superset-modal">
+  <div class="modal">
+    <div class="modal-title">Add superset</div>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:12px">Pick two exercises to perform back-to-back as a superset.</p>
+    <span class="field-label">Exercise A</span>
+    <select class="select-field" id="ss-ex-a"></select>
+    <span class="field-label">Exercise B</span>
+    <select class="select-field" id="ss-ex-b"></select>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeSupersetModal()">Cancel</button>
+      <button class="btn-primary" onclick="addSuperset()" style="flex:1"><i class="ti ti-layers-intersect"></i> Add</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ========================================================
+   EXERCISE DATABASE
+======================================================== */
+const BUILTIN_EXERCISES = [
+  // CHEST
+  {id:'bp',  name:'Bench press',            muscle:'Chest',     equipment:'Barbell',
+   instructions:['Lie flat on a bench, grip the bar slightly wider than shoulder-width.','Unrack the bar and hold it directly above your chest with arms fully extended.','Lower the bar slowly to your mid-chest, keeping elbows at about 45 degrees.','Press the bar back up to the starting position, exhaling on the way up.'],
+   tips:['Keep your feet flat on the floor and back slightly arched.','Do not bounce the bar off your chest.','Keep wrists straight throughout the movement.'],
+   primaryMuscles:['Pectoralis major'],secondaryMuscles:['Triceps','Front deltoid'],
+   youtubeQuery:'bench press form tutorial'},
+  {id:'idb', name:'Incline dumbbell press', muscle:'Chest',     equipment:'Dumbbell',
+   instructions:['Set bench to 30-45 degrees. Sit back holding dumbbells at chest height.','Press the dumbbells up and slightly inward until arms are extended.','Lower slowly back to chest height with control.'],
+   tips:['Keep lower back in contact with the bench.','Focus on squeezing the upper chest at the top.'],
+   primaryMuscles:['Upper pectoralis'],secondaryMuscles:['Triceps','Front deltoid'],
+   youtubeQuery:'incline dumbbell press tutorial'},
+  {id:'pec', name:'Pec deck fly',           muscle:'Chest',     equipment:'Machine',
+   instructions:['Sit with back flat against the pad. Grip handles at chest height.','Bring handles together in a wide arc until they meet in front of your chest.','Slowly return to start, feeling the stretch in your chest.'],
+   tips:['Avoid locking your elbows — keep a slight bend.','Move slowly on the way back for maximum stretch.'],
+   primaryMuscles:['Pectoralis major'],secondaryMuscles:['Front deltoid'],
+   youtubeQuery:'pec deck fly tutorial'},
+  {id:'cbf', name:'Cable fly',              muscle:'Chest',     equipment:'Cable',
+   instructions:['Set cables to shoulder height. Stand in the center gripping a handle in each hand.','Step forward, lean slightly forward and bring your hands together in an arc.','Slowly return to the starting position with control.'],
+   tips:['Maintain slight elbow bend throughout.','Imagine hugging a large barrel.'],
+   primaryMuscles:['Pectoralis major'],secondaryMuscles:['Front deltoid'],
+   youtubeQuery:'cable chest fly tutorial'},
+  {id:'dip', name:'Dip',                    muscle:'Chest',     equipment:'Bodyweight',
+   instructions:['Grip parallel bars and support yourself with arms extended.','Lean slightly forward, then lower yourself by bending your elbows to about 90 degrees.','Push back up to the starting position.'],
+   tips:['Leaning forward targets chest; staying upright targets triceps.','Keep elbows pointing backward, not flaring outward.'],
+   primaryMuscles:['Pectoralis major'],secondaryMuscles:['Triceps','Front deltoid'],
+   youtubeQuery:'dip exercise chest form'},
+
+  // BACK
+  {id:'dl',  name:'Deadlift',               muscle:'Back',      equipment:'Barbell',
+   instructions:['Stand with feet hip-width apart, bar over mid-foot.','Hinge at hips, bend knees and grip bar just outside your legs.','Drive through the floor, keeping chest up and back flat until you stand tall.','Lower the bar back to the floor with control.'],
+   tips:['Keep the bar close to your body throughout.','Never round your lower back under load.','Engage your lats before pulling — "protect your armpits".'],
+   primaryMuscles:['Erector spinae','Glutes'],secondaryMuscles:['Hamstrings','Traps','Lats'],
+   youtubeQuery:'deadlift form tutorial'},
+  {id:'row', name:'Barbell row',            muscle:'Back',      equipment:'Barbell',
+   instructions:['Hinge forward to about 45 degrees, gripping bar shoulder-width overhand.','Pull bar toward your lower chest/upper abdomen, leading with your elbows.','Lower bar back down with control.'],
+   tips:['Keep your back flat — do not round.','Squeeze your shoulder blades together at the top.'],
+   primaryMuscles:['Latissimus dorsi','Rhomboids'],secondaryMuscles:['Biceps','Rear deltoid'],
+   youtubeQuery:'barbell row form tutorial'},
+  {id:'lat', name:'Lat pulldown',           muscle:'Back',      equipment:'Cable',
+   instructions:['Grip the bar wider than shoulder-width and sit with thighs secured under pads.','Pull the bar down to your upper chest, leading with elbows.','Slowly return to the starting position with arms fully extended.'],
+   tips:['Lean back slightly as you pull.','Avoid shrugging your shoulders.'],
+   primaryMuscles:['Latissimus dorsi'],secondaryMuscles:['Biceps','Rear deltoid'],
+   youtubeQuery:'lat pulldown form tutorial'},
+  {id:'pr',  name:'Pull-up',                muscle:'Back',      equipment:'Bodyweight',
+   instructions:['Hang from a bar with an overhand grip slightly wider than shoulders.','Pull yourself up until your chin clears the bar.','Lower yourself slowly back to a dead hang.'],
+   tips:['Initiate the pull by depressing your shoulder blades.','Avoid swinging or kipping for strict form.'],
+   primaryMuscles:['Latissimus dorsi'],secondaryMuscles:['Biceps','Rear deltoid'],
+   youtubeQuery:'pull up proper form tutorial'},
+  {id:'sr',  name:'Seated cable row',       muscle:'Back',      equipment:'Cable',
+   instructions:['Sit facing the cable machine, feet on platform, knees slightly bent.','Pull the handle to your abdomen, squeezing your shoulder blades together.','Slowly return to the starting position until arms are fully extended.'],
+   tips:['Avoid rounding your lower back as you reach forward.','Lead with elbows, not hands.'],
+   primaryMuscles:['Rhomboids','Latissimus dorsi'],secondaryMuscles:['Biceps'],
+   youtubeQuery:'seated cable row tutorial'},
+
+  // LEGS
+  {id:'sq',  name:'Squat',                  muscle:'Legs',      equipment:'Barbell',
+   instructions:['Place the bar on your upper traps. Stand with feet shoulder-width apart, toes out slightly.','Brace your core, push your hips back and bend your knees to descend.','Lower until thighs are parallel to the floor (or deeper if mobility allows).','Drive through your heels to stand back up.'],
+   tips:['Keep your chest up and knees tracking over your toes.','Breathe in at the top, hold through the descent.','Do not let your heels come off the ground.'],
+   primaryMuscles:['Quadriceps','Glutes'],secondaryMuscles:['Hamstrings','Core','Erector spinae'],
+   youtubeQuery:'squat form tutorial barbell'},
+  {id:'ldp', name:'Leg press',              muscle:'Legs',      equipment:'Machine',
+   instructions:['Sit in the machine with feet shoulder-width on the platform.','Release the safety locks and lower the platform by bending your knees toward your chest.','Press back up until legs are nearly straight (do not lock knees).'],
+   tips:['Do not let your lower back peel off the seat.','Foot position determines muscle focus: high = glutes/hamstrings, low = quads.'],
+   primaryMuscles:['Quadriceps','Glutes'],secondaryMuscles:['Hamstrings'],
+   youtubeQuery:'leg press form tutorial'},
+  {id:'rdl', name:'Romanian deadlift',      muscle:'Legs',      equipment:'Barbell',
+   instructions:['Stand holding bar at hip level with overhand grip.','Push hips back and lower bar down your legs, keeping back flat and a soft knee bend.','Feel a deep stretch in your hamstrings, then drive hips forward to return upright.'],
+   tips:['Keep the bar in contact with your legs throughout.','Think "hinge" not "squat" — this is a hip-dominant movement.'],
+   primaryMuscles:['Hamstrings','Glutes'],secondaryMuscles:['Erector spinae'],
+   youtubeQuery:'romanian deadlift form tutorial'},
+  {id:'lc',  name:'Leg curl',               muscle:'Legs',      equipment:'Machine',
+   instructions:['Lie face-down on the machine with the pad just above your heels.','Curl your legs up toward your glutes as far as possible.','Lower slowly back to the starting position.'],
+   tips:['Avoid raising your hips off the bench.','Control the eccentric (lowering) phase.'],
+   primaryMuscles:['Hamstrings'],secondaryMuscles:['Calves'],
+   youtubeQuery:'lying leg curl tutorial'},
+  {id:'lx',  name:'Leg extension',          muscle:'Legs',      equipment:'Machine',
+   instructions:['Sit in the machine with the pad on your lower shins, back against the seat.','Extend both legs until they are straight, squeezing your quads at the top.','Lower slowly back to starting position.'],
+   tips:['Do not use momentum — focus on quad squeeze.','Keep your back flat against the seat.'],
+   primaryMuscles:['Quadriceps'],secondaryMuscles:[],
+   youtubeQuery:'leg extension machine tutorial'},
+  {id:'crf', name:'Calf raise',             muscle:'Legs',      equipment:'Machine',
+   instructions:['Place shoulders under the pads, feet on the platform with heels hanging off.','Rise onto your toes as high as possible.','Lower heels below the platform level for a full stretch.'],
+   tips:['Pause at the top and bottom for maximum contraction and stretch.','Keep knees slightly soft, not locked.'],
+   primaryMuscles:['Gastrocnemius','Soleus'],secondaryMuscles:[],
+   youtubeQuery:'standing calf raise tutorial'},
+  {id:'lunge',name:'Lunge',                 muscle:'Legs',      equipment:'Bodyweight',
+   instructions:['Stand tall, feet together.','Step one foot forward and lower your back knee toward the floor.','Push through your front foot to return to standing.'],
+   tips:['Keep your front knee behind your toes.','Maintain an upright torso.'],
+   primaryMuscles:['Quadriceps','Glutes'],secondaryMuscles:['Hamstrings','Calves'],
+   youtubeQuery:'lunge exercise proper form'},
+
+  // SHOULDERS
+  {id:'ohp', name:'Overhead press',         muscle:'Shoulders', equipment:'Barbell',
+   instructions:['Stand with feet shoulder-width, bar resting on front deltoids with overhand grip.','Press bar directly overhead until arms are locked out.','Lower slowly back to the starting position.'],
+   tips:['Keep your core braced and glutes squeezed.','Avoid excessive lower back arch — move your head slightly back to let the bar pass.'],
+   primaryMuscles:['Front deltoid','Medial deltoid'],secondaryMuscles:['Triceps','Traps','Core'],
+   youtubeQuery:'overhead press form tutorial'},
+  {id:'lr',  name:'Lateral raise',          muscle:'Shoulders', equipment:'Dumbbell',
+   instructions:['Stand holding dumbbells at your sides.','Raise both arms out to the sides until they are level with your shoulders.','Lower slowly back to your sides.'],
+   tips:['Tilt dumbbells slightly forward (like pouring water) to target the medial deltoid.','Avoid shrugging — keep traps relaxed.'],
+   primaryMuscles:['Medial deltoid'],secondaryMuscles:['Traps'],
+   youtubeQuery:'lateral raise dumbbell tutorial'},
+  {id:'fr',  name:'Front raise',            muscle:'Shoulders', equipment:'Dumbbell',
+   instructions:['Stand holding dumbbells in front of your thighs, palms facing down.','Raise one or both arms forward to shoulder height.','Lower with control.'],
+   tips:['Keep a slight bend in your elbows.','Avoid using momentum — move slowly.'],
+   primaryMuscles:['Front deltoid'],secondaryMuscles:['Medial deltoid'],
+   youtubeQuery:'front raise shoulder tutorial'},
+  {id:'rfe', name:'Rear delt fly',          muscle:'Shoulders', equipment:'Dumbbell',
+   instructions:['Hinge forward at the hips, holding dumbbells with a neutral grip.','Raise both arms out to the sides in a wide arc, leading with your elbows.','Lower slowly back to starting position.'],
+   tips:['Keep a slight bend in the elbows throughout.','Focus on squeezing your rear delts and rhomboids.'],
+   primaryMuscles:['Rear deltoid'],secondaryMuscles:['Rhomboids','Traps'],
+   youtubeQuery:'rear delt fly dumbbell tutorial'},
+  {id:'facepl',name:'Face pull',            muscle:'Shoulders', equipment:'Cable',
+   instructions:['Set cable to upper chest/face height with rope attachment.','Pull the rope toward your face, flaring your elbows out to the sides.','Hold briefly at full contraction, then return slowly.'],
+   tips:['External rotate at the top — thumbs point backward.','Great for shoulder health and rear delt development.'],
+   primaryMuscles:['Rear deltoid'],secondaryMuscles:['External rotators','Traps'],
+   youtubeQuery:'face pull exercise tutorial'},
+
+  // BICEPS
+  {id:'cb',  name:'Barbell curl',           muscle:'Biceps',    equipment:'Barbell',
+   instructions:['Stand holding a barbell with underhand grip, hands shoulder-width apart.','Curl the bar up toward your shoulders, keeping elbows at your sides.','Lower slowly back to the starting position.'],
+   tips:['Avoid swinging — use strict form.','Squeeze your biceps hard at the top.'],
+   primaryMuscles:['Biceps brachii'],secondaryMuscles:['Brachialis','Brachioradialis'],
+   youtubeQuery:'barbell curl form tutorial'},
+  {id:'hc',  name:'Hammer curl',            muscle:'Biceps',    equipment:'Dumbbell',
+   instructions:['Stand holding dumbbells with a neutral (palms-in) grip.','Curl both dumbbells up simultaneously, keeping neutral grip throughout.','Lower slowly back to starting position.'],
+   tips:['The neutral grip shifts emphasis to the brachialis and forearms.','Keep your upper arms stationary.'],
+   primaryMuscles:['Brachialis'],secondaryMuscles:['Biceps brachii','Brachioradialis'],
+   youtubeQuery:'hammer curl tutorial'},
+  {id:'cc',  name:'Cable curl',             muscle:'Biceps',    equipment:'Cable',
+   instructions:['Stand in front of a low cable with a straight or EZ bar attachment.','Curl the handle up toward your chin, keeping elbows at your sides.','Lower with control.'],
+   tips:['Cables provide constant tension — great for muscle growth.','Squeeze at the top and resist on the way down.'],
+   primaryMuscles:['Biceps brachii'],secondaryMuscles:['Brachialis'],
+   youtubeQuery:'cable curl biceps tutorial'},
+  {id:'ic',  name:'Incline dumbbell curl',  muscle:'Biceps',    equipment:'Dumbbell',
+   instructions:['Sit on an incline bench holding dumbbells at arm\'s length.','Curl both dumbbells up toward your shoulders without moving your upper arms.','Lower slowly.'],
+   tips:['The incline position stretches the long head of the biceps for a fuller peak.','Do not swing or use momentum.'],
+   primaryMuscles:['Biceps brachii long head'],secondaryMuscles:['Brachialis'],
+   youtubeQuery:'incline dumbbell curl tutorial'},
+
+  // TRICEPS
+  {id:'pd',  name:'Tricep pushdown',        muscle:'Triceps',   equipment:'Cable',
+   instructions:['Set cable to high position with a straight or V-bar attachment.','Keep elbows at your sides and push the bar down until arms are fully extended.','Allow the bar to rise back up slowly.'],
+   tips:['Keep your elbows locked at your sides — they should not move.','Flex your triceps hard at full extension.'],
+   primaryMuscles:['Triceps brachii'],secondaryMuscles:[],
+   youtubeQuery:'tricep pushdown cable tutorial'},
+  {id:'te',  name:'Skull crusher',          muscle:'Triceps',   equipment:'Barbell',
+   instructions:['Lie on a bench holding an EZ-bar above your chest with an overhand grip.','Lower the bar toward your forehead by bending your elbows.','Extend your arms back to the starting position.'],
+   tips:['Keep your upper arms vertical and stationary.','Use controlled motion — never drop the bar.'],
+   primaryMuscles:['Triceps brachii'],secondaryMuscles:[],
+   youtubeQuery:'skull crusher tricep tutorial'},
+  {id:'kbx', name:'Tricep kickback',        muscle:'Triceps',   equipment:'Dumbbell',
+   instructions:['Hinge forward, upper arm parallel to the floor, holding a dumbbell.','Extend your forearm back until your arm is fully straightened.','Lower slowly back to 90 degrees.'],
+   tips:['Keep your upper arm still — only your forearm moves.','Squeeze the tricep hard at full extension.'],
+   primaryMuscles:['Triceps brachii'],secondaryMuscles:[],
+   youtubeQuery:'tricep kickback dumbbell tutorial'},
+  {id:'ohe', name:'Overhead tricep extension',muscle:'Triceps', equipment:'Dumbbell',
+   instructions:['Hold one dumbbell with both hands overhead, arms extended.','Lower the dumbbell behind your head by bending at the elbows.','Press back up to the starting position.'],
+   tips:['Keep elbows close together and pointed forward.','Great for stretching the long head of the triceps.'],
+   primaryMuscles:['Triceps brachii long head'],secondaryMuscles:[],
+   youtubeQuery:'overhead tricep extension tutorial'},
+
+  // CORE
+  {id:'cr',  name:'Crunch',                 muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Lie on your back, knees bent, hands behind your head.','Lift your shoulder blades off the floor by contracting your abs.','Lower back down with control.'],
+   tips:['Do not pull on your neck.','Exhale as you crunch up.'],
+   primaryMuscles:['Rectus abdominis'],secondaryMuscles:['Obliques'],
+   youtubeQuery:'crunch ab exercise proper form'},
+  {id:'pl',  name:'Plank',                  muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Support yourself on forearms and toes, body in a straight line.','Hold the position, keeping hips level — do not sag or raise them.','Breathe normally throughout.'],
+   tips:['Squeeze your glutes and core simultaneously.','Avoid looking up — keep a neutral neck.'],
+   primaryMuscles:['Transverse abdominis','Rectus abdominis'],secondaryMuscles:['Glutes','Shoulders'],
+   youtubeQuery:'plank exercise proper form'},
+  {id:'lrl', name:'Leg raise',              muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Lie flat on your back, arms at your sides.','Keeping legs straight, raise them to 90 degrees above the floor.','Lower slowly without letting feet touch the ground.'],
+   tips:['Press your lower back into the floor.','Slow the descent for extra difficulty.'],
+   primaryMuscles:['Lower rectus abdominis','Hip flexors'],secondaryMuscles:[],
+   youtubeQuery:'leg raise abs tutorial'},
+  {id:'russ', name:'Russian twist',         muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Sit with knees bent, feet off the floor, torso leaning slightly back.','Hold hands together and rotate your torso side to side.','Touch the floor beside each hip with your hands.'],
+   tips:['Add a weight or medicine ball for extra challenge.','Keep your core braced throughout.'],
+   primaryMuscles:['Obliques'],secondaryMuscles:['Rectus abdominis'],
+   youtubeQuery:'russian twist core exercise'},
+  {id:'bicc', name:'Bicycle crunch',        muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Lie on your back, hands behind head, legs lifted with knees bent at 90 degrees.','Bring your right elbow to your left knee while extending the right leg.','Alternate sides in a pedaling motion.'],
+   tips:['Move slowly and deliberately — do not rush.','Focus on rotating your torso, not just your elbow.'],
+   primaryMuscles:['Obliques','Rectus abdominis'],secondaryMuscles:[],
+   youtubeQuery:'bicycle crunch tutorial'},
+  {id:'mnt', name:'Mountain climber',       muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Start in a high plank position, arms straight.','Drive one knee toward your chest, then switch legs in a running motion.','Keep hips level and core engaged.'],
+   tips:['The faster you go the more cardio benefit. Slower = more core.','Keep shoulders over wrists.'],
+   primaryMuscles:['Rectus abdominis','Hip flexors'],secondaryMuscles:['Shoulders','Obliques'],
+   youtubeQuery:'mountain climber exercise tutorial'},
+  {id:'hip', name:'Hip thrust',             muscle:'Core',      equipment:'Barbell',
+   instructions:['Sit with upper back against a bench, bar over your hips.','Drive hips up until your torso is parallel to the floor.','Squeeze glutes hard at the top, then lower.'],
+   tips:['Place a pad between you and the bar for comfort.','This is also excellent for glute development.'],
+   primaryMuscles:['Glutes','Transverse abdominis'],secondaryMuscles:['Hamstrings'],
+   youtubeQuery:'hip thrust tutorial'},
+  {id:'abwh', name:'Ab wheel rollout',      muscle:'Core',      equipment:'Ab wheel',
+   instructions:['Kneel on the floor holding an ab wheel with both hands.','Roll the wheel forward, extending your body as far as you can while keeping your back flat.','Pull the wheel back to your knees using your abs.'],
+   tips:['Start with short range of motion and progress over time.','Avoid letting your lower back sag.'],
+   primaryMuscles:['Rectus abdominis','Transverse abdominis'],secondaryMuscles:['Lats','Shoulders'],
+   youtubeQuery:'ab wheel rollout tutorial'},
+  {id:'sidpl', name:'Side plank',           muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Lie on your side and prop yourself up on one forearm.','Lift your hips so your body forms a straight line from head to feet.','Hold the position, then repeat on the other side.'],
+   tips:['Stack your feet or stagger them for more balance.','Keep your neck neutral.'],
+   primaryMuscles:['Obliques'],secondaryMuscles:['Glutes','Shoulder stabilizers'],
+   youtubeQuery:'side plank exercise tutorial'},
+  {id:'vup', name:'V-up',                   muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Lie flat, arms overhead.','Simultaneously lift your legs and torso toward each other, reaching hands toward feet.','Lower back down with control.'],
+   tips:['Keep both legs straight for maximum difficulty.','Exhale as you crunch up.'],
+   primaryMuscles:['Rectus abdominis','Hip flexors'],secondaryMuscles:[],
+   youtubeQuery:'v up exercise tutorial'},
+  {id:'dead', name:'Dead bug',              muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Lie on your back, arms pointing to the ceiling, knees bent 90 degrees in the air.','Lower your right arm and left leg toward the floor simultaneously.','Return to start and repeat on the opposite side.'],
+   tips:['Press your lower back firmly into the floor throughout.','Move slowly and with control.'],
+   primaryMuscles:['Transverse abdominis','Rectus abdominis'],secondaryMuscles:['Hip flexors'],
+   youtubeQuery:'dead bug exercise tutorial'},
+  {id:'hangk', name:'Hanging knee raise',   muscle:'Core',      equipment:'Bodyweight',
+   instructions:['Hang from a pull-up bar with arms fully extended.','Draw your knees up toward your chest by contracting your abs.','Lower back to dead hang with control.'],
+   tips:['Avoid swinging. Initiate the movement with your abs, not hip flexors.','Progress to straight leg raises over time.'],
+   primaryMuscles:['Lower rectus abdominis'],secondaryMuscles:['Hip flexors'],
+   youtubeQuery:'hanging knee raise tutorial'},
+];
+
+const MUSCLES = ['All', ...new Set(BUILTIN_EXERCISES.map(e => e.muscle))];
+
+/* ========================================================
+   STATE
+======================================================== */
+let S = {
+  customExercises: [],
+  savedRoutines:   [],
+  sessions:        [],
+  records:         {}
+};
+
+// Builder state (ephemeral)
+let B = {
+  editingIndex: -1,  // -1 = new
+  activeMuscle: 'All',
+  blocks: []         // [{type:'single'|'superset', exercises:[{id,name,sets:[{reps,weight}]}]}]
+};
+
+let workout     = null;
+let timerSecs   = 0;
+let timerInterval = null;
+let detailExId  = null;
+
+function allExercises() {
+  return [...BUILTIN_EXERCISES, ...S.customExercises];
+}
+
+/* ========================================================
+   PERSISTENCE
+======================================================== */
+function persist() {
+  try { localStorage.setItem('fitlog_v2', JSON.stringify(S)); } catch(e){}
+}
+function hydrate() {
+  try {
+    const r = localStorage.getItem('fitlog_v2');
+    if (r) {
+      const d = JSON.parse(r);
+      S.customExercises = d.customExercises || [];
+      S.savedRoutines   = d.savedRoutines   || [];
+      S.sessions        = d.sessions        || [];
+      S.records         = d.records         || {};
+    }
+  } catch(e){}
+}
+
+/* ========================================================
+   NAVIGATION
+======================================================== */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  document.getElementById('fab-new-routine').style.display = name==='routine' ? 'flex' : 'none';
+  if (name==='routine')  renderRoutinePage();
+  if (name==='sessions') renderSessionsPage();
+  if (name==='progress') renderProgressPage();
+}
+
+/* ========================================================
+   LIBRARY PAGE
+======================================================== */
+function renderLibrary() {
+  const tabsEl = document.getElementById('muscle-tabs');
+  tabsEl.innerHTML = MUSCLES.map(m =>
+    `<button class="mtab${(m===(S._libMuscle||'All'))?' active':''}" onclick="filterLib('${m}')">${m}</button>`
+  ).join('');
+
+  const filter = S._libMuscle || 'All';
+  const list = filter==='All' ? allExercises() : allExercises().filter(e=>e.muscle===filter);
+
+  document.getElementById('exercise-list').innerHTML = `
+    <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:8px" onclick="openAddExModal()">
+      <div style="width:34px;height:34px;border-radius:50%;border:.5px dashed var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--accent);flex-shrink:0"><i class="ti ti-plus"></i></div>
+      <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--accent)">Add custom exercise</div><div style="font-size:12px;color:var(--text3)">Create your own exercise</div></div>
+    </div>
+    ${list.map(ex => {
+      const isCustom = !!S.customExercises.find(c=>c.id===ex.id);
+      return `<div class="card ex-card">
+        <div class="ex-card-info" onclick="openDetail('${ex.id}')">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-meta">${ex.muscle} &middot; ${ex.equipment}${isCustom?' &middot; Custom':''}</div>
+        </div>
+        <button class="icon-btn" style="font-size:16px;color:var(--accent);border-color:var(--accent)" onclick="openDetail('${ex.id}')" aria-label="Info">
+          <i class="ti ti-info-circle"></i>
+        </button>
+      </div>`;
+    }).join('')}`;
+}
+
+function filterLib(m) {
+  S._libMuscle = m;
+  renderLibrary();
+}
+
+/* ========================================================
+   EXERCISE DETAIL
+======================================================== */
+function openDetail(id) {
+  detailExId = id;
+  const ex = allExercises().find(e=>e.id===id);
+  if (!ex) return;
+  document.getElementById('detail-title').textContent = ex.name;
+
+  // Check if this exercise is in any current builder
+  const inBuilder = B.blocks.some(b => b.exercises && b.exercises.some(e=>e.id===id));
+  const addBtn = document.getElementById('detail-add-btn');
+  addBtn.innerHTML = `<i class="ti ti-${inBuilder?'check':'plus'}"></i>`;
+  addBtn.title = inBuilder ? 'In routine' : 'Add to routine';
+
+  // Build muscle SVG
+  const primaryColor = '#185FA5';
+  const secondaryColor = '#93C5FD';
+  const muscleSVG = buildMuscleSVG(ex);
+
+  const steps = (ex.instructions||[]).map((s,i)=>`<div class="step-row"><span class="step-num">${i+1}</span><span>${s}</span></div>`).join('');
+  const tips  = (ex.tips||[]).map(t=>`<div class="tips-row"><i class="ti ti-bulb"></i><span>${t}</span></div>`).join('');
+  const primList  = (ex.primaryMuscles||[]).join(', ') || '—';
+  const secList   = (ex.secondaryMuscles||[]).join(', ') || '—';
+
+  const ytQuery = (ex.youtubeQuery||ex.name+' exercise tutorial').replace(/\s+/g,'+');
+  const ytHref  = ex.youtubeUrl || `https://www.youtube.com/results?search_query=${ytQuery}`;
+
+  document.getElementById('detail-body').innerHTML = `
+    <div class="card" style="margin-bottom:10px">
+      <div class="muscle-diagram">${muscleSVG}</div>
+      <div style="display:flex;gap:12px;margin-top:8px">
+        <div style="flex:1"><span style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase">Primary</span><br><span style="font-size:13px;font-weight:600">${primList}</span></div>
+        <div style="flex:1"><span style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase">Secondary</span><br><span style="font-size:13px">${secList}</span></div>
+      </div>
+    </div>
+    ${steps ? `<div class="instruction-card"><h3>How to perform</h3>${steps}</div>` : ''}
+    ${tips  ? `<div class="instruction-card"><h3>Tips</h3>${tips}</div>` : ''}
+    <button class="yt-btn" onclick="openYT('${ytHref}')">
+      <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M21.5 2.5A2.75 2.75 0 0 0 19.05.08C17.4 0 11 0 11 0S4.6 0 2.95.08A2.75 2.75 0 0 0 .5 2.5C.41 4.16.41 8 .41 8s0 3.84.09 5.5a2.75 2.75 0 0 0 2.45 2.42C4.6 16 11 16 11 16s6.4 0 8.05-.08a2.75 2.75 0 0 0 2.45-2.42c.09-1.66.09-5.5.09-5.5s0-3.84-.09-5.5z" fill="#fff"/><path d="M8.75 11.5v-7l6 3.5-6 3.5z" fill="#FF0000"/></svg>
+      Watch tutorial on YouTube
+    </button>
+    ${ex.id && S.customExercises.find(c=>c.id===ex.id) ? `<button class="btn-danger" style="margin-top:8px" onclick="deleteCustomExercise('${ex.id}')">Delete this exercise</button>` : ''}
+  `;
+
+  document.getElementById('detail-screen').classList.add('open');
+}
+
+function openYT(url) {
+  window.open(url, '_blank');
+}
+
+function closeDetail() {
+  document.getElementById('detail-screen').classList.remove('open');
+}
+
+function toggleExFromDetail() {
+  if (!detailExId) return;
+  const ex = allExercises().find(e=>e.id===detailExId);
+  if (!ex) return;
+  const idx = B.blocks.findIndex(b => b.type==='single' && b.exercises[0].id===detailExId);
+  if (idx>=0) {
+    B.blocks.splice(idx,1);
+    toast('Removed from routine');
+  } else {
+    const pb = getPB(detailExId);
+    B.blocks.push({type:'single', exercises:[{id:ex.id, name:ex.name, sets:[{reps:'',weight:pb||''}]}]});
+    toast('Added to routine');
+  }
+  const inBuilder = B.blocks.some(b => b.exercises && b.exercises.some(e=>e.id===detailExId));
+  const addBtn = document.getElementById('detail-add-btn');
+  addBtn.innerHTML = `<i class="ti ti-${inBuilder?'check':'plus'}"></i>`;
+}
+
+function buildMuscleSVG(ex) {
+  const muscle = ex.muscle || '';
+  const bodyFill = '#E5E7EB';
+  const active = '#185FA5';
+  const sec = '#93C5FD';
+
+  const configs = {
+    Chest: {front:[{part:'chest',fill:active}], back:[]},
+    Back:  {front:[], back:[{part:'back',fill:active},{part:'lats',fill:active}]},
+    Legs:  {front:[{part:'quads',fill:active}], back:[{part:'hamstrings',fill:sec},{part:'glutes',fill:sec}]},
+    Shoulders:{front:[{part:'shoulders',fill:active}], back:[{part:'rear-delt',fill:sec}]},
+    Biceps:{front:[{part:'biceps',fill:active}], back:[]},
+    Triceps:{front:[], back:[{part:'triceps',fill:active}]},
+    Core:  {front:[{part:'abs',fill:active}], back:[]},
+  };
+
+  const cfg = configs[muscle] || {front:[],back:[]};
+
+  function makeFigure(viewType) {
+    const isFront = viewType==='front';
+    const highlights = isFront ? cfg.front : cfg.back;
+    const hi = {};
+    highlights.forEach(h=>hi[h.part]=h.fill);
+
+    const chestF = hi['chest']||bodyFill;
+    const absF   = hi['abs']||bodyFill;
+    const quadsF = hi['quads']||bodyFill;
+    const bicepsF= hi['biceps']||bodyFill;
+    const shouldF= hi['shoulders']||bodyFill;
+    const backF  = hi['back']||bodyFill;
+    const latsF  = hi['lats']||bodyFill;
+    const hamF   = hi['hamstrings']||bodyFill;
+    const gluteF = hi['glutes']||bodyFill;
+    const triF   = hi['triceps']||bodyFill;
+    const rdeltF = hi['rear-delt']||bodyFill;
+
+    if (isFront) return `<svg viewBox="0 0 70 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- head --> <circle cx="35" cy="10" r="9" fill="${bodyFill}" stroke="#D1D5DB" stroke-width=".5"/>
+      <!-- neck --> <rect x="31" y="18" width="8" height="6" rx="2" fill="${bodyFill}"/>
+      <!-- shoulders --> <ellipse cx="18" cy="32" rx="9" ry="6" fill="${shouldF}"/> <ellipse cx="52" cy="32" rx="9" ry="6" fill="${shouldF}"/>
+      <!-- torso/chest --> <rect x="22" y="26" width="26" height="22" rx="4" fill="${chestF}"/>
+      <!-- abs --> <rect x="24" y="48" width="22" height="24" rx="3" fill="${absF}"/>
+      <!-- upper arm --> <rect x="8" y="32" width="8" height="22" rx="4" fill="${bicepsF}"/> <rect x="54" y="32" width="8" height="22" rx="4" fill="${bicepsF}"/>
+      <!-- forearm --> <rect x="9" y="55" width="6" height="18" rx="3" fill="${bodyFill}"/> <rect x="55" y="55" width="6" height="18" rx="3" fill="${bodyFill}"/>
+      <!-- hips --> <rect x="22" y="72" width="26" height="10" rx="4" fill="${bodyFill}"/>
+      <!-- quads --> <rect x="22" y="82" width="11" height="32" rx="4" fill="${quadsF}"/> <rect x="37" y="82" width="11" height="32" rx="4" fill="${quadsF}"/>
+      <!-- lower leg --> <rect x="23" y="115" width="9" height="26" rx="4" fill="${bodyFill}"/> <rect x="38" y="115" width="9" height="26" rx="4" fill="${bodyFill}"/>
+    </svg>`;
+
+    return `<svg viewBox="0 0 70 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- head --> <circle cx="35" cy="10" r="9" fill="${bodyFill}" stroke="#D1D5DB" stroke-width=".5"/>
+      <!-- neck --> <rect x="31" y="18" width="8" height="6" rx="2" fill="${bodyFill}"/>
+      <!-- rear shoulders --> <ellipse cx="18" cy="32" rx="9" ry="6" fill="${rdeltF}"/> <ellipse cx="52" cy="32" rx="9" ry="6" fill="${rdeltF}"/>
+      <!-- back --> <rect x="22" y="26" width="26" height="22" rx="4" fill="${backF}"/>
+      <!-- lats --> <polygon points="22,30 16,42 22,48" fill="${latsF}"/> <polygon points="48,30 54,42 48,48" fill="${latsF}"/>
+      <!-- lower back --> <rect x="24" y="48" width="22" height="16" rx="3" fill="${bodyFill}"/>
+      <!-- upper arm back --> <rect x="8" y="32" width="8" height="22" rx="4" fill="${triF}"/> <rect x="54" y="32" width="8" height="22" rx="4" fill="${triF}"/>
+      <!-- forearm --> <rect x="9" y="55" width="6" height="18" rx="3" fill="${bodyFill}"/> <rect x="55" y="55" width="6" height="18" rx="3" fill="${bodyFill}"/>
+      <!-- glutes --> <rect x="22" y="64" width="26" height="18" rx="4" fill="${gluteF}"/>
+      <!-- hamstrings --> <rect x="22" y="82" width="11" height="32" rx="4" fill="${hamF}"/> <rect x="37" y="82" width="11" height="32" rx="4" fill="${hamF}"/>
+      <!-- lower leg --> <rect x="23" y="115" width="9" height="26" rx="4" fill="${bodyFill}"/> <rect x="38" y="115" width="9" height="26" rx="4" fill="${bodyFill}"/>
+    </svg>`;
+  }
+
+  const hasFront = cfg.front.length>0;
+  const hasBack  = cfg.back.length>0;
+  const showBoth = hasFront && hasBack;
+
+  if (showBoth) {
+    return `
+      <div class="muscle-figure">${makeFigure('front')}<p>Front</p></div>
+      <div class="muscle-figure">${makeFigure('back')}<p>Back</p></div>`;
+  }
+  if (hasBack) {
+    return `<div class="muscle-figure" style="flex:none;margin:0 auto">${makeFigure('back')}<p>Back</p></div>`;
+  }
+  return `<div class="muscle-figure" style="flex:none;margin:0 auto">${makeFigure('front')}<p>Front</p></div>`;
+}
+
+/* ========================================================
+   ADD CUSTOM EXERCISE
+======================================================== */
+function openAddExModal() {
+  const sel = document.getElementById('custom-ex-muscle');
+  sel.innerHTML = MUSCLES.filter(m=>m!=='All').map(m=>`<option value="${m}">${m}</option>`).join('');
+  document.getElementById('add-ex-modal').classList.add('open');
+}
+function closeAddExModal() {
+  document.getElementById('add-ex-modal').classList.remove('open');
+  ['custom-ex-name','custom-ex-equip','custom-ex-instructions','custom-ex-yt'].forEach(id=>{document.getElementById(id).value='';});
+}
+function saveCustomExercise() {
+  const name = document.getElementById('custom-ex-name').value.trim();
+  if (!name) { toast('Enter a name'); return; }
+  const muscle = document.getElementById('custom-ex-muscle').value;
+  const equip  = document.getElementById('custom-ex-equip').value.trim() || 'Custom';
+  const instr  = document.getElementById('custom-ex-instructions').value.trim();
+  const yt     = document.getElementById('custom-ex-yt').value.trim();
+  const id = 'custom_' + Date.now();
+  S.customExercises.push({
+    id, name, muscle, equipment:equip,
+    instructions: instr ? instr.split('\n').filter(Boolean) : [],
+    tips:[], primaryMuscles:[muscle], secondaryMuscles:[],
+    youtubeUrl: yt || null
+  });
+  persist();
+  closeAddExModal();
+  renderLibrary();
+  toast('Exercise added!');
+}
+function deleteCustomExercise(id) {
+  if (!confirm('Delete this exercise?')) return;
+  S.customExercises = S.customExercises.filter(e=>e.id!==id);
+  persist();
+  closeDetail();
+  renderLibrary();
+  toast('Exercise deleted');
+}
+
+/* ========================================================
+   ROUTINE PAGE
+======================================================== */
+function renderRoutinePage() {
+  const listEl  = document.getElementById('saved-routines-list');
+  const emptyEl = document.getElementById('routine-page-empty');
+  if (S.savedRoutines.length===0) {
+    listEl.innerHTML=''; emptyEl.style.display='block'; return;
+  }
+  emptyEl.style.display='none';
+  listEl.innerHTML = `<div class="section-title">Your routines</div>` +
+    S.savedRoutines.map((r,i) => `
+      <div class="card mb8">
+        <div class="flex-between">
+          <div>
+            <div style="font-size:16px;font-weight:700">${r.name}</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:2px">${r.blocks.reduce((s,b)=>s+(b.exercises?b.exercises.length:0),0)} exercises &middot; ${r.blocks.length} block${r.blocks.length!==1?'s':''}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="icon-btn" onclick="editRoutine(${i})" aria-label="Edit" style="font-size:16px"><i class="ti ti-pencil"></i></button>
+            <button class="delete-btn" onclick="deleteRoutine(${i})"><i class="ti ti-trash"></i></button>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <button class="btn-primary" onclick="startWorkout(${i})"><i class="ti ti-player-play"></i> Start workout</button>
+        </div>
+      </div>
+    `).join('');
+}
+
+function startNewRoutine() {
+  B = { editingIndex:-1, activeMuscle:'All', blocks:[] };
+  document.getElementById('builder-name').value='';
+  document.getElementById('builder-title').textContent='New routine';
+  renderBuilderExList();
+  renderBuilderBlocks();
+  document.getElementById('builder-screen').classList.add('open');
+}
+
+function editRoutine(i) {
+  const r = S.savedRoutines[i];
+  B = { editingIndex:i, activeMuscle:'All', blocks: JSON.parse(JSON.stringify(r.blocks)) };
+  document.getElementById('builder-name').value = r.name;
+  document.getElementById('builder-title').textContent = 'Edit routine';
+  renderBuilderExList();
+  renderBuilderBlocks();
+  document.getElementById('builder-screen').classList.add('open');
+}
+
+function closeBuilder() {
+  document.getElementById('builder-screen').classList.remove('open');
+}
+
+function deleteRoutine(i) {
+  if (!confirm(`Delete "${S.savedRoutines[i].name}"?`)) return;
+  S.savedRoutines.splice(i,1);
+  persist();
+  renderRoutinePage();
+  toast('Routine deleted');
+}
+
+/* ========================================================
+   ROUTINE BUILDER
+======================================================== */
+function renderBuilderExList() {
+  const tabsEl = document.getElementById('builder-muscle-tabs');
+  tabsEl.innerHTML = MUSCLES.map(m =>
+    `<button class="mtab${m===B.activeMuscle?' active':''}" onclick="filterBuilder('${m}')">${m}</button>`
+  ).join('');
+
+  const filter = B.activeMuscle;
+  const list = filter==='All' ? allExercises() : allExercises().filter(e=>e.muscle===filter);
+  const selectedIds = new Set(B.blocks.flatMap(b=>b.exercises?b.exercises.map(e=>e.id):[]));
+
+  document.getElementById('builder-exercise-list').innerHTML = list.map(ex => `
+    <div class="card ex-card" style="margin-bottom:6px">
+      <div class="ex-card-info" style="cursor:default">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-meta">${ex.muscle} &middot; ${ex.equipment}</div>
+      </div>
+      <button class="icon-btn${selectedIds.has(ex.id)?' added':''}"
+        onclick="toggleBuilderEx('${ex.id}')"
+        aria-label="${selectedIds.has(ex.id)?'Remove':'Add'}">
+        <i class="ti ti-${selectedIds.has(ex.id)?'check':'plus'}"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+function filterBuilder(m) {
+  B.activeMuscle = m;
+  renderBuilderExList();
+}
+
+function toggleBuilderEx(id) {
+  const ex = allExercises().find(e=>e.id===id);
+  if (!ex) return;
+  const idx = B.blocks.findIndex(b=>b.type==='single'&&b.exercises[0].id===id);
+  if (idx>=0) {
+    B.blocks.splice(idx,1);
+  } else {
+    const pb = getPB(id);
+    B.blocks.push({type:'single', exercises:[{id:ex.id, name:ex.name, sets:[{reps:'',weight:pb||''}]}]});
+  }
+  renderBuilderExList();
+  renderBuilderBlocks();
+}
+
+function getPB(exId) {
+  const rec = S.records[exId];
+  if (rec && rec.maxWeight > 0) return rec.maxWeight;
+  return '';
+}
+
+function renderBuilderBlocks() {
+  const el = document.getElementById('builder-blocks');
+  const emptyEl = document.getElementById('builder-blocks-empty');
+  if (B.blocks.length===0) { el.innerHTML=''; emptyEl.style.display='block'; return; }
+  emptyEl.style.display='none';
+
+  el.innerHTML = B.blocks.map((block, bi) => {
+    if (block.type==='superset') {
+      return `<div class="superset-block">
+        <div class="flex-between">
+          <span class="superset-label"><i class="ti ti-layers-intersect"></i> Superset</span>
+          <button class="remove-btn" onclick="removeBlock(${bi})" aria-label="Remove block"><i class="ti ti-trash"></i></button>
+        </div>
+        ${block.exercises.map((ex,ei)=>renderBuilderExBlock(ex,bi,ei,block)).join(`<div class="divider-line"></div>`)}
+      </div>`;
+    }
+    const ex = block.exercises[0];
+    return `<div class="routine-block">
+      <div class="block-header">
+        <span class="block-name">${ex.name}</span>
+        <button class="remove-btn" onclick="removeBlock(${bi})" aria-label="Remove"><i class="ti ti-trash"></i></button>
+      </div>
+      ${renderBuilderExBlock(ex, bi, 0, block)}
+    </div>`;
+  }).join('');
+}
+
+function renderBuilderExBlock(ex, bi, ei, block) {
+  const pb = getPB(ex.id);
+  const pbHint = pb ? `<span class="pb-hint">PR: ${pb}kg</span>` : '';
+  const sets = ex.sets || [];
+  const nSets = sets.length;
+
+  return `<div>
+    ${block.type==='superset' ? `<div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text2)">${String.fromCharCode(65+ei)}. ${ex.name} ${pbHint}</div>` : `<div style="margin-bottom:6px">${pbHint}</div>`}
+    <div class="sets-count-row">
+      <span style="font-size:12px;color:var(--text3)">Sets:</span>
+      <div class="sets-stepper">
+        <button class="stepper-btn" onclick="changeSetCount(${bi},${ei},-1)" aria-label="Fewer sets"><i class="ti ti-minus"></i></button>
+        <span class="stepper-val">${nSets}</span>
+        <button class="stepper-btn" onclick="changeSetCount(${bi},${ei},1)" aria-label="More sets"><i class="ti ti-plus"></i></button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:40px 1fr 10px 1fr;gap:6px;align-items:center;margin-bottom:4px;">
+      <span></span>
+      <span style="font-size:10px;color:var(--text3);text-align:center">REPS</span><span></span>
+      <span style="font-size:10px;color:var(--text3);text-align:center">KG</span>
+    </div>
+    ${sets.map((s,si)=>`
+      <div style="display:grid;grid-template-columns:40px 1fr 10px 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;color:var(--text3)">Set ${si+1}</span>
+        <input class="set-input" type="number" inputmode="decimal" placeholder="-" value="${s.reps}"
+          onchange="updateBuilderSet(${bi},${ei},${si},'reps',this.value)"/>
+        <span></span>
+        <input class="set-input" type="number" inputmode="decimal" placeholder="-" value="${s.weight}"
+          onchange="updateBuilderSet(${bi},${ei},${si},'weight',this.value)"/>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function changeSetCount(bi, ei, delta) {
+  const ex = B.blocks[bi].exercises[ei];
+  const n = (ex.sets.length + delta);
+  if (n < 1 || n > 10) return;
+  while (ex.sets.length < n) ex.sets.push({reps:'', weight: getPB(ex.id)||''});
+  while (ex.sets.length > n) ex.sets.pop();
+  renderBuilderBlocks();
+}
+
+function updateBuilderSet(bi, ei, si, field, val) {
+  B.blocks[bi].exercises[ei].sets[si][field] = val;
+}
+
+function removeBlock(bi) {
+  B.blocks.splice(bi, 1);
+  renderBuilderExList();
+  renderBuilderBlocks();
+}
+
+/* ========================================================
+   SUPERSET MODAL
+======================================================== */
+function openSupersetModal() {
+  const opts = allExercises().map(e=>`<option value="${e.id}">${e.name} (${e.muscle})</option>`).join('');
+  document.getElementById('ss-ex-a').innerHTML = opts;
+  document.getElementById('ss-ex-b').innerHTML = opts;
+  document.getElementById('superset-modal').classList.add('open');
+}
+function closeSupersetModal() {
+  document.getElementById('superset-modal').classList.remove('open');
+}
+function addSuperset() {
+  const idA = document.getElementById('ss-ex-a').value;
+  const idB = document.getElementById('ss-ex-b').value;
+  if (idA===idB) { toast('Choose two different exercises'); return; }
+  const exA = allExercises().find(e=>e.id===idA);
+  const exB = allExercises().find(e=>e.id===idB);
+  B.blocks.push({
+    type:'superset',
+    exercises:[
+      {id:exA.id, name:exA.name, sets:[{reps:'', weight:getPB(exA.id)||''}]},
+      {id:exB.id, name:exB.name, sets:[{reps:'', weight:getPB(exB.id)||''}]}
+    ]
+  });
+  closeSupersetModal();
+  renderBuilderExList();
+  renderBuilderBlocks();
+  toast('Superset added!');
+}
+
+function saveBuilderRoutine() {
+  const name = document.getElementById('builder-name').value.trim();
+  if (!name) { toast('Give your routine a name'); return; }
+  if (B.blocks.length===0) { toast('Add at least one exercise'); return; }
+  const routine = { name, blocks: JSON.parse(JSON.stringify(B.blocks)) };
+  if (B.editingIndex >= 0) {
+    S.savedRoutines[B.editingIndex] = routine;
+    toast('Routine updated!');
+  } else {
+    S.savedRoutines.push(routine);
+    toast('Routine saved!');
+  }
+  persist();
+  closeBuilder();
+  showPage('routine');
+}
+
+/* ========================================================
+   WORKOUT
+======================================================== */
+function startWorkout(routineIdx) {
+  const r = S.savedRoutines[routineIdx];
+  workout = {
+    routineName: r.name,
+    blocks: r.blocks.map(block => ({
+      type: block.type,
+      exercises: block.exercises.map(ex => ({
+        id: ex.id, name: ex.name,
+        sets: ex.sets.map(s=>({reps:s.reps||'',weight:s.weight||'',done:false}))
+      }))
+    }))
+  };
+  timerSecs=0; clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    timerSecs++;
+    const m=Math.floor(timerSecs/60), s=timerSecs%60;
+    document.getElementById('workout-timer').textContent=m+':'+(s<10?'0':'')+s;
+  },1000);
+  renderWorkout();
+  document.getElementById('workout-screen').classList.add('open');
+}
+
+function renderWorkout() {
+  document.getElementById('workout-title').textContent = workout.routineName;
+  document.getElementById('workout-body').innerHTML = workout.blocks.map((block,bi)=>{
+    if (block.type==='superset') {
+      return `<div style="border:1.5px solid var(--superset);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px;background:var(--surface)">
+        <span class="superset-label" style="margin-bottom:10px"><i class="ti ti-layers-intersect"></i> Superset</span>
+        ${block.exercises.map((ex,ei)=>renderLiveEx(ex,bi,ei,true)).join('<div class="divider-line"></div>')}
+      </div>`;
+    }
+    return `<div class="card" style="margin-bottom:10px">${renderLiveEx(block.exercises[0],bi,0,false)}</div>`;
+  }).join('');
+}
+
+function renderLiveEx(ex, bi, ei, isSuperset) {
+  const rec = S.records[ex.id];
+  const prLabel = rec&&rec.maxWeight>0 ? `<span class="pr-badge"><i class="ti ti-trophy"></i> PR ${rec.maxWeight}kg</span>` : '';
+  return `<div>
+    <div style="font-size:14px;font-weight:700;margin-bottom:8px">${isSuperset?String.fromCharCode(65+ei)+'. ':''}${ex.name}${prLabel}</div>
+    <div style="display:grid;grid-template-columns:26px 1fr 10px 1fr 10px 34px;gap:6px;align-items:center;margin-bottom:4px;">
+      <span></span><span style="font-size:10px;color:var(--text3);text-align:center">REPS</span><span></span>
+      <span style="font-size:10px;color:var(--text3);text-align:center">KG</span><span></span><span></span>
+    </div>
+    ${ex.sets.map((s,si)=>`
+      <div style="display:grid;grid-template-columns:26px 1fr 10px 1fr 10px 34px;gap:6px;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;color:var(--text3)">${si+1}</span>
+        <input class="live-input" type="number" inputmode="decimal" placeholder="reps" value="${s.reps}"
+          onchange="updateLive(${bi},${ei},${si},'reps',this.value)"/>
+        <span></span>
+        <input class="live-input" type="number" inputmode="decimal" placeholder="kg" value="${s.weight}"
+          onchange="updateLive(${bi},${ei},${si},'weight',this.value)"/>
+        <span></span>
+        <button class="check-btn${s.done?' done':''}" onclick="toggleDone(${bi},${ei},${si})" aria-label="Mark done">
+          <i class="ti ti-check"></i>
+        </button>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function updateLive(bi, ei, si, field, val) {
+  workout.blocks[bi].exercises[ei].sets[si][field] = val;
+}
+function toggleDone(bi, ei, si) {
+  workout.blocks[bi].exercises[ei].sets[si].done = !workout.blocks[bi].exercises[ei].sets[si].done;
+  renderWorkout();
+}
+function closeWorkout() {
+  if (!confirm('Discard this workout?')) return;
+  clearInterval(timerInterval); workout=null;
+  document.getElementById('workout-screen').classList.remove('open');
+}
+function finishWorkout() {
+  if (!workout) return;
+  clearInterval(timerInterval);
+  const allEx = workout.blocks.flatMap(b=>b.exercises);
+  const session = {
+    date: new Date().toISOString(),
+    routineName: workout.routineName,
+    durationMins: Math.round(timerSecs/60),
+    exercises: allEx.map(ex=>({
+      id:ex.id, name:ex.name,
+      sets: ex.sets.filter(s=>s.reps||s.weight).map(s=>({reps:parseInt(s.reps)||0,weight:parseFloat(s.weight)||0}))
+    })).filter(ex=>ex.sets.length>0)
+  };
+  S.sessions.unshift(session);
+  session.exercises.forEach(ex=>{
+    const maxW=Math.max(...ex.sets.map(s=>s.weight),0);
+    const maxR=Math.max(...ex.sets.map(s=>s.reps),0);
+    if (!S.records[ex.id]) S.records[ex.id]={maxWeight:0,maxReps:0,history:[],firstWeight:null};
+    if (S.records[ex.id].firstWeight===null&&maxW>0) S.records[ex.id].firstWeight=maxW;
+    if (maxW>S.records[ex.id].maxWeight) S.records[ex.id].maxWeight=maxW;
+    if (maxR>S.records[ex.id].maxReps)   S.records[ex.id].maxReps=maxR;
+    S.records[ex.id].history.push({date:session.date,maxWeight:maxW,maxReps:maxR});
+  });
+  persist();
+  workout=null;
+  document.getElementById('workout-screen').classList.remove('open');
+  showPage('sessions');
+  toast('Workout saved! ');
+}
+
+/* ========================================================
+   SESSIONS PAGE
+======================================================== */
+function renderSessionsPage() {
+  const listEl=document.getElementById('sessions-list');
+  const emptyEl=document.getElementById('sessions-empty');
+  if (S.sessions.length===0){listEl.innerHTML='';emptyEl.style.display='block';return;}
+  emptyEl.style.display='none';
+  listEl.innerHTML=S.sessions.map(s=>{
+    const d=new Date(s.date);
+    const dateStr=d.toLocaleDateString('nl-NL',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    const totalSets=s.exercises.reduce((sum,ex)=>sum+ex.sets.length,0);
+    const totalVol=s.exercises.reduce((sum,ex)=>sum+ex.sets.reduce((ss,st)=>ss+st.reps*st.weight,0),0);
+    return `<div class="card mb8">
+      <div style="font-size:12px;color:var(--text3)">${dateStr}</div>
+      <div style="font-size:15px;font-weight:700;margin:3px 0 6px">${s.routineName}</div>
+      <div class="session-stats">
+        <span class="stat-pill"><i class="ti ti-clock"></i>${s.durationMins} min</span>
+        <span class="stat-pill"><i class="ti ti-repeat"></i>${totalSets} sets</span>
+        <span class="stat-pill"><i class="ti ti-barbell"></i>${Math.round(totalVol).toLocaleString('nl-NL')} kg vol</span>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text3)">${s.exercises.map(e=>e.name).join(' &middot; ')}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ========================================================
+   PROGRESS PAGE
+======================================================== */
+function renderProgressPage() {
+  const listEl=document.getElementById('progress-list');
+  const emptyEl=document.getElementById('progress-empty');
+  const ids=Object.keys(S.records);
+  if (ids.length===0){listEl.innerHTML='';emptyEl.style.display='block';return;}
+  emptyEl.style.display='none';
+
+  listEl.innerHTML=ids.map(id=>{
+    const rec=S.records[id];
+    const ex=allExercises().find(e=>e.id===id);
+    const name=ex?ex.name:id;
+    const hist=(rec.history||[]).slice(-8);
+    const maxW=Math.max(...hist.map(h=>h.maxWeight),1);
+    const latestW=hist.length>0?hist[hist.length-1].maxWeight:0;
+    const firstW=rec.firstWeight||(hist.length>0?hist[0].maxWeight:0);
+    const diffKg=+(latestW-firstW).toFixed(1);
+    const diffPct=firstW>0?Math.round((diffKg/firstW)*100):0;
+    const hasProgression=firstW>0&&hist.length>1;
+    const deltaHTML=hasProgression
+      ?`<span class="prog-delta ${diffKg>=0?'up':'down'}">${diffKg>=0?'+':''}${diffKg}kg (${diffKg>=0?'+':''}${diffPct}%)</span>`:'';
+
+    return `<div class="card mb8">
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px">${name}</div>
+      <div style="font-size:13px;color:var(--text3);margin-bottom:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        <span>Latest: <strong style="color:var(--text)">${latestW}kg</strong></span>
+        <span style="color:var(--border-mid)">&middot;</span>
+        <span>PR: <strong style="color:var(--text)">${rec.maxWeight}kg</strong> x ${rec.maxReps} reps</span>
+        ${deltaHTML}
+      </div>
+      ${hist.length<2?'<p style="font-size:12px;color:var(--text3)">Log more sessions to see your progression</p>':
+        hist.map(h=>{
+          const d=new Date(h.date).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+          const isLatest=h===hist[hist.length-1];
+          return `<div class="prog-row">
+            <span class="prog-date">${d}</span>
+            <div class="prog-bar-wrap"><div class="prog-bar" style="width:${Math.round(h.maxWeight/maxW*100)}%;${isLatest?'background:var(--success)':''}"></div></div>
+            <span class="prog-val" style="${isLatest?'color:var(--success)':''}">${h.maxWeight}kg</span>
+          </div>`;
+        }).join('')}
+    </div>`;
+  }).join('');
+}
+
+/* ========================================================
+   TOAST
+======================================================== */
+let toastTimer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+/* ========================================================
+   INIT
+======================================================== */
+document.getElementById('today-date').textContent=
+  new Date().toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
+
+['save-modal','add-ex-modal','superset-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+hydrate();
+renderLibrary();
+renderRoutinePage();
+
+if ('serviceWorker' in navigator) {
+  const sw=`const C='fitlog-v3';const A=['./','./index.html'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(A))));
+self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+}
+</script>
+</body>
+</html>
