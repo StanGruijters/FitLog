@@ -308,7 +308,26 @@ nav{display:flex}
       <div id="cfg-ss-partner" style="display:none">
         <input class="bsearch" id="cfg-ss-search" placeholder="Search partner exercise..." oninput="renderPartnerList()" style="margin-bottom:6px"/>
         <div id="cfg-ss-selected" style="display:none;margin-bottom:8px;padding:8px 12px;background:var(--ssl);border-radius:var(--rs);font-size:13px;font-weight:600;color:var(--ss)"></div>
-        <div id="cfg-ss-list" style="max-height:28vh;overflow-y:auto;border:.5px solid var(--bd);border-radius:var(--rm);margin-bottom:10px"></div>
+        <div id="cfg-ss-list" style="max-height:22vh;overflow-y:auto;border:.5px solid var(--bd);border-radius:var(--rm);margin-bottom:10px"></div>
+        <!-- Exercise B config — shown after partner is picked -->
+        <div id="cfg-ss-bconfig" style="display:none;background:var(--ssl);border-radius:var(--rm);padding:12px;margin-bottom:4px">
+          <div style="font-size:12px;font-weight:700;color:var(--ss);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">
+            <i class="ti ti-layers-intersect"></i> Exercise B — <span id="cfg-ss-bname"></span>
+          </div>
+          <div class="cfg-row">
+            <div><div class="cfg-lbl">Reps</div><input class="cfg-inp" id="cfg-b-reps" type="number" inputmode="decimal" placeholder="10" style="background:var(--sf)"/></div>
+            <div></div>
+            <div><div class="cfg-lbl">Kg</div><input class="cfg-inp" id="cfg-b-weight" type="number" inputmode="decimal" placeholder="0" style="background:var(--sf)"/></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:13px;color:var(--ss);font-weight:600">Sets</span>
+            <div class="stepper">
+              <button class="stpbtn" onclick="cfgBSets(-1)" style="border-color:var(--ss);color:var(--ss)"><i class="ti ti-minus"></i></button>
+              <span class="stpval" id="cfg-b-sets-val">3</span>
+              <button class="stpbtn" onclick="cfgBSets(1)" style="border-color:var(--ss);color:var(--ss)"><i class="ti ti-plus"></i></button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- add button -->
@@ -590,7 +609,7 @@ function newRoutine() {
   B={idx:-1,blocks:[]};
   el('bname').value='';
   _bMuscle='All';
-  _cfgEx=null; _cfgSets=3; _cfgSSOn=false; _cfgPartner=null;
+  _cfgEx=null; _cfgSets=3; _cfgSSOn=false; _cfgPartner=null; _cfgBSets=3;
   renderBldTabs(); renderBldList(); renderBldBlocks();
   el('fs-builder').classList.add('on');
 }
@@ -598,6 +617,7 @@ function editRtn(i) {
   B={idx:i,blocks:JSON.parse(JSON.stringify(S.routines[i].blocks))};
   el('bname').value=S.routines[i].name;
   _bMuscle='All';
+  _cfgBSets=3;
   renderBldTabs(); renderBldList(); renderBldBlocks();
   el('fs-builder').classList.add('on');
 }
@@ -613,6 +633,7 @@ var _cfgEx = null;
 var _cfgSets = 3;
 var _cfgSSOn = false;
 var _cfgPartner = null;
+var _cfgBSets = 3;
 
 function getPB(id) { var r=S.records[id]; return (r&&r.maxWeight>0)?r.maxWeight:''; }
 
@@ -730,6 +751,11 @@ function openCfg(id) {
   el('cfg-ss-selected').textContent='';
   el('cfg-ss-search').value='';
   html('cfg-ss-list','');
+  el('cfg-ss-bconfig').style.display='none';
+  el('cfg-b-reps').value='';
+  el('cfg-b-weight').value='';
+  _cfgBSets=3;
+  el('cfg-b-sets-val').textContent='3';
   el('m-cfg').classList.add('on');
 }
 function closeCfg() { el('m-cfg').classList.remove('on'); _cfgEx=null; }
@@ -739,15 +765,25 @@ function cfgSets(d) {
   el('cfg-sets-val').textContent=_cfgSets;
 }
 
+function cfgBSets(d) {
+  _cfgBSets=Math.min(10,Math.max(1,_cfgBSets+d));
+  el('cfg-b-sets-val').textContent=_cfgBSets;
+}
+
 function toggleSSMode() {
   _cfgSSOn=!_cfgSSOn;
   _cfgPartner=null;
+  _cfgBSets=3;
   el('cfg-ss-toggle').style.background=_cfgSSOn?'var(--ss)':'var(--bdm)';
   el('cfg-ss-knob').style.transform=_cfgSSOn?'translateX(18px)':'translateX(0)';
   el('cfg-ss-partner').style.display=_cfgSSOn?'block':'none';
   el('cfg-ss-selected').style.display='none';
   el('cfg-ss-selected').textContent='';
   el('cfg-ss-search').value='';
+  el('cfg-ss-bconfig').style.display='none';
+  el('cfg-b-reps').value='';
+  el('cfg-b-weight').value='';
+  el('cfg-b-sets-val').textContent='3';
   if (_cfgSSOn) renderPartnerList();
 }
 
@@ -772,8 +808,15 @@ function renderPartnerList() {
 function pickPartner(id) {
   _cfgPartner=getEx(id);
   if (!_cfgPartner) return;
+  _cfgBSets=3;
   el('cfg-ss-selected').style.display='block';
   el('cfg-ss-selected').textContent='Partner: '+_cfgPartner.name;
+  // show exercise B config fields
+  el('cfg-ss-bname').textContent=_cfgPartner.name;
+  el('cfg-b-reps').value='';
+  el('cfg-b-weight').value=getPB(_cfgPartner.id)||'';
+  el('cfg-b-sets-val').textContent='3';
+  el('cfg-ss-bconfig').style.display='block';
   renderPartnerList();
 }
 
@@ -784,9 +827,11 @@ function confirmCfg() {
   var weight=el('cfg-weight').value||'';
   var sets=_cfgSets;
   if (_cfgSSOn) {
+    var bReps=el('cfg-b-reps').value||'';
+    var bWeight=el('cfg-b-weight').value||'';
     B.blocks.push({ type:'superset', exercises:[
       { id:_cfgEx.id, name:_cfgEx.name, reps:reps, weight:weight, sets:sets },
-      { id:_cfgPartner.id, name:_cfgPartner.name, reps:'', weight:getPB(_cfgPartner.id)||'', sets:sets }
+      { id:_cfgPartner.id, name:_cfgPartner.name, reps:bReps, weight:bWeight, sets:_cfgBSets }
     ]});
     toast(_cfgEx.name+' + '+_cfgPartner.name+' added as superset');
   } else {
