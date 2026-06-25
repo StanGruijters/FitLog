@@ -158,6 +158,22 @@ nav{display:flex}
 .fsh input.ifield::placeholder{color:rgba(255,255,255,.4)}
 .fsh .tchip{background:rgba(255,255,255,.15);color:#fff}
 .fab{position:fixed;bottom:76px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(24,95,165,.35);z-index:40}
+/* ---- ERROR BAR ---- */
+#err-bar{position:fixed;top:0;left:0;right:0;z-index:500;background:#C0392B;color:#fff;font-size:13px;font-weight:600;padding:12px 16px;display:flex;align-items:center;gap:10px;transform:translateY(-100%);transition:transform .3s ease;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+#err-bar.show{transform:translateY(0)}
+#err-bar i{font-size:18px;flex-shrink:0}
+#err-bar span{flex:1}
+#err-bar button{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0;line-height:1;opacity:.7}
+/* ---- SPINNER ---- */
+#spinner{position:fixed;inset:0;background:rgba(26,31,54,.6);z-index:490;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#spinner.show{display:flex}
+.spin-ring{width:44px;height:44px;border:4px solid rgba(255,255,255,.2);border-top-color:#FF7900;border-radius:50%;animation:spin .7s linear infinite}
+#spinner p{color:#fff;font-size:13px;font-weight:600;opacity:.85}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ---- SKELETON ---- */
+.skel{background:linear-gradient(90deg,var(--sf2) 25%,var(--bd) 50%,var(--sf2) 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:var(--rs)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{height:80px;border-radius:var(--rl);margin-bottom:8px}
 .spbtn{width:30px;height:30px;border-radius:50%;border:.5px solid var(--bdm);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ac)}
 .spval{font-size:15px;font-weight:700;min-width:24px;text-align:center}
 .pbhint{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--ac);background:var(--acl);padding:2px 8px;border-radius:8px}
@@ -170,6 +186,19 @@ nav{display:flex}
 </style>
 </head>
 <body>
+<!-- ---- ERROR BAR ---- -->
+<div id="err-bar">
+  <i class="ti ti-alert-triangle"></i>
+  <span id="err-msg"></span>
+  <button onclick="hideErr()" aria-label="Sluiten"><i class="ti ti-x"></i></button>
+</div>
+
+<!-- ---- SPINNER ---- -->
+<div id="spinner">
+  <div class="spin-ring"></div>
+  <p id="spinner-msg">Laden...</p>
+</div>
+
 <!-- ═══ LOGIN SCREEN ═══════════════════════════════════════ -->
 <div id="login-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 24px;background:var(--nav-bg)">
   <div style="width:100%;max-width:360px">
@@ -1051,6 +1080,35 @@ var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 var CURRENT_USER = null;
 
 // ============================================================
+// ERROR BAR + SPINNER HELPERS
+// ============================================================
+var _errTimer = null;
+
+function showErr(msg) {
+  el('err-msg').textContent = msg;
+  el('err-bar').classList.add('show');
+  clearTimeout(_errTimer);
+  _errTimer = setTimeout(hideErr, 4000);
+}
+function hideErr() { el('err-bar').classList.remove('show'); }
+
+function showSpinner(msg) {
+  el('spinner-msg').textContent = msg || 'Laden...';
+  el('spinner').classList.add('show');
+}
+function hideSpinner() { el('spinner').classList.remove('show'); }
+
+function friendlyErr(err) {
+  if (!err) return 'Er is een onbekende fout opgetreden.';
+  var m = err.message || err.msg || String(err);
+  if (m.indexOf('network') >= 0 || m.indexOf('fetch') >= 0) return 'Geen verbinding. Controleer je internet en probeer opnieuw.';
+  if (m.indexOf('JWT') >= 0 || m.indexOf('token') >= 0) return 'Je sessie is verlopen. Log opnieuw in.';
+  if (m.indexOf('duplicate') >= 0 || m.indexOf('unique') >= 0) return 'Dit item bestaat al.';
+  if (m.indexOf('permission') >= 0 || m.indexOf('policy') >= 0) return 'Je hebt geen toegang tot deze actie.';
+  return 'Er is iets misgegaan. Probeer het opnieuw.';
+}
+
+// ============================================================
 // AUTH UI
 // ============================================================
 var _authMode = 'signin';
@@ -1062,7 +1120,7 @@ function switchTab(mode) {
   el('tab-signin').style.color = isSignin ? '#fff' : 'rgba(255,255,255,.6)';
   el('tab-signup').style.background = !isSignin ? 'var(--ac)' : 'transparent';
   el('tab-signup').style.color = !isSignin ? '#fff' : 'rgba(255,255,255,.6)';
-  el('auth-submit').textContent = isSignin ? 'Sign in' : 'Create account';
+  el('auth-submit').textContent = isSignin ? 'Inloggen' : 'Account aanmaken';
   el('auth-error').style.display = 'none';
   el('auth-msg').style.display = 'none';
 }
@@ -1070,33 +1128,29 @@ function switchTab(mode) {
 function submitAuth() {
   var email = el('auth-email').value.trim();
   var pass  = el('auth-password').value;
-  if (!email || !pass) { showAuthError('Please enter your email and password'); return; }
-  el('auth-submit').textContent = 'Please wait...';
+  if (!email || !pass) { showAuthError('Vul je e-mailadres en wachtwoord in'); return; }
+  el('auth-submit').textContent = 'Even wachten...';
   el('auth-submit').disabled = true;
   if (_authMode === 'signin') {
-    sb.auth.signInWithPassword({ email: email, password: pass }).then(function(res) {
+    sb.auth.signInWithPassword({ email:email, password:pass }).then(function(res) {
       el('auth-submit').disabled = false;
-      el('auth-submit').textContent = 'Sign in';
-      if (res.error) showAuthError(res.error.message);
+      el('auth-submit').textContent = 'Inloggen';
+      if (res.error) showAuthError(res.error.message === 'Invalid login credentials' ? 'Onjuist e-mailadres of wachtwoord.' : res.error.message);
     });
   } else {
-    sb.auth.signUp({ email: email, password: pass }).then(function(res) {
+    sb.auth.signUp({ email:email, password:pass }).then(function(res) {
       el('auth-submit').disabled = false;
-      el('auth-submit').textContent = 'Create account';
+      el('auth-submit').textContent = 'Account aanmaken';
       if (res.error) { showAuthError(res.error.message); return; }
-      showAuthMsg('Check your email to confirm your account, then sign in.');
+      showAuthMsg('Controleer je e-mail om je account te bevestigen, log daarna in.');
     });
   }
 }
 
 function signInGoogle() {
-  sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo:window.location.href } });
 }
-
-function signOut() {
-  sb.auth.signOut();
-}
-
+function signOut() { sb.auth.signOut(); }
 function showAuthError(msg) {
   el('auth-error').textContent = msg;
   el('auth-error').style.display = 'block';
@@ -1118,7 +1172,6 @@ function showApp(user) {
   el('hdate').textContent = new Date().toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
   loadFromDB();
 }
-
 function showLogin() {
   CURRENT_USER = null;
   el('login-screen').style.display = 'flex';
@@ -1128,96 +1181,137 @@ function showLogin() {
 // ============================================================
 // DATABASE - LOAD ALL USER DATA
 // ============================================================
+function showSkelRtn() {
+  html('rtnlist','<div class="skel skel-card"><\/div><div class="skel skel-card"><\/div>');
+  hide('rtn-empty');
+}
+function showSkelLib() {
+  html('exlist','<div class="skel skel-card"><\/div><div class="skel skel-card"><\/div><div class="skel skel-card"><\/div>');
+}
+
 function loadFromDB() {
   S = { custom:[], routines:[], sessions:[], records:{} };
   var uid = CURRENT_USER.id;
-  var done = 0;
-  function check() { done++; if (done===4) { renderLib(); renderRtn(); } }
+  var done = 0, errors = 0;
+  showSpinner('Jouw data laden...');
+  showSkelRtn();
+  showSkelLib();
 
-  // custom exercises
-  sb.from('custom_exercises').select('data').eq('user_id', uid).then(function(r) {
-    if (r.data) S.custom = r.data.map(function(row){ return row.data; });
-    check();
+  function check(err) {
+    if (err) { errors++; console.error('loadFromDB:', err); }
+    done++;
+    if (done === 4) {
+      hideSpinner();
+      if (errors > 0) showErr('Sommige data kon niet worden geladen. Ververs de pagina.');
+      renderLib();
+      renderRtn();
+    }
+  }
+
+  sb.from('custom_exercises').select('data').eq('user_id',uid).then(function(r){
+    if (r.error) { check(r.error); return; }
+    S.custom = (r.data||[]).map(function(row){ return row.data; });
+    check(null);
   });
-
-  // routines
-  sb.from('routines').select('id,name,blocks').eq('user_id', uid).order('created_at').then(function(r) {
-    if (r.data) S.routines = r.data.map(function(row){ return { _id:row.id, name:row.name, blocks:row.blocks }; });
-    check();
+  sb.from('routines').select('id,name,blocks').eq('user_id',uid).order('created_at').then(function(r){
+    if (r.error) { check(r.error); return; }
+    S.routines = (r.data||[]).map(function(row){ return { _id:row.id, name:row.name, blocks:row.blocks }; });
+    check(null);
   });
-
-  // sessions
-  sb.from('sessions').select('id,routine_name,dur_mins,exercises,logged_at').eq('user_id', uid).order('logged_at', {ascending:false}).limit(50).then(function(r) {
-    if (r.data) S.sessions = r.data.map(function(row){
+  sb.from('sessions').select('id,routine_name,dur_mins,exercises,logged_at').eq('user_id',uid).order('logged_at',{ascending:false}).limit(50).then(function(r){
+    if (r.error) { check(r.error); return; }
+    S.sessions = (r.data||[]).map(function(row){
       return { _id:row.id, name:row.routine_name, durMins:row.dur_mins, exercises:row.exercises, date:row.logged_at };
     });
-    check();
+    check(null);
   });
-
-  // records
-  sb.from('records').select('exercise_id,max_weight,max_reps,first_weight,history').eq('user_id', uid).then(function(r) {
-    if (r.data) r.data.forEach(function(row){
+  sb.from('records').select('exercise_id,max_weight,max_reps,first_weight,history').eq('user_id',uid).then(function(r){
+    if (r.error) { check(r.error); return; }
+    (r.data||[]).forEach(function(row){
       S.records[row.exercise_id] = { maxWeight:row.max_weight, maxReps:row.max_reps, firstWeight:row.first_weight, history:row.history||[] };
     });
-    check();
+    check(null);
   });
 }
 
 // ============================================================
-// DATABASE - SAVE HELPERS
+// DATABASE - SAVE HELPERS (all with error handling + spinner)
 // ============================================================
 function dbSaveRoutine(routine) {
   var uid = CURRENT_USER.id;
+  showSpinner('Routine opslaan...');
   if (routine._id) {
-    // update existing
-    sb.from('routines').update({ name:routine.name, blocks:routine.blocks, updated_at:new Date().toISOString() }).eq('id', routine._id).eq('user_id', uid).then(function(){});
+    sb.from('routines').update({ name:routine.name, blocks:routine.blocks, updated_at:new Date().toISOString() })
+      .eq('id',routine._id).eq('user_id',uid).then(function(r){
+        hideSpinner();
+        if (r.error) showErr(friendlyErr(r.error));
+      });
   } else {
-    // insert new and store returned id
-    sb.from('routines').insert({ user_id:uid, name:routine.name, blocks:routine.blocks }).select('id').single().then(function(r){
-      if (r.data) routine._id = r.data.id;
-    });
+    sb.from('routines').insert({ user_id:uid, name:routine.name, blocks:routine.blocks })
+      .select('id').single().then(function(r){
+        hideSpinner();
+        if (r.error) { showErr(friendlyErr(r.error)); return; }
+        if (r.data) routine._id = r.data.id;
+      });
   }
 }
 
 function dbDeleteRoutine(routine) {
   if (!routine._id) return;
-  sb.from('routines').delete().eq('id', routine._id).eq('user_id', CURRENT_USER.id).then(function(){});
-}
-
-function dbSaveSession(session) {
-  var uid = CURRENT_USER.id;
-  sb.from('sessions').insert({ user_id:uid, routine_name:session.name, dur_mins:session.durMins, exercises:session.exercises, logged_at:session.date }).select('id').single().then(function(r){
-    if (r.data) session._id = r.data.id;
+  showSpinner('Routine verwijderen...');
+  sb.from('routines').delete().eq('id',routine._id).eq('user_id',CURRENT_USER.id).then(function(r){
+    hideSpinner();
+    if (r.error) showErr(friendlyErr(r.error));
   });
 }
 
+function dbSaveSession(session) {
+  showSpinner('Workout opslaan...');
+  sb.from('sessions').insert({ user_id:CURRENT_USER.id, routine_name:session.name, dur_mins:session.durMins, exercises:session.exercises, logged_at:session.date })
+    .select('id').single().then(function(r){
+      hideSpinner();
+      if (r.error) { showErr(friendlyErr(r.error)); return; }
+      if (r.data) session._id = r.data.id;
+    });
+}
+
 function dbUpsertRecord(exId, rec) {
-  var uid = CURRENT_USER.id;
-  sb.from('records').upsert({ user_id:uid, exercise_id:exId, max_weight:rec.maxWeight, max_reps:rec.maxReps, first_weight:rec.firstWeight||0, history:rec.history||[], updated_at:new Date().toISOString() }, { onConflict:'user_id,exercise_id' }).then(function(){});
+  sb.from('records').upsert({
+    user_id:CURRENT_USER.id, exercise_id:exId,
+    max_weight:rec.maxWeight, max_reps:rec.maxReps,
+    first_weight:rec.firstWeight||0, history:rec.history||[],
+    updated_at:new Date().toISOString()
+  },{ onConflict:'user_id,exercise_id' }).then(function(r){
+    if (r.error) showErr(friendlyErr(r.error));
+  });
 }
 
 function dbSaveCustomEx(ex) {
-  sb.from('custom_exercises').insert({ user_id:CURRENT_USER.id, data:ex }).then(function(){});
+  showSpinner('Oefening opslaan...');
+  sb.from('custom_exercises').insert({ user_id:CURRENT_USER.id, data:ex }).then(function(r){
+    hideSpinner();
+    if (r.error) showErr(friendlyErr(r.error));
+  });
 }
 
 function dbDeleteCustomEx(id) {
-  // we stored data->id, so filter by data->>'id'
-  sb.from('custom_exercises').delete().eq('user_id', CURRENT_USER.id).eq('data->>id', id).then(function(){});
+  showSpinner('Oefening verwijderen...');
+  sb.from('custom_exercises').delete().eq('user_id',CURRENT_USER.id).eq('data->>id',id).then(function(r){
+    hideSpinner();
+    if (r.error) showErr(friendlyErr(r.error));
+  });
 }
 
-// Legacy save/load (no-op now - DB is source of truth)
+// Legacy - no-op
 function save() {}
 function load() {}
 
 // ============================================================
-// PATCH EXISTING FUNCTIONS TO USE DB INSTEAD OF LOCALSTORAGE
+// OVERRIDE FUNCTIONS TO USE DB
 // ============================================================
-
-// Override saveCustomEx to also write to DB
-var _origSaveCustomEx = saveCustomEx;
 function saveCustomEx() {
   var name = el('cx-name').value.trim();
-  if (!name) { toast('Enter a name'); return; }
+  if (!name) { toast('Voer een naam in'); return; }
   var muscle = el('cx-muscle').value;
   var equip  = el('cx-equip').value.trim() || 'Custom';
   var instr  = el('cx-instr').value.trim();
@@ -1228,43 +1322,41 @@ function saveCustomEx() {
     tips:[], primary:[muscle], secondary:[], ytq:name+' exercise tutorial', youtubeUrl:yt||null };
   S.custom.push(ex);
   dbSaveCustomEx(ex);
-  closeCustomModal(); renderLib(); toast('Exercise added!');
+  closeCustomModal(); renderLib(); toast('Oefening toegevoegd!');
 }
 
 function delCustomEx(id) {
-  if (!confirm('Delete this exercise?')) return;
+  if (!confirm('Weet je zeker dat je deze oefening wilt verwijderen?')) return;
   S.custom = S.custom.filter(function(e){ return e.id!==id; });
   dbDeleteCustomEx(id);
-  closeDetail(); renderLib(); toast('Exercise deleted');
+  closeDetail(); renderLib(); toast('Oefening verwijderd');
 }
 
-// Override saveRoutine to write to DB
 function saveRoutine() {
   var name = el('bname').value.trim();
-  if (!name) { toast('Give your routine a name'); return; }
-  if (!B.blocks || B.blocks.length===0) { toast('Add at least one exercise'); return; }
+  if (!name) { toast('Geef je routine een naam'); return; }
+  if (!B.blocks || B.blocks.length===0) { toast('Voeg minimaal een oefening toe'); return; }
   if (B.idx >= 0) {
     S.routines[B.idx].name   = name;
     S.routines[B.idx].blocks = JSON.parse(JSON.stringify(B.blocks));
     dbSaveRoutine(S.routines[B.idx]);
-    toast('Routine updated!');
+    toast('Routine bijgewerkt!');
   } else {
     var r = { name:name, blocks:JSON.parse(JSON.stringify(B.blocks)) };
     S.routines.push(r);
     dbSaveRoutine(r);
-    toast('Routine saved!');
+    toast('Routine opgeslagen!');
   }
   closeBuilder(); SP('rtn');
 }
 
 function delRtn(i) {
-  if (!confirm('Delete "' + S.routines[i].name + '"?')) return;
+  if (!confirm('Weet je zeker dat je "' + S.routines[i].name + '" wilt verwijderen?')) return;
   dbDeleteRoutine(S.routines[i]);
-  S.routines.splice(i, 1);
-  renderRtn(); toast('Routine deleted');
+  S.routines.splice(i,1);
+  renderRtn(); toast('Routine verwijderd');
 }
 
-// Override finishWorkout to write session + records to DB
 function finishWorkout() {
   if (!WO) return;
   clearInterval(timerInt);
@@ -1276,7 +1368,7 @@ function finishWorkout() {
   var ses = { date:new Date().toISOString(), name:WO.name, durMins:Math.round(timerSec/60),
     exercises: allExArr.map(function(ex){
       return { id:ex.id, name:ex.name,
-        sets: ex.sets.filter(function(s){return s.reps||s.weight;}).map(function(s){return {reps:parseInt(s.reps)||0, weight:parseFloat(s.weight)||0};}) };
+        sets: ex.sets.filter(function(s){return s.reps||s.weight;}).map(function(s){return {reps:parseInt(s.reps)||0,weight:parseFloat(s.weight)||0};}) };
     }).filter(function(ex){return ex.sets.length>0;})
   };
 
@@ -1286,8 +1378,8 @@ function finishWorkout() {
   ses.exercises.forEach(function(ex) {
     var mw=0, mr=0;
     for (var i=0;i<ex.sets.length;i++) {
-      if(ex.sets[i].weight>mw) mw=ex.sets[i].weight;
-      if(ex.sets[i].reps>mr)   mr=ex.sets[i].reps;
+      if (ex.sets[i].weight>mw) mw=ex.sets[i].weight;
+      if (ex.sets[i].reps>mr)   mr=ex.sets[i].reps;
     }
     if (!S.records[ex.id]) S.records[ex.id] = { maxWeight:0, maxReps:0, firstWeight:null, history:[] };
     if (S.records[ex.id].firstWeight===null && mw>0) S.records[ex.id].firstWeight=mw;
@@ -1299,9 +1391,12 @@ function finishWorkout() {
 
   WO = null;
   el('fs-workout').classList.remove('on');
-  SP('ses'); toast('Workout saved!');
+  SP('ses'); toast('Workout opgeslagen!');
 }
 
+// ============================================================
+// INIT
+// ============================================================
 // ============================================================
 // INIT
 // ============================================================
