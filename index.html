@@ -884,7 +884,58 @@ for (var i = 0; i < EX.length; i++) {
 var S = { custom:[], routines:[], sessions:[], records:{} };
 var B = { idx:-1, blocks:[] };
 var WO = null;
-var timerSec = 0, timerInt = null;
+var timerSec = 0, timerInt = null, _woStartTs = null, _woAccum = 0;
+
+// ---- WORKOUT TIMER (wall-clock based so it survives screen-off/backgrounding) ----
+function _renderWoTimer() {
+  var m = Math.floor(timerSec / 60), s = timerSec % 60;
+  var t = el('wo-timer');
+  if (t) t.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function _tickWoTimer() {
+  if (_woStartTs === null) return;
+  timerSec = _woAccum + Math.floor((Date.now() - _woStartTs) / 1000);
+  _renderWoTimer();
+}
+
+// Start a fresh workout timer (from zero)
+function startWoTimer() {
+  clearInterval(timerInt);
+  _woAccum = 0;
+  timerSec = 0;
+  _woStartTs = Date.now();
+  _renderWoTimer();
+  timerInt = setInterval(_tickWoTimer, 1000);
+}
+
+// Resume a paused workout timer, continuing from prevSec
+function resumeWoTimer(prevSec) {
+  clearInterval(timerInt);
+  _woAccum = prevSec || 0;
+  timerSec = _woAccum;
+  _woStartTs = Date.now();
+  _renderWoTimer();
+  timerInt = setInterval(_tickWoTimer, 1000);
+}
+
+// Stop the timer entirely (workout finished or discarded)
+function stopWoTimer() {
+  clearInterval(timerInt);
+  timerInt = null;
+  _woStartTs = null;
+  _woAccum = 0;
+}
+
+// Freeze the timer but keep elapsed time (used when pausing)
+function freezeWoTimer() {
+  _tickWoTimer();
+  clearInterval(timerInt);
+  timerInt = null;
+  _woStartTs = null;
+  _woAccum = timerSec;
+}
+
 var _libMuscle = 'All';
 var _toastT = null;
 
@@ -1527,12 +1578,7 @@ function startWO(ri) {
     }
     WO.blocks.push(nb);
   }
-  timerSec=0; clearInterval(timerInt);
-  timerInt=setInterval(function(){
-    timerSec++;
-    var m=Math.floor(timerSec/60),s=timerSec%60;
-    var t=el('wo-timer'); if(t) t.textContent=m+':'+(s<10?'0':'')+s;
-  },1000);
+  startWoTimer();
   renderWO(); el('fs-workout').classList.add('on');
 }
 
@@ -1588,7 +1634,7 @@ function toggleCircuitRound(btn) {
 
 function closeWorkout(){
   if(!confirm(T('discardWorkout'))) return;
-  clearInterval(timerInt);
+  stopWoTimer();
   stopRest();
   WO=null;
   try { localStorage.removeItem('fitlog_paused_workout'); } catch(e) {}
@@ -1597,7 +1643,7 @@ function closeWorkout(){
 
 function pauseWorkout() {
   if (!WO) return;
-  clearInterval(timerInt);
+  freezeWoTimer();
   stopRest();
   var paused = {
     WO: WO,
@@ -1634,11 +1680,7 @@ function resumePausedWorkout() {
   timerSec = paused.timerSec || 0;
   try { localStorage.removeItem('fitlog_paused_workout'); } catch(e) {}
   var rb = el('resume-banner'); if (rb) rb.style.display = 'none';
-  clearInterval(timerInt);
-  timerInt = setInterval(function() {
-    timerSec++; var m=Math.floor(timerSec/60),s=timerSec%60;
-    var t=el('wo-timer'); if(t) t.textContent=m+':'+(s<10?'0':'')+s;
-  }, 1000);
+  resumeWoTimer(timerSec);
   renderWO();
   el('app').style.display = 'none';
   el('start-screen').style.display = 'none';
@@ -1690,7 +1732,8 @@ function adjustRestDur(delta) {
 // ---- WORKOUT FINISH + SUMMARY ----
 function finishWorkout(){
   if(!WO) return;
-  clearInterval(timerInt);
+  _tickWoTimer();
+  stopWoTimer();
   stopRest();
 
   var allEx=[];
@@ -2715,12 +2758,7 @@ function startWO(ri) {
     }
     WO.blocks.push(nb);
   }
-  timerSec = 0; clearInterval(timerInt);
-  timerInt = setInterval(function() {
-    timerSec++;
-    var m = Math.floor(timerSec/60), s = timerSec%60;
-    var t = el('wo-timer'); if (t) t.textContent = m + ':' + (s < 10 ? '0' : '') + s;
-  }, 1000);
+  startWoTimer();
   renderWO();
   el('fs-workout').classList.add('on');
 }
@@ -2795,11 +2833,7 @@ function _doStartSoloWO(id, numSets, reps, weight) {
   var sets = [];
   for (var i=0; i<(numSets||3); i++) sets.push({reps:reps||'',weight:weight||getPB(id)||'',done:false});
   WO = { name:ex.name, blocks:[{ type:'single', exercises:[{ id:ex.id, name:ex.name, sets:sets }] }] };
-  timerSec = 0; clearInterval(timerInt);
-  timerInt = setInterval(function() {
-    timerSec++; var m=Math.floor(timerSec/60),s=timerSec%60;
-    var t=el('wo-timer'); if(t) t.textContent=m+':'+(s<10?'0':'')+s;
-  }, 1000);
+  startWoTimer();
   renderWO();
   el('fs-detail').classList.remove('on');
   el('fs-workout').classList.add('on');
@@ -3529,6 +3563,14 @@ window.onload = function() {
   });
 
   // Safety net: persist settings if the app is hidden/closed while Settings is open
+
+  // Immediately re-sync the workout timer when returning to the app
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible' && WO && _woStartTs !== null) {
+      _tickWoTimer();
+    }
+  });
+
   document.addEventListener('visibilitychange', function() {
     if (document.visibilityState === 'hidden') {
       var settingsScreen = el('fs-settings');
