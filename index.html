@@ -182,6 +182,16 @@ nav{display:flex}
 .swap-item:active{background:var(--acl);border-color:var(--ac)}
 .swap-item-name{font-size:14px;font-weight:600}
 .swap-item-meta{font-size:11px;color:var(--tx3);margin-top:1px}
+.ord-group{display:inline-flex;gap:2px;flex-shrink:0}
+.ord-btn{width:26px;height:26px;border-radius:7px;border:.5px solid var(--bd);background:var(--sf2);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;padding:0;font-family:inherit;touch-action:manipulation}
+.ord-btn:active:not(:disabled){background:var(--ac);border-color:var(--ac);color:#fff}
+.ord-btn:disabled{opacity:.28;cursor:default}
+.ord-btn.sm{width:22px;height:22px;font-size:11px;border-radius:6px}
+.drag-handle{cursor:grab;touch-action:none;padding:2px;margin-right:2px;color:var(--tx3)}
+.bld-block{transition:opacity .15s}
+.bld-block.dragging{opacity:.4}
+.bld-block.drop-above{box-shadow:0 -3px 0 0 var(--ac)}
+.bld-block.drop-below{box-shadow:0 3px 0 0 var(--ac)}
 .fab{position:fixed;bottom:76px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(24,95,165,.35);z-index:40}
 /* ---- ERROR BAR ---- */
 #err-bar{position:fixed;top:0;left:0;right:0;z-index:500;background:#C0392B;color:#fff;font-size:13px;font-weight:600;padding:12px 16px;display:flex;align-items:center;gap:10px;transform:translateY(-100%);transition:transform .3s ease;box-shadow:0 2px 12px rgba(0,0,0,.25)}
@@ -2562,6 +2572,155 @@ function changeSetsAttr(btn) {
   if (sv) sv.textContent = ex.sets;
 }
 
+
+// ============================================================
+// REORDER BLOCKS AND EXERCISES IN THE ROUTINE BUILDER
+// ============================================================
+
+// Move a whole block (single / superset / circuit) up or down
+function moveBlock(bi, dir) {
+  var to = bi + dir;
+  if (to < 0 || to >= B.blocks.length) return;
+  var tmp = B.blocks[bi];
+  B.blocks[bi] = B.blocks[to];
+  B.blocks[to] = tmp;
+  renderBldBlocks();
+}
+
+// Move an exercise within its own superset / circuit block
+function moveExInBlock(bi, ei, dir) {
+  var blk = B.blocks[bi];
+  if (!blk || !blk.exercises) return;
+  var to = ei + dir;
+  if (to < 0 || to >= blk.exercises.length) return;
+  var tmp = blk.exercises[ei];
+  blk.exercises[ei] = blk.exercises[to];
+  blk.exercises[to] = tmp;
+  renderBldBlocks();
+}
+
+// Reposition a block from one index to another (used by drag & drop)
+function reorderBlock(from, to) {
+  if (from === to || from < 0 || to < 0) return;
+  if (from >= B.blocks.length || to >= B.blocks.length) return;
+  var moved = B.blocks.splice(from, 1)[0];
+  B.blocks.splice(to, 0, moved);
+  renderBldBlocks();
+}
+
+// Build the up/down arrow controls for a block header
+function blockArrows(bi) {
+  var up   = bi > 0;
+  var down = bi < B.blocks.length - 1;
+  var s = '<span class="ord-group">';
+  s += '<button class="ord-btn"' + (up ? '' : ' disabled') + ' onclick="moveBlock(' + bi + ',-1)" aria-label="Omhoog"><i class="ti ti-chevron-up"><\/i><\/button>';
+  s += '<button class="ord-btn"' + (down ? '' : ' disabled') + ' onclick="moveBlock(' + bi + ',1)" aria-label="Omlaag"><i class="ti ti-chevron-down"><\/i><\/button>';
+  s += '<\/span>';
+  return s;
+}
+
+// Build the up/down arrow controls for an exercise inside a block
+function exArrows(bi, ei, total) {
+  if (total < 2) return '';
+  var up   = ei > 0;
+  var down = ei < total - 1;
+  var s = '<span class="ord-group">';
+  s += '<button class="ord-btn sm"' + (up ? '' : ' disabled') + ' onclick="moveExInBlock(' + bi + ',' + ei + ',-1)" aria-label="Omhoog"><i class="ti ti-chevron-up"><\/i><\/button>';
+  s += '<button class="ord-btn sm"' + (down ? '' : ' disabled') + ' onclick="moveExInBlock(' + bi + ',' + ei + ',1)" aria-label="Omlaag"><i class="ti ti-chevron-down"><\/i><\/button>';
+  s += '<\/span>';
+  return s;
+}
+
+
+
+// ---- DRAG & DROP REORDERING (touch + mouse, via event delegation) ----
+var _dragBi = -1, _dragEl = null, _dropBi = -1, _dropAfter = false, _dragActive = false;
+
+function _clearDropMarkers() {
+  var all = document.querySelectorAll('.bld-block');
+  for (var i = 0; i < all.length; i++) {
+    all[i].classList.remove('drop-above', 'drop-below');
+  }
+}
+
+function _dragUpdate(clientY) {
+  if (!_dragActive) return;
+  var target = null;
+  var all = document.querySelectorAll('.bld-block');
+  for (var i = 0; i < all.length; i++) {
+    var r = all[i].getBoundingClientRect();
+    if (clientY >= r.top && clientY <= r.bottom) { target = all[i]; break; }
+  }
+  _clearDropMarkers();
+  if (!target) { _dropBi = -1; return; }
+  var tbi = parseInt(target.dataset.bi);
+  if (tbi === _dragBi) { _dropBi = -1; return; }
+  var rect = target.getBoundingClientRect();
+  _dropAfter = clientY > rect.top + rect.height / 2;
+  _dropBi = tbi;
+  target.classList.add(_dropAfter ? 'drop-below' : 'drop-above');
+}
+
+function _dragEnd() {
+  if (!_dragActive) return;
+  _dragActive = false;
+  if (_dragEl) _dragEl.classList.remove('dragging');
+  _clearDropMarkers();
+  if (_dropBi >= 0 && _dragBi >= 0 && _dropBi !== _dragBi) {
+    var to = _dropBi;
+    if (_dropAfter && to < _dragBi) to = to + 1;
+    if (!_dropAfter && to > _dragBi) to = to - 1;
+    reorderBlock(_dragBi, to);
+  }
+  _dragBi = -1; _dropBi = -1; _dragEl = null;
+}
+
+function setupBldDrag() {
+  var wrap = el('bld-blocks');
+  if (!wrap || wrap._dragBound) return;
+  wrap._dragBound = true;
+
+  // ---- touch ----
+  wrap.addEventListener('touchstart', function(e) {
+    var handle = e.target.closest('.drag-handle');
+    if (!handle) return;
+    _dragBi = parseInt(handle.dataset.dragBi);
+    _dragEl = handle.closest('.bld-block');
+    if (!_dragEl) { _dragBi = -1; return; }
+    _dragActive = true;
+    _dragEl.classList.add('dragging');
+    e.preventDefault();
+  }, { passive: false });
+
+  wrap.addEventListener('touchmove', function(e) {
+    if (!_dragActive) return;
+    _dragUpdate(e.touches[0].clientY);
+    e.preventDefault();
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', function() { _dragEnd(); });
+  wrap.addEventListener('touchcancel', function() { _dragEnd(); });
+
+  // ---- mouse ----
+  wrap.addEventListener('mousedown', function(e) {
+    var handle = e.target.closest('.drag-handle');
+    if (!handle) return;
+    _dragBi = parseInt(handle.dataset.dragBi);
+    _dragEl = handle.closest('.bld-block');
+    if (!_dragEl) { _dragBi = -1; return; }
+    _dragActive = true;
+    _dragEl.classList.add('dragging');
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (_dragActive) _dragUpdate(e.clientY);
+  });
+
+  document.addEventListener('mouseup', function() { _dragEnd(); });
+}
+
+
 function renderBldBlocks() {
   var cnt = 0;
   for (var bi = 0; bi < B.blocks.length; bi++) cnt += B.blocks[bi].exercises ? B.blocks[bi].exercises.length : 0;
@@ -2575,16 +2734,16 @@ function renderBldBlocks() {
   for (var bi = 0; bi < B.blocks.length; bi++) {
     var blk = B.blocks[bi];
     if (blk.type === 'circuit') {
-      h += '<div class="cblock">';
+      h += '<div class="cblock bld-block" data-bi="' + bi + '">';
       h += '<div class="fb" style="margin-bottom:8px">';
-      h += '<span class="clbl"><i class="ti ti-refresh"><\/i> Circuit &mdash; ' + blk.rounds + ' ' + T('rounds') + '<\/span>';
-      h += '<button class="bld-rmv" onclick="removeBlock(' + bi + ')"><i class="ti ti-trash"><\/i><\/button>';
+      h += '<span class="clbl"><i class="ti ti-grip-vertical drag-handle" data-drag-bi="' + bi + '"><\/i> Circuit &mdash; ' + blk.rounds + ' ' + T('rounds') + '<\/span>';
+      h += '<span style="display:flex;align-items:center;gap:2px">' + blockArrows(bi) + '<button class="bld-rmv" onclick="removeBlock(' + bi + ')"><i class="ti ti-trash"><\/i><\/button><\/span>';
       h += '<\/div>';
       for (var ei = 0; ei < blk.exercises.length; ei++) {
         var ex = blk.exercises[ei];
         var sep = ei > 0 ? 'margin-top:8px;padding-top:8px;border-top:.5px solid rgba(0,180,216,.2)' : '';
         h += '<div style="' + sep + '">';
-        h += '<div style="font-size:12px;font-weight:600;color:var(--ok);margin-bottom:4px">' + (ei+1) + '. ' + ex.name + '<\/div>';
+        h += '<div style="font-size:12px;font-weight:600;color:var(--ok);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;gap:6px"><span>' + (ei+1) + '. ' + ex.name + '<\/span>' + exArrows(bi, ei, blk.exercises.length) + '<\/div>';
         h += '<div style="display:grid;grid-template-columns:1fr 10px 1fr;gap:8px;margin-bottom:2px">';
         h += '<div><div style="font-size:10px;color:var(--tx3);text-align:center;margin-bottom:3px;font-weight:700">'+(isTimeEx(ex.name)?'SEC':'REPS')+'<\/div>';
         h += '<input class="sinput" type="number" inputmode="decimal" placeholder="e.g. 12" value="' + ex.reps + '" data-bi="' + bi + '" data-ei="' + ei + '" data-field="reps" onchange="updateCircuitExAttr(this)"><\/div>';
@@ -2595,25 +2754,28 @@ function renderBldBlocks() {
       }
       h += '<\/div>';
     } else if (blk.type === 'superset') {
-      h += '<div class="ssblock">' +
+      h += '<div class="ssblock bld-block" data-bi="' + bi + '">' +
         '<div class="fb" style="margin-bottom:8px">' +
-          '<span class="sslbl"><i class="ti ti-layers-intersect"><\/i> Superset<\/span>' +
-          '<button class="bld-rmv" onclick="removeBlock(' + bi + ')"><i class="ti ti-trash"><\/i><\/button>' +
+          '<span class="sslbl"><i class="ti ti-grip-vertical drag-handle" data-drag-bi="' + bi + '"><\/i> Superset<\/span>' +
+          '<span style="display:flex;align-items:center;gap:2px">' + blockArrows(bi) + '<button class="bld-rmv" onclick="removeBlock(' + bi + ')"><i class="ti ti-trash"><\/i><\/button><\/span>' +
         '<\/div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px"><span style="font-size:11px;font-weight:700;color:var(--ss)">A<\/span>' + exArrows(bi, 0, blk.exercises.length) + '<\/div>' +
         renderExConfig(blk.exercises[0], bi, 0) +
         '<div class="dvd"><\/div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px"><span style="font-size:11px;font-weight:700;color:var(--ac)">B<\/span>' + exArrows(bi, 1, blk.exercises.length) + '<\/div>' +
         renderExConfig(blk.exercises[1], bi, 1) +
       '<\/div>';
     } else {
-      h += '<div class="rblock">' +
-        '<div class="fb" style="margin-bottom:8px"><span style="font-size:14px;font-weight:600">' + blk.exercises[0].name + '<\/span>' +
-          '<button class="bld-rmv" onclick="removeBlock(' + bi + ')"><i class="ti ti-trash"><\/i><\/button>' +
+      h += '<div class="rblock bld-block" data-bi="' + bi + '">' +
+        '<div class="fb" style="margin-bottom:8px"><span style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px"><i class="ti ti-grip-vertical drag-handle" data-drag-bi="' + bi + '"><\/i>' + blk.exercises[0].name + '<\/span>' +
+          '<span style="display:flex;align-items:center;gap:2px">' + blockArrows(bi) + '<button class="bld-rmv" onclick="removeBlock(' + bi + ')"><i class="ti ti-trash"><\/i><\/button><\/span>' +
         '<\/div>' +
         renderExConfig(blk.exercises[0], bi, 0) +
       '<\/div>';
     }
   }
   html('bld-blocks', h);
+  setupBldDrag();
 }
 
 function updateCircuitEx(bi, ei, field, val) {
