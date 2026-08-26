@@ -99,6 +99,7 @@ nav{display:flex}
 .mbg.on{display:flex}
 #m-cfg{z-index:90}
 #m-solo{z-index:95}
+#m-swap{z-index:97}
 #m-edit-ex{z-index:96}
 .modal{background:var(--sf);border-radius:var(--rl) var(--rl) 0 0;padding:20px 16px 32px;width:100%;max-height:88vh;overflow-y:auto}
 .mtitle{font-size:17px;font-weight:700;margin-bottom:14px}
@@ -175,6 +176,12 @@ nav{display:flex}
 .settimer-btn{background:none;border:none;cursor:pointer;color:var(--ac);font-size:15px;padding:0;display:flex;align-items:center}
 .settimer-btn.running{color:var(--er)}
 .settimer-val{font-size:12px;font-weight:700;color:var(--tx);min-width:28px;text-align:center}
+.swap-btn{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--tx3);font-size:17px;padding:2px 4px;display:flex;align-items:center;touch-action:manipulation}
+.swap-btn:active{color:var(--ac)}
+.swap-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 12px;border-radius:var(--rm);border:.5px solid var(--bd);background:var(--sf);margin-bottom:6px;cursor:pointer}
+.swap-item:active{background:var(--acl);border-color:var(--ac)}
+.swap-item-name{font-size:14px;font-weight:600}
+.swap-item-meta{font-size:11px;color:var(--tx3);margin-top:1px}
 .fab{position:fixed;bottom:76px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--ac);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 16px rgba(24,95,165,.35);z-index:40}
 /* ---- ERROR BAR ---- */
 #err-bar{position:fixed;top:0;left:0;right:0;z-index:500;background:#C0392B;color:#fff;font-size:13px;font-weight:600;padding:12px 16px;display:flex;align-items:center;gap:10px;transform:translateY(-100%);transition:transform .3s ease;box-shadow:0 2px 12px rgba(0,0,0,.25)}
@@ -2326,6 +2333,7 @@ var TRANSLATIONS = {
     greetMorning:'Good morning', greetAfternoon:'Good afternoon', greetEvening:'Good evening',
     lastSessionToday:'Last session today', lastSessionYesterday:'Last session yesterday', daysAgo:'days ago',
     exercisesTracked:'exercises tracked', routineWord:'routine', routinesWord:'routines',
+    swapTitle:'Swap exercise', sameMuscle:'Same muscle group', allMuscles:'All exercises',
     lang:'EN'
   },
   nl: {
@@ -2395,6 +2403,7 @@ var TRANSLATIONS = {
     greetMorning:'Goedemorgen', greetAfternoon:'Goedemiddag', greetEvening:'Goedenavond',
     lastSessionToday:'Laatste sessie vandaag', lastSessionYesterday:'Laatste sessie gisteren', daysAgo:'dagen geleden',
     exercisesTracked:'oefeningen bijgehouden', routineWord:'routine', routinesWord:'routines',
+    swapTitle:'Wissel oefening', sameMuscle:'Zelfde spiergroep', allMuscles:'Alle oefeningen',
     lang:'NL'
   }
 };
@@ -2631,8 +2640,8 @@ function renderWO() {
       h += '<div style="border:1.5px solid var(--ss);border-radius:var(--rl);padding:12px 14px;margin-bottom:10px;background:var(--sf)">';
       h += '<span class="sslbl" style="margin-bottom:12px"><i class="ti ti-layers-intersect"><\/i> Superset<\/span>';
       h += '<div style="display:flex;gap:8px;margin-bottom:10px">';
-      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ss)">A. ' + (exA ? exA.name : '') + '<\/div>';
-      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ac)">B. ' + (exB ? exB.name : '') + '<\/div>';
+      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ss);display:flex;align-items:center;justify-content:space-between;gap:4px">' + '<span>A. ' + (exA ? exA.name : '') + '<\/span>' + '<button class="swap-btn" data-bi="'+bi+'" data-ei="0" onclick="openSwapEx(this)" title="Wissel oefening"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
+      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;justify-content:space-between;gap:4px">' + '<span>B. ' + (exB ? exB.name : '') + '<\/span>' + '<button class="swap-btn" data-bi="'+bi+'" data-ei="1" onclick="openSwapEx(this)" title="Wissel oefening"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
       h += '<\/div>';
       h += '<div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 30px;gap:6px;align-items:center;margin-bottom:6px">';
       h += '<span><\/span>';
@@ -2711,7 +2720,7 @@ function renderLiveEx(ex, bi, ei, isSS, isCircuit) {
   var prefix = isSS ? String.fromCharCode(65+ei) + '. ' : isCircuit ? (ei+1) + '. ' : '';
   var timeMode = isTimeEx(ex.name);
   var h = '<div>';
-  h += '<div style="font-size:14px;font-weight:700;margin-bottom:8px">' + prefix + ex.name + pr + '<\/div>';
+  h += '<div style="font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px">' + '<span>' + prefix + ex.name + pr + '<\/span>' + '<button class="swap-btn" data-bi="' + bi + '" data-ei="' + ei + '" onclick="openSwapEx(this)" title="Wissel oefening"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
   h += '<div style="display:grid;grid-template-columns:24px 1fr 8px 1fr 8px 30px 30px;gap:6px;align-items:center;margin-bottom:4px">';
   h += '<span><\/span><span style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700">'+(timeMode?'SEC':'REPS')+'<\/span><span><\/span>';
   h += '<span style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700">'+(timeMode?'TIMER':'KG')+'<\/span><span><\/span><span><\/span><span><\/span><\/div>';
@@ -3551,6 +3560,105 @@ function toggleSetTimer(btn) {
 }
 
 
+
+// ============================================================
+// SWAP EXERCISE DURING WORKOUT (e.g. machine occupied)
+// ============================================================
+var _swapBi = -1, _swapEi = -1, _swapSameMuscle = true;
+
+function openSwapEx(btn) {
+  if (!WO) return;
+  var bi = parseInt(btn.dataset.bi), ei = parseInt(btn.dataset.ei);
+  var blk = WO.blocks[bi];
+  var ex  = blk && blk.exercises[ei];
+  if (!ex) return;
+  _swapBi = bi; _swapEi = ei; _swapSameMuscle = true;
+  var full = getEx(ex.id);
+  el('swap-current').textContent = ex.name + (full ? ' \u00b7 ' + full.muscle : '');
+  el('swap-search').value = '';
+  setSwapFilter(true);
+  el('m-swap').classList.add('on');
+}
+
+function setSwapFilter(sameMuscle) {
+  _swapSameMuscle = sameMuscle;
+  var sameBtn = el('swap-filter-same'), allBtn = el('swap-filter-all');
+  if (sameBtn) sameBtn.classList.toggle('on', sameMuscle);
+  if (allBtn)  allBtn.classList.toggle('on', !sameMuscle);
+  renderSwapList();
+}
+
+function renderSwapList() {
+  if (!WO || !WO.blocks[_swapBi]) return;
+  var current = WO.blocks[_swapBi].exercises[_swapEi];
+  if (!current) return;
+  var currentFull = getEx(current.id);
+  var muscle = currentFull ? currentFull.muscle : null;
+  var q = (el('swap-search').value || '').toLowerCase().trim();
+
+  var pool = EX.concat(S.custom || []);
+  var list = pool.filter(function(e) {
+    if (e.id === current.id) return false;
+    if (_swapSameMuscle && muscle && e.muscle !== muscle) return false;
+    if (q && e.name.toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+
+  if (!list.length) {
+    html('swap-list', '<div style="text-align:center;padding:20px;font-size:13px;color:var(--tx3)">Geen oefeningen gevonden<\/div>');
+    return;
+  }
+
+  var h = '';
+  for (var i = 0; i < list.length; i++) {
+    var e = list[i];
+    var pb = getPB(e.id);
+    h += '<div class="swap-item" data-id="' + e.id + '" onclick="chooseSwapEx(this)">';
+    h += '<div style="min-width:0;flex:1">';
+    h += '<div class="swap-item-name">' + e.name + '<\/div>';
+    h += '<div class="swap-item-meta">' + e.muscle + ' \u00b7 ' + e.equipment + (pb ? ' \u00b7 PR ' + pb + 'kg' : '') + '<\/div>';
+    h += '<\/div>';
+    h += '<i class="ti ti-chevron-right" style="color:var(--tx3);flex-shrink:0"><\/i>';
+    h += '<\/div>';
+  }
+  html('swap-list', h);
+}
+
+function chooseSwapEx(node) {
+  var newId = node.dataset.id;
+  var newEx = getEx(newId);
+  if (!newEx || !WO || !WO.blocks[_swapBi]) return;
+  var blk = WO.blocks[_swapBi];
+  var oldEx = blk.exercises[_swapEi];
+  if (!oldEx) return;
+
+  // Swap identity, keep the sets (reps/weight/done) exactly as they were
+  oldEx.id   = newEx.id;
+  oldEx.name = newEx.name;
+
+  el('m-swap').classList.remove('on');
+  renderWO();
+
+  // Offer to persist the change in the saved routine
+  var rtn = null;
+  for (var i = 0; i < S.routines.length; i++) {
+    if (S.routines[i].name === WO.name) { rtn = S.routines[i]; break; }
+  }
+  if (rtn && rtn.blocks[_swapBi] && rtn.blocks[_swapBi].exercises[_swapEi]) {
+    if (confirm('Ook opslaan in je routine "' + WO.name + '"?\n\nAnnuleren = alleen voor deze workout.')) {
+      rtn.blocks[_swapBi].exercises[_swapEi].id   = newEx.id;
+      rtn.blocks[_swapBi].exercises[_swapEi].name = newEx.name;
+      dbSaveRoutine(rtn);
+      toast('Routine bijgewerkt');
+    } else {
+      toast('Gewisseld voor deze workout');
+    }
+  } else {
+    toast('Gewisseld voor deze workout');
+  }
+}
+
+
 window.onload = function() {
 
   // Intercept Android/browser back button while Settings is open
@@ -3606,7 +3714,7 @@ window.onload = function() {
   el('app').style.display = 'none';
 
   // Modal backdrop close
-  ['m-custom','m-cfg','m-share','m-import','m-circuit','m-quicklog','m-solo','m-calc'].forEach(function(id){
+  ['m-custom','m-cfg','m-share','m-import','m-circuit','m-quicklog','m-solo','m-calc','m-swap'].forEach(function(id){
     var el_ = el(id); if (el_) el_.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
   });
 
@@ -3649,6 +3757,25 @@ function isTimeEx(name) {
 }
 
 </script>
+<!-- SWAP EXERCISE MODAL -->
+<div class="mbg" id="m-swap">
+  <div class="modal" style="max-height:88vh;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-shrink:0">
+      <div>
+        <div class="mtitle" style="margin-bottom:2px" data-t="swapTitle">Wissel oefening</div>
+        <div style="font-size:12px;color:var(--tx3)" id="swap-current"></div>
+      </div>
+      <button class="ibt" onclick="el('m-swap').classList.remove('on')" style="border-color:transparent;font-size:20px;color:var(--tx3)"><i class="ti ti-x"></i></button>
+    </div>
+    <input class="ifield" id="swap-search" placeholder="Zoeken..." oninput="renderSwapList()" style="margin:12px 0 8px;flex-shrink:0"/>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-shrink:0">
+      <button class="calc-bar-btn on" id="swap-filter-same" onclick="setSwapFilter(true)" data-t="sameMuscle">Zelfde spiergroep</button>
+      <button class="calc-bar-btn" id="swap-filter-all" onclick="setSwapFilter(false)" data-t="allMuscles">Alle oefeningen</button>
+    </div>
+    <div id="swap-list" style="overflow-y:auto;flex:1;min-height:120px"></div>
+  </div>
+</div>
+
 <!-- WEIGHT CALCULATOR MODAL -->
 <div class="mbg" id="m-calc">
   <div class="modal" style="max-height:90vh;overflow-y:auto">
