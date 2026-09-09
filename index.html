@@ -2593,12 +2593,18 @@ function genPickEx(lib, slot, cfg, usedIds, usedNames, rnd, planUsed) {
 function genDay(dayDef, cfg, lib, records, rnd, planUsed) {
   var tpl = GEN_TPL[dayDef.k].slice();
 
-  // Focusspier krijgt een extra slot, maar alleen op dagen waar die
+  // Focusspieren krijgen een extra slot, maar alleen op dagen waar die
   // spier al thuishoort. Anders krijg je borstwerk op je beendag.
-  if (cfg.focus) {
-    var hasFocus = false;
-    for (var fi = 0; fi < tpl.length; fi++) if (tpl[fi].m === cfg.focus) hasFocus = true;
-    if (hasFocus) { tpl.splice(3, 0, {m: cfg.focus}); tpl.push({m: cfg.focus}); }
+  // cfg.focus mag een string of een lijst zijn.
+  if (cfg.focus && cfg.focus.length) {
+    var fl = (typeof cfg.focus === 'string') ? [cfg.focus] : cfg.focus;
+    for (var fj = 0; fj < fl.length; fj++) {
+      var hasFocus = false, fi;
+      for (fi = 0; fi < tpl.length; fi++) if (tpl[fi].m === fl[fj]) hasFocus = true;
+      if (!hasFocus) continue;
+      tpl.splice(Math.min(3 + fj, tpl.length), 0, {m: fl[fj]});
+      tpl.push({m: fl[fj]});
+    }
   }
 
   var total = cfg.mins * 60;
@@ -2896,7 +2902,7 @@ var GEN_T = {
     swap:'Wissel', tight:'Krappe tijd: rusttijden zijn ingekort om binnen je sessieduur te blijven.',
     cantTrain:'Niet te trainen met dit materiaal:', warmup:'Warming-up', finisher:'Afsluiter',
     rounds:'rondes', sets:'sets', saved:'Routines opgeslagen', savedOne:'Routine opgeslagen',
-    genCta:'Routine laten maken',
+    genCta:'Routine laten maken', multiHint:'Je kunt er meerdere kiezen.',
     noSwap:'Geen alternatief beschikbaar', est:'ongeveer', minsShort:'min'
   },
   en: {
@@ -2923,7 +2929,7 @@ var GEN_T = {
     swap:'Swap', tight:'Tight on time: rest periods were shortened to fit your session length.',
     cantTrain:'Cannot be trained with this equipment:', warmup:'Warm-up', finisher:'Finisher',
     rounds:'rounds', sets:'sets', saved:'Routines saved', savedOne:'Routine saved',
-    genCta:'Build a routine',
+    genCta:'Build a routine', multiHint:'You can pick more than one.',
     noSwap:'No alternative available', est:'about', minsShort:'min'
   }
 };
@@ -2979,7 +2985,7 @@ var GW_STEPS = [
       {v:'bar',   t:GT('gBar'),   s:GT('gBarS')},
       {v:'bench', t:GT('gBench'), s:GT('gBenchS')} ]; } },
 
-  { k:'focus', q:'qFocus', opts:function(){
+  { k:'focus', q:'qFocus', multi:1, opts:function(){
       var o = [{v:'', t:GT('fNone')}], i;
       for (i=0;i<GEN_MUSCLE_OPTS.length;i++) o.push({v:GEN_MUSCLE_OPTS[i], t:T('m'+GEN_MUSCLE_OPTS[i]) || GEN_MUSCLE_OPTS[i]});
       return o; } },
@@ -3001,7 +3007,7 @@ function gwVisible() {
 
 function openGenerator() {
   _gw = { mode:'plan', goal:'hyp', days:3, dayType:'fullA', mins:60,
-          level:'int', where:'gym', gear:['bar','bench'], focus:'', cardio:'none' };
+          level:'int', where:'gym', gear:['bar','bench'], focus:[], cardio:'none' };
   _gwStep = 0;
   el('gen-title').textContent = GT('title');
   renderGw();
@@ -3016,10 +3022,16 @@ function renderGw() {
 
   h += '<div style="font-size:20px;font-weight:700;line-height:1.3;margin-bottom:16px">' + GT(st.q) + '<\/div>';
   if (st.hint) h += '<div style="font-size:13px;color:var(--tx3);margin:-8px 0 14px;line-height:1.5">' + GT(st.hint) + '<\/div>';
+  if (st.multi) h += '<div style="font-size:13px;color:var(--tx3);margin:-8px 0 14px;line-height:1.5">' + GT('multiHint') + '<\/div>';
 
   for (i = 0; i < opts.length; i++) {
     o = opts[i];
-    sel = st.multi ? (_gw.gear.indexOf(o.v) >= 0) : (String(_gw[st.k]) === String(o.v));
+    if (st.multi) {
+      var arr = _gw[st.k] || [];
+      sel = (o.v === '') ? (arr.length === 0) : (arr.indexOf(o.v) >= 0);
+    } else {
+      sel = String(_gw[st.k]) === String(o.v);
+    }
     h += '<div class="card gw-opt" data-act="pick" data-k="' + st.k + '" data-v="' + o.v + '"' +
          ' style="cursor:pointer;display:flex;align-items:center;gap:12px;margin-bottom:8px;' +
          (sel ? 'border-color:var(--ac);background:var(--acl)' : '') + '">' +
@@ -3044,8 +3056,10 @@ function renderGw() {
 function gwPick(k, v) {
   var steps = gwVisible(), st = steps[_gwStep];
   if (st.multi) {
-    var idx = _gw.gear.indexOf(v);
-    if (idx >= 0) _gw.gear.splice(idx, 1); else _gw.gear.push(v);
+    if (!_gw[k]) _gw[k] = [];
+    if (v === '') { _gw[k] = []; renderGw(); return; }
+    var idx = _gw[k].indexOf(v);
+    if (idx >= 0) _gw[k].splice(idx, 1); else _gw[k].push(v);
     renderGw();
     return;
   }
@@ -3074,7 +3088,7 @@ function gwConfig() {
   else                           equip = ['Bodyweight'];
   return {
     goal:_gw.goal, days:_gw.days, mins:_gw.mins, level:_gw.level,
-    equip:equip, focus:_gw.focus || null, cardio:_gw.cardio,
+    equip:equip, focus:(_gw.focus && _gw.focus.length) ? _gw.focus.slice() : null, cardio:_gw.cardio,
     mode:_gw.mode, dayType:_gw.dayType,
     bar:  _gw.where === 'gym' ? true : _gw.gear.indexOf('bar')   >= 0,
     bench:_gw.where === 'gym' ? true : _gw.gear.indexOf('bench') >= 0
@@ -3098,6 +3112,7 @@ function runGenerator() {
 }
 
 function regenDay() {
+  if (!_genOut || !_genOut.length) return;
   var cfg = gwConfig();
   cfg.seed = Math.floor(Math.random() * 2147483647);
   var fresh = genPlan(cfg, allEx(), S.records || {});
@@ -3139,6 +3154,7 @@ function gpvSwap(bi, ei) {
 // --- Voorbeeldscherm -----------------------------------------
 
 function renderGpv() {
+  if (!_genOut || !_genOut.length) return;
   var r = _genOut[_gpvDay], h = '', i, b, e;
 
   // Dagtabs (alleen bij een plan)
@@ -3216,6 +3232,7 @@ function gpvExRow(e, bi, ei, inner) {
 // --- Opslaan --------------------------------------------------
 
 function saveGenerated() {
+  if (!_genOut || !_genOut.length) return;
   var i, r;
   for (i = 0; i < _genOut.length; i++) {
     r = _genOut[i];
