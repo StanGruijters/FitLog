@@ -1,5 +1,5 @@
 // FitLog-dev Service Worker — Offline Support
-const CACHE_NAME = 'fitlog-v7';
+const CACHE_NAME = 'fitlog-v8';
 const ASSETS = [
   './',
   './index.html'
