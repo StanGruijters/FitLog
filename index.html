@@ -182,6 +182,17 @@ nav{display:flex}
 .swap-item:active{background:var(--acl);border-color:var(--ac)}
 .swap-item-name{font-size:14px;font-weight:600}
 .swap-item-meta{font-size:11px;color:var(--tx3);margin-top:1px}
+#m-confirm{z-index:99;align-items:center;padding:20px}
+.confirm-modal{border-radius:var(--rl);max-width:340px;margin:0 auto;padding:22px 20px 18px;text-align:center}
+.confirm-icon{width:48px;height:48px;border-radius:50%;background:var(--wl);color:var(--wt);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px}
+.confirm-icon.danger{background:#FFEBEE;color:var(--er)}
+.confirm-title{font-size:17px;font-weight:700;margin-bottom:6px}
+.confirm-msg{font-size:13px;color:var(--tx2);line-height:1.45;margin-bottom:16px}
+.confirm-actions{display:flex;gap:8px}
+.confirm-btn{flex:1;padding:12px;border-radius:var(--rm);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;border:none;touch-action:manipulation}
+.confirm-no{background:var(--sf2);color:var(--tx);border:.5px solid var(--bd)}
+.confirm-yes{background:var(--ac);color:#fff}
+.confirm-yes.danger{background:var(--er)}
 .ex-illu{width:100%;border-radius:var(--rl);overflow:hidden;background:var(--sf2);border:.5px solid var(--bd);margin-bottom:10px;line-height:0}
 .ex-illu img{width:100%;height:auto;display:block;object-fit:contain}
 .ord-group{display:inline-flex;gap:2px;flex-shrink:0}
@@ -1216,11 +1227,6 @@ function saveCustomEx() {
     tips:[], primary:[muscle], secondary:[], ytq:name+' exercise tutorial', youtubeUrl:yt||null });
   save(); closeCustomModal(); renderLib(); toast(T('exerciseAdded'));
 }
-function delCustomEx(id) {
-  if (!confirm(T('confirmDeleteEx'))) return;
-  S.custom = S.custom.filter(function(e){ return e.id!==id; });
-  save(); closeDetail(); renderLib(); toast(T('exerciseDeleted'));
-}
 
 // ---- ROUTINE PAGE ----
 function renderRtn() {
@@ -1268,10 +1274,6 @@ function editRtn(i) {
   setTimeout(initSplitter, 50);
 }
 function closeBuilder() { el('fs-builder').classList.remove('on'); }
-function delRtn(i) {
-  if (!confirm('Delete "'+S.routines[i].name+'"?')) return;
-  S.routines.splice(i,1); save(); renderRtn(); toast(T('routineDeleted'));
-}
 
 // ---- BUILDER ----
 var _bMuscle = 'All';
@@ -1703,7 +1705,14 @@ function toggleCircuitRound(btn) {
 
 
 function closeWorkout(){
-  if(!confirm(T('discardWorkout'))) return;
+  askConfirm({ title:T('dlgDiscardT'), msg:T('dlgDiscardM'),
+               yes:T('dlgDiscardY'), no:T('dlgDiscardN'),
+               icon:'trash', danger:true }, function(ok){
+    if (ok) _doCloseWorkout();
+  });
+}
+
+function _doCloseWorkout(){
   stopWoTimer();
   stopRest();
   WO=null;
@@ -1914,7 +1923,14 @@ function renderSes(){
 }
 
 function deleteSession(i) {
-  if (!confirm(T('deleteSession'))) return;
+  askConfirm({ title:T('dlgSessionT'), msg:T('dlgSessionM'),
+               yes:T('dlgSessionY'), no:T('dlgSessionN'),
+               icon:'trash', danger:true }, function(ok){
+    if (ok) _doDeleteSession(i);
+  });
+}
+
+function _doDeleteSession(i) {
   var ses = S.sessions[i];
   S.sessions.splice(i, 1);
   if (ses && ses._id) {
@@ -2293,7 +2309,14 @@ function saveCustomEx() {
 }
 
 function delCustomEx(id) {
-  if (!confirm(T('confirmDeleteEx'))) return;
+  askConfirm({ title:T('dlgExT'), msg:T('dlgExM'),
+               yes:T('dlgExY'), no:T('dlgExN'),
+               icon:'trash', danger:true }, function(ok){
+    if (ok) _doDelCustomEx(id);
+  });
+}
+
+function _doDelCustomEx(id) {
   S.custom = S.custom.filter(function(e){ return e.id!==id; });
   dbDeleteCustomEx(id);
   closeDetail(); renderLib(); toast(T('exerciseDeleted'));
@@ -2318,7 +2341,14 @@ function saveRoutine() {
 }
 
 function delRtn(i) {
-  if (!confirm('Weet je zeker dat je "' + S.routines[i].name + '" wilt verwijderen?')) return;
+  askConfirm({ title:T('dlgRtnT'), msg:'"' + S.routines[i].name + '" ' + T('dlgRtnM'),
+               yes:T('dlgRtnY'), no:T('dlgRtnN'),
+               icon:'trash', danger:true }, function(ok){
+    if (ok) _doDelRtn(i);
+  });
+}
+
+function _doDelRtn(i) {
   dbDeleteRoutine(S.routines[i]);
   S.routines.splice(i,1);
   renderRtn(); toast(T('routineDeleted'));
@@ -2426,6 +2456,22 @@ var TRANSLATIONS = {
     deleteAllPermanently:'Permanently delete all data?',
     confirmDeleteEx:'Are you sure you want to delete this exercise?',
     enterDesc:'Add a short description for this routine (optional)',
+    dlgDiscardT:'Bail out now?', dlgDiscardM:'Every set you logged today disappears. No undo.',
+    dlgDiscardY:'Throw it away', dlgDiscardN:'Keep going',
+    dlgSessionT:'Wipe this session?', dlgSessionM:'It vanishes from your history for good.',
+    dlgSessionY:'Wipe it', dlgSessionN:'Keep it',
+    dlgExT:'Scrap this exercise?', dlgExM:'Your own exercise disappears from the library.',
+    dlgExY:'Scrap it', dlgExN:'Keep it',
+    dlgRtnT:'Tear down this routine?', dlgRtnM:'gone for good. Logged sessions stay.',
+    dlgRtnY:'Tear it down', dlgRtnN:'Keep it',
+    dlgAcc1T:'Delete everything?', dlgAcc1M:'Your account, routines, sessions and records. All of it.',
+    dlgAcc1Y:'Continue', dlgAcc1N:'Cancel',
+    dlgAcc2T:'Really really sure?', dlgAcc2M:'There is no way back. Every rep you logged is gone.',
+    dlgAcc2Y:'Delete permanently', dlgAcc2N:'No, stop',
+    dlgSwapT:'Remember this swap?', dlgSwapM:'Put the new exercise in your routine, or use it just for today.',
+    dlgSwapY:'Save in routine', dlgSwapN:'Only today',
+    dlgShareT:'Share your routine', dlgShareM:'Add a short description so others know what they are in for.',
+    dlgShareY:'Create code', dlgShareN:'Cancel',
     lang:'EN'
   },
   nl: {
@@ -2525,6 +2571,22 @@ var TRANSLATIONS = {
     deleteAllPermanently:'Alle gegevens permanent verwijderen?',
     confirmDeleteEx:'Weet je zeker dat je deze oefening wilt verwijderen?',
     enterDesc:'Geef een korte omschrijving van deze routine (optioneel)',
+    dlgDiscardT:'Nu al stoppen?', dlgDiscardM:'Alles wat je vandaag hebt vastgelegd verdwijnt. Zonder pardon.',
+    dlgDiscardY:'Weggooien', dlgDiscardN:'Doorgaan',
+    dlgSessionT:'Sessie wissen?', dlgSessionM:'Deze workout verdwijnt definitief uit je geschiedenis.',
+    dlgSessionY:'Wissen', dlgSessionN:'Bewaren',
+    dlgExT:'Oefening schrappen?', dlgExM:'Je eigen oefening verdwijnt uit de bibliotheek.',
+    dlgExY:'Schrappen', dlgExN:'Bewaren',
+    dlgRtnT:'Routine slopen?', dlgRtnM:'is voorgoed weg. Je vastgelegde sessies blijven staan.',
+    dlgRtnY:'Slopen', dlgRtnN:'Bewaren',
+    dlgAcc1T:'Alles verwijderen?', dlgAcc1M:'Je account, routines, sessies en records. Werkelijk alles.',
+    dlgAcc1Y:'Doorgaan', dlgAcc1N:'Annuleren',
+    dlgAcc2T:'Echt heel zeker?', dlgAcc2M:'Hier is geen weg terug. Elke rep die je ooit logde is weg.',
+    dlgAcc2Y:'Definitief verwijderen', dlgAcc2N:'Nee, stop',
+    dlgSwapT:'Wissel onthouden?', dlgSwapM:'Zet de nieuwe oefening in je routine, of gebruik hem alleen vandaag.',
+    dlgSwapY:'In routine zetten', dlgSwapN:'Alleen vandaag',
+    dlgShareT:'Deel je routine', dlgShareM:'Geef een korte omschrijving zodat anderen weten wat ze te wachten staat.',
+    dlgShareY:'Code aanmaken', dlgShareN:'Annuleren',
     lang:'NL'
   }
 };
@@ -3184,8 +3246,15 @@ function openShareModal(i) {
 }
 
 function openShareDescModal(r) {
-  var desc = prompt(T('enterDesc'), '');
-  if (desc === null) return;
+  askConfirm({ title:T('dlgShareT'), msg:T('dlgShareM'),
+               yes:T('dlgShareY'), no:T('dlgShareN'),
+               icon:'share', input:true, placeholder:T('phRoutineName') },
+    function(ok, value){
+      if (ok) _doShareRoutine(r, value || '');
+    });
+}
+
+function _doShareRoutine(r, desc) {
   var code = Math.floor(100000 + Math.random() * 900000).toString();
   var displayName = CURRENT_USER.user_metadata && CURRENT_USER.user_metadata.full_name
     ? CURRENT_USER.user_metadata.full_name
@@ -3438,8 +3507,19 @@ function signOutFromSettings() {
 }
 
 function deleteAccount() {
-  if (!confirm('Are you sure? This will permanently delete your account and all data. This cannot be undone.')) return;
-  if (!confirm(T('deleteAllPermanently'))) return;
+  askConfirm({ title:T('dlgAcc1T'), msg:T('dlgAcc1M'),
+               yes:T('dlgAcc1Y'), no:T('dlgAcc1N'),
+               icon:'alert-triangle', danger:true }, function(ok1){
+    if (!ok1) return;
+    askConfirm({ title:T('dlgAcc2T'), msg:T('dlgAcc2M'),
+                 yes:T('dlgAcc2Y'), no:T('dlgAcc2N'),
+                 icon:'trash-x', danger:true }, function(ok2){
+      if (ok2) _doDeleteAccount();
+    });
+  });
+}
+
+function _doDeleteAccount() {
   // Delete all user data then sign out
   var uid = CURRENT_USER.id;
   Promise.all([
@@ -3932,21 +4012,86 @@ function chooseSwapEx(node) {
     if (S.routines[i].name === WO.name) { rtn = S.routines[i]; break; }
   }
   if (rtn && rtn.blocks[_swapBi] && rtn.blocks[_swapBi].exercises[_swapEi]) {
-    if (confirm('Ook opslaan in je routine "' + WO.name + '"?\n\nAnnuleren = alleen voor deze workout.')) {
-      rtn.blocks[_swapBi].exercises[_swapEi].id   = newEx.id;
-      rtn.blocks[_swapBi].exercises[_swapEi].name = newEx.name;
-      dbSaveRoutine(rtn);
-      toast(T('routineUpdated'));
-    } else {
-      toast(T('swapOnlyNow'));
-    }
+    var _bi = _swapBi, _ei = _swapEi;
+    askConfirm({ title:T('dlgSwapT'), msg:T('dlgSwapM'),
+                 yes:T('dlgSwapY'), no:T('dlgSwapN'),
+                 icon:'refresh' }, function(ok){
+      if (ok) {
+        rtn.blocks[_bi].exercises[_ei].id   = newEx.id;
+        rtn.blocks[_bi].exercises[_ei].name = newEx.name;
+        dbSaveRoutine(rtn);
+        toast(T('routineUpdated'));
+      } else {
+        toast(T('swapOnlyNow'));
+      }
+    });
   } else {
     toast(T('swapOnlyNow'));
   }
 }
 
 
+
+// ============================================================
+// CUSTOM CONFIRM / PROMPT DIALOG
+// Replaces the browser's native confirm() and prompt(), which
+// always show the site domain and cannot be styled.
+// ============================================================
+var _confirmCb = null;
+
+function askConfirm(opts, onYes) {
+  var titleEl = el('confirm-title');
+  var msgEl   = el('confirm-msg');
+  var iconEl  = el('confirm-icon');
+  var yesBtn  = el('confirm-yes');
+  var noBtn   = el('confirm-no');
+  var inputEl = el('confirm-input');
+  if (!titleEl) { if (onYes) onYes(true); return; }   // fail open
+
+  titleEl.textContent = opts.title || '';
+  msgEl.textContent   = opts.msg || '';
+  msgEl.style.display = opts.msg ? '' : 'none';
+  yesBtn.textContent  = opts.yes || T('saveBtn');
+  noBtn.textContent   = opts.no  || T('cancelBtn');
+
+  iconEl.className = 'confirm-icon' + (opts.danger ? ' danger' : '');
+  iconEl.innerHTML = '<i class="ti ti-' + (opts.icon || 'alert-triangle') + '"><\/i>';
+  yesBtn.className = 'confirm-btn confirm-yes' + (opts.danger ? ' danger' : '');
+
+  if (opts.input) {
+    inputEl.style.display = '';
+    inputEl.value = '';
+    inputEl.setAttribute('placeholder', opts.placeholder || '');
+  } else {
+    inputEl.style.display = 'none';
+  }
+
+  _confirmCb = onYes;
+  el('m-confirm').classList.add('on');
+  if (opts.input) setTimeout(function(){ inputEl.focus(); }, 150);
+}
+
+function _closeConfirm(answer) {
+  var inputEl = el('confirm-input');
+  var value   = inputEl && inputEl.style.display !== 'none' ? inputEl.value : null;
+  el('m-confirm').classList.remove('on');
+  var cb = _confirmCb;
+  _confirmCb = null;
+  if (cb) cb(answer, value);
+}
+
+function setupConfirmDialog() {
+  var yes = el('confirm-yes'), no = el('confirm-no'), bg = el('m-confirm');
+  if (!yes || yes._bound) return;
+  yes._bound = true;
+  yes.addEventListener('click', function(){ _closeConfirm(true); });
+  no.addEventListener('click',  function(){ _closeConfirm(false); });
+  bg.addEventListener('click', function(e){ if (e.target === this) _closeConfirm(false); });
+}
+
+
 window.onload = function() {
+  setupConfirmDialog();
 
   // Intercept Android/browser back button while Settings is open
   // so unsaved changes are saved instead of silently discarded
@@ -4044,6 +4189,20 @@ function isTimeEx(name) {
 }
 
 </script>
+<!-- CUSTOM CONFIRM / PROMPT DIALOG -->
+<div class="mbg" id="m-confirm">
+  <div class="modal confirm-modal">
+    <div class="confirm-icon" id="confirm-icon"><i class="ti ti-alert-triangle"></i></div>
+    <div class="confirm-title" id="confirm-title"></div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <input class="ifield" id="confirm-input" style="display:none;margin:0 0 14px"/>
+    <div class="confirm-actions">
+      <button class="confirm-btn confirm-no"  id="confirm-no"></button>
+      <button class="confirm-btn confirm-yes" id="confirm-yes"></button>
+    </div>
+  </div>
+</div>
+
 <!-- SWAP EXERCISE MODAL -->
 <div class="mbg" id="m-swap">
   <div class="modal" style="max-height:88vh;display:flex;flex-direction:column">
