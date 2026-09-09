@@ -301,7 +301,7 @@ nav{display:flex}
 <!-- ---- SPINNER ---- -->
 <div id="spinner">
   <div class="spin-ring"></div>
-  <p id="spinner-msg">Laden...</p>
+  <p id="spinner-msg" data-t="loading">Laden...</p>
 </div>
 
 <!-- LOADING SCREEN -->
@@ -332,13 +332,13 @@ nav{display:flex}
       <div style="display:flex;align-items:center;gap:12px">
         <i class="ti ti-player-play-filled" style="font-size:28px;color:#000"></i>
         <div style="flex:1">
-          <div style="font-size:14px;font-weight:700;color:#000">Workout gepauzeerd</div>
+          <div style="font-size:14px;font-weight:700;color:#000" data-t="workoutPaused">Workout gepauzeerd</div>
           <div style="font-size:12px;color:rgba(0,0,0,.65)" id="resume-banner-name"></div>
         </div>
         <i class="ti ti-chevron-right" style="font-size:20px;color:#000"></i>
       </div>
     </div>
-    <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px">Where do you want to go?</div>
+    <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px" data-t="whereToGo">Where do you want to go?</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <button onclick="goTo('lib')" class="start-tile" style="background:#00B4D8;border:none;border-radius:20px;padding:28px 20px;cursor:pointer;text-align:left;transition:background .15s;display:flex;flex-direction:column;gap:12px;box-shadow:0 4px 16px rgba(0,180,216,.3)">
         <i class="ti ti-books" style="font-size:36px;color:#000000"></i>
@@ -358,7 +358,7 @@ nav{display:flex}
       </button>
     </div>
   </div>
-  <div style="padding:0 20px calc(env(safe-area-inset-bottom,0) + 20px);font-size:12px;color:rgba(255,255,255,.3);text-align:center">LOG. by SG Apps</div>
+  <div style="padding:0 20px calc(env(safe-area-inset-bottom,0) + 20px);font-size:12px;color:rgba(255,255,255,.3);text-align:center" data-t="byLine">LOG. by SG Apps</div>
 </div>
 
 <!-- ═══ LOGIN SCREEN ═══════════════════════════════════════ -->
@@ -373,13 +373,13 @@ nav{display:flex}
     </div>
     <!-- Form -->
     <div id="auth-error" style="display:none;background:rgba(226,75,74,.2);border:1px solid var(--er);color:#FFB3B3;padding:10px 12px;border-radius:var(--rs);font-size:13px;margin-bottom:14px"></div>
-    <input id="auth-email" type="email" placeholder="Email address" style="width:100%;height:46px;border:1px solid rgba(255,255,255,.15);border-radius:var(--rm);background:rgba(255,255,255,.08);color:#fff;font-size:15px;padding:0 14px;font-family:inherit;margin-bottom:12px"/>
-    <input id="auth-password" type="password" placeholder="Password" style="width:100%;height:46px;border:1px solid rgba(255,255,255,.15);border-radius:var(--rm);background:rgba(255,255,255,.08);color:#fff;font-size:15px;padding:0 14px;font-family:inherit;margin-bottom:16px"/>
+    <input id="auth-email" type="email" placeholder="Email address" data-t-ph="phEmail" style="width:100%;height:46px;border:1px solid rgba(255,255,255,.15);border-radius:var(--rm);background:rgba(255,255,255,.08);color:#fff;font-size:15px;padding:0 14px;font-family:inherit;margin-bottom:12px"/>
+    <input id="auth-password" type="password" placeholder="Password" data-t-ph="phPassword" style="width:100%;height:46px;border:1px solid rgba(255,255,255,.15);border-radius:var(--rm);background:rgba(255,255,255,.08);color:#fff;font-size:15px;padding:0 14px;font-family:inherit;margin-bottom:16px"/>
     <button id="auth-submit" onclick="submitAuth()" style="width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:var(--rm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px">Sign in</button>
     <!-- Divider -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
       <div style="flex:1;height:.5px;background:rgba(255,255,255,.15)"></div>
-      <span style="font-size:12px;color:rgba(255,255,255,.4)">or continue with</span>
+      <span style="font-size:12px;color:rgba(255,255,255,.4)" data-t="orContinueWith">or continue with</span>
       <div style="flex:1;height:.5px;background:rgba(255,255,255,.15)"></div>
     </div>
     <!-- Google login -->
@@ -398,8 +398,8 @@ nav{display:flex}
       <div style="display:flex;align-items:center;gap:8px">
         <span class="hdate" id="hdate"></span>
         <button id="lang-btn" onclick="toggleLang()" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.7);font-size:13px;font-weight:700;padding:4px 8px;border-radius:8px;border:.5px solid rgba(255,255,255,.2)">EN</button>
-        <button onclick="openCalc()" title="Weight calculator" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:20px;padding:2px;display:flex;align-items:center"><i class="ti ti-calculator"></i></button>
-        <button onclick="openSettings()" title="Settings" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:20px;padding:2px;display:flex;align-items:center"><i class="ti ti-settings"></i></button>
+        <button onclick="openCalc()" title="Weight calculator" data-t-title="ttCalculator" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:20px;padding:2px;display:flex;align-items:center"><i class="ti ti-calculator"></i></button>
+        <button onclick="openSettings()" title="Settings" data-t-title="ttSettings" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);font-size:20px;padding:2px;display:flex;align-items:center"><i class="ti ti-settings"></i></button>
       </div>
     </div>
     <nav>
@@ -417,21 +417,21 @@ nav{display:flex}
     <div class="page" id="p-rtn">
       <div id="rtnlist"></div>
       <div id="rtn-empty" class="empty" style="display:none">
-        <i class="ti ti-list-check"></i><p data-t="rtnEmpty">No routines yet.<br>Build one yourself, or let LOG. put one together for you.</p>
+        <i class="ti ti-list-check"></i><p data-t="noRoutines">No routines yet.<br>Tap + to build your first routine!</p>
       </div>
     </div>
     <div class="page" id="p-ses">
       <div class="stitle" data-t="recentSessions">Recent sessions</div>
       <div id="seslist"></div>
       <div id="ses-empty" class="empty" style="display:none">
-        <i class="ti ti-calendar-off"></i><p>No sessions yet.<br>Start a routine to log your first workout!</p>
+        <i class="ti ti-calendar-off"></i><p data-t="noSessions">No sessions yet.<br data-t="startRoutineFirst">Start a routine to log your first workout!</p>
       </div>
     </div>
     <div class="page" id="p-prg">
       <div class="stitle" data-t="personalRecords">Personal records</div>
       <div id="prglist"></div>
       <div id="prg-empty" class="empty" style="display:none">
-        <i class="ti ti-chart-bar-off"></i><p>Complete sessions to see your progress here</p>
+        <i class="ti ti-chart-bar-off"></i><p data-t="completeToSeeProgress">Complete sessions to see your progress here</p>
       </div>
     </div>
   </div>
@@ -444,15 +444,15 @@ nav{display:flex}
   <!-- fixed header: name + save -->
   <div class="fsh" style="flex-shrink:0">
     <button class="ibt" onclick="closeBuilder()" style="border-color:transparent"><i class="ti ti-arrow-left"></i></button>
-    <input class="ifield" id="bname" placeholder="Routine name..." style="margin:0;flex:1;height:36px;font-size:14px"/>
-    <button class="ibt" onclick="saveRoutine()" style="background:var(--ac);border-color:var(--ac);color:#fff;font-size:18px" title="Save routine"><i class="ti ti-device-floppy"></i></button>
+    <input class="ifield" id="bname" placeholder="Routine name..." data-t-ph="phRoutineName" style="margin:0;flex:1;height:36px;font-size:14px"/>
+    <button class="ibt" onclick="saveRoutine()" style="background:var(--ac);border-color:var(--ac);color:#fff;font-size:18px" title="Save routine" data-t-title="ttSaveRoutine"><i class="ti ti-device-floppy"></i></button>
   </div>
   <!-- split layout -->
   <div class="bld">
     <!-- top: muscle tabs + search + exercise list -->
     <div class="bld-top">
       <div class="mtabs" id="bld-tabs" style="margin-bottom:8px"></div>
-      <input class="bsearch" id="bld-search" placeholder="Search exercises..." oninput="renderBldList()"/>
+      <input class="bsearch" id="bld-search" placeholder="Search exercises..." data-t-ph="phSearchEx" oninput="renderBldList()"/>
     </div>
     <div class="bld-list" id="bld-list"></div>
     <!-- draggable splitter -->
@@ -476,38 +476,6 @@ nav{display:flex}
   </div>
 </div>
 
-<!-- ═══ ROUTINE GENERATOR — WIZARD ═══════════════════════════ -->
-<div class="fs" id="fs-gen">
-  <div class="fsh" style="flex-shrink:0">
-    <button class="ibt" id="gen-close" style="border-color:transparent"><i class="ti ti-arrow-left"></i></button>
-    <div class="fstitle" id="gen-title">Routine maken</div>
-    <div id="gen-count" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.55)"></div>
-  </div>
-  <div style="height:3px;background:var(--bd);flex-shrink:0">
-    <div id="gen-bar" style="height:100%;width:0;background:var(--ac);transition:width .18s ease"></div>
-  </div>
-  <div style="flex:1;overflow-y:auto;padding:22px 16px 8px" id="gen-body"></div>
-  <div style="padding:12px 16px calc(env(safe-area-inset-bottom,0) + 12px);border-top:.5px solid var(--bd);display:flex;gap:10px;flex-shrink:0">
-    <button class="btnO" id="gen-prev" style="margin-top:0;flex:1">Terug</button>
-    <button class="btn" id="gen-next" style="flex:2">Volgende</button>
-  </div>
-</div>
-
-<!-- ═══ ROUTINE GENERATOR — VOORBEELD ════════════════════════ -->
-<div class="fs" id="fs-genprev">
-  <div class="fsh" style="flex-shrink:0">
-    <button class="ibt" id="gpv-back" style="border-color:transparent"><i class="ti ti-arrow-left"></i></button>
-    <div class="fstitle" id="gpv-title">Je plan</div>
-    <button class="ibt" id="gpv-save" style="background:var(--ac);border-color:var(--ac);color:#fff;font-size:18px"><i class="ti ti-device-floppy"></i></button>
-  </div>
-  <div class="mtabs" id="gpv-tabs" style="padding:10px 16px 0;flex-shrink:0"></div>
-  <div style="flex:1;overflow-y:auto;padding:14px 16px 8px" id="gpv-body"></div>
-  <div style="padding:12px 16px calc(env(safe-area-inset-bottom,0) + 12px);border-top:.5px solid var(--bd);display:flex;gap:10px;flex-shrink:0">
-    <button class="btnO" id="gpv-regen" style="margin-top:0;flex:1"><i class="ti ti-refresh"></i> Dag opnieuw</button>
-    <button class="btn" id="gpv-savebtn" style="flex:2"><i class="ti ti-device-floppy"></i> Opslaan</button>
-  </div>
-</div>
-
 <!-- DETAIL SCREEN -->
 <div class="fs" id="fs-detail">
   <div class="fsh">
@@ -523,7 +491,7 @@ nav{display:flex}
     <button class="ibt" onclick="closeWorkout()" style="border-color:transparent"><i class="ti ti-x"></i></button>
     <div class="fstitle" id="wo-title"></div>
     <div class="tchip" id="wo-timer">0:00</div>
-    <button class="ibt" onclick="pauseWorkout()" style="border-color:transparent" title="Pauzeren"><i class="ti ti-player-pause"></i></button>
+    <button class="ibt" onclick="pauseWorkout()" style="border-color:transparent" title="Pauzeren" data-t-title="ttPause"><i class="ti ti-player-pause"></i></button>
   </div>
   <div class="fsb" id="wo-body"></div>
   <div class="fsf">
@@ -534,7 +502,7 @@ nav{display:flex}
     <div class="wo-sum-card">
       <div class="wo-sum-hdr">
         <i class="ti ti-trophy wo-sum-icon"></i>
-        <div class="wo-sum-title">Workout complete!</div>
+        <div class="wo-sum-title" data-t="workoutComplete">Workout complete!</div>
         <div class="wo-sum-sub" id="wo-sum-name"></div>
       </div>
       <div class="wo-sum-stats">
@@ -573,10 +541,10 @@ nav{display:flex}
     </svg>
     <div class="rest-ring-txt" id="rest-countdown">90</div>
   </div>
-  <div class="rest-lbl">Rusttimer</div>
+  <div class="rest-lbl" data-t="restTimer">Rusttimer</div>
   <div class="rest-actions">
     <button class="rest-btn rest-btn-add" onclick="adjustRestDur(30)">+30s</button>
-    <button class="rest-btn rest-btn-skip" onclick="stopRest()">Overslaan</button>
+    <button class="rest-btn rest-btn-skip" onclick="stopRest()" data-t="skipBtn">Overslaan</button>
   </div>
 </div>
 
@@ -584,11 +552,11 @@ nav{display:flex}
 <div class="mbg" id="m-custom">
   <div class="modal">
     <div class="mtitle" data-t="addCustom">Add custom exercise</div>
-    <span class="flbl" data-t="exerciseName">Name</span><input class="ifield" id="cx-name" placeholder="e.g. Cable pull-through"/>
+    <span class="flbl" data-t="exerciseName">Name</span><input class="ifield" id="cx-name" placeholder="e.g. Cable pull-through" data-t-ph="phExampleName"/>
     <span class="flbl" data-t="muscleGroup">Muscle group</span><select class="sfield" id="cx-muscle"></select>
-    <span class="flbl" data-t="equipment">Equipment</span><input class="ifield" id="cx-equip" placeholder="e.g. Cable, Dumbbell"/>
+    <span class="flbl" data-t="equipment">Equipment</span><input class="ifield" id="cx-equip" placeholder="e.g. Cable, Dumbbell" data-t-ph="phExampleEquip"/>
     <span class="flbl">Instructions (one per line, optional)</span>
-    <textarea class="tfield" id="cx-instr" placeholder="Step by step instructions..."></textarea>
+    <textarea class="tfield" id="cx-instr" placeholder="Step by step instructions..." data-t-ph="phInstructions"></textarea>
     <span class="flbl">YouTube link (optional)</span>
     <input class="ifield" id="cx-yt" placeholder="https://youtube.com/watch?v=..."/>
     <div class="mact">
@@ -649,7 +617,7 @@ nav{display:flex}
       <div id="cfg-circuit-partner" style="display:none;background:var(--okl);border-radius:var(--rm);padding:10px 12px;margin-bottom:8px">
         <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Add more exercises to circuit:</div>
         <div id="cfg-circuit-selected" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;min-height:24px"></div>
-        <input class="bsearch" id="cfg-circuit-search" placeholder="Search exercise..." oninput="renderCfgCircuitList()" style="margin-bottom:6px"/>
+        <input class="bsearch" id="cfg-circuit-search" placeholder="Search exercise..." data-t-ph="phSearchOne" oninput="renderCfgCircuitList()" style="margin-bottom:6px"/>
         <div id="cfg-circuit-list" style="max-height:25vh;overflow-y:auto;border:.5px solid var(--bd);border-radius:var(--rm);background:#fff"></div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
           <span style="font-size:13px;color:var(--ok);font-weight:600">Rounds:</span>
@@ -662,7 +630,7 @@ nav{display:flex}
       </div>
       <!-- partner search, hidden until superset toggled on -->
       <div id="cfg-ss-partner" style="display:none">
-        <input class="bsearch" id="cfg-ss-search" placeholder="Search partner exercise..." oninput="renderPartnerList()" style="margin-bottom:6px"/>
+        <input class="bsearch" id="cfg-ss-search" placeholder="Search partner exercise..." data-t-ph="phSearchPartner" oninput="renderPartnerList()" style="margin-bottom:6px"/>
         <div id="cfg-ss-selected" style="display:none;margin-bottom:8px;padding:8px 12px;background:var(--ssl);border-radius:var(--rs);font-size:13px;font-weight:600;color:var(--ss)"></div>
         <div id="cfg-ss-list" style="max-height:22vh;overflow-y:auto;border:.5px solid var(--bd);border-radius:var(--rm);margin-bottom:10px"></div>
         <!-- Exercise B config — shown after partner is picked -->
@@ -711,14 +679,14 @@ nav{display:flex}
   <div class="modal">
     <div class="mtitle" id="import-title" data-t="importTitle">Import routine</div>
     <p id="import-desc" style="font-size:13px;color:var(--tx3);margin-bottom:12px"></p>
-    <input class="ifield" id="import-code" placeholder="Enter 6-digit code..." maxlength="6" inputmode="numeric" style="font-size:22px;letter-spacing:6px;text-align:center"/>
+    <input class="ifield" id="import-code" placeholder="Enter 6-digit code..." data-t-ph="phCode" maxlength="6" inputmode="numeric" style="font-size:22px;letter-spacing:6px;text-align:center"/>
     <div id="import-preview" style="display:none;background:var(--sf2);border-radius:var(--rm);padding:12px;margin-bottom:12px">
       <div style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px" id="import-by"></div>
       <div style="font-size:15px;font-weight:700" id="import-rname"></div>
       <div style="font-size:13px;color:var(--tx3);margin-top:2px" id="import-rdesc"></div>
     </div>
     <div class="mact">
-      <button class="btnO" style="margin:0" onclick="el('m-import').classList.remove('on')">Cancel</button>
+      <button class="btnO" style="margin:0" onclick="el('m-import').classList.remove('on')" data-t="cancelBtn">Cancel</button>
       <button class="btn" style="flex:1;margin:0" id="import-btn" onclick="importRoutine()" data-t="importBtn">Import</button>
     </div>
   </div>
@@ -773,7 +741,7 @@ nav{display:flex}
     <div class="card" style="margin-bottom:16px">
       <div style="margin-bottom:10px">
         <span class="flbl" data-t="displayName">Display name</span>
-        <input class="ifield" id="s-name" placeholder="Your name" style="margin-bottom:0"/>
+        <input class="ifield" id="s-name" placeholder="Your name" data-t-ph="phYourName" style="margin-bottom:0"/>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div>
@@ -786,7 +754,7 @@ nav{display:flex}
         </div>
       </div>
       <div>
-        <span class="flbl">Goal</span>
+        <span class="flbl" data-t="goal">Goal</span>
         <select class="sfield" id="s-goal" style="margin-bottom:0">
           <option value="strength" data-t="goalStrength">Build strength</option>
           <option value="muscle" data-t="goalMuscle">Build muscle</option>
@@ -803,7 +771,7 @@ nav{display:flex}
       <div class="fb">
         <div>
           <div style="font-size:14px;font-weight:600" data-t="weightUnit">Weight unit</div>
-          <div style="font-size:12px;color:var(--tx3)">Used for all exercises</div>
+          <div style="font-size:12px;color:var(--tx3)" data-t="usedForAll">Used for all exercises</div>
         </div>
         <div style="display:flex;gap:0;border:.5px solid var(--bdm);border-radius:var(--rs);overflow:hidden">
           <button id="unit-kg" onclick="setUnit('kg')" style="padding:7px 16px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;background:var(--ac);color:#fff">kg</button>
@@ -859,7 +827,7 @@ nav{display:flex}
         <input type="file" id="s-photo-input" accept="image/*" style="display:none" onchange="uploadProfilePhoto(this)"/>
       </div>
       <div>
-        <div style="font-size:15px;font-weight:700" id="s-display-name">User</div>
+        <div style="font-size:15px;font-weight:700" id="s-display-name" data-t="genericUser">User</div>
         <div style="font-size:13px;color:var(--tx3)" id="s-email"></div>
       </div>
     </div>
@@ -886,7 +854,7 @@ nav{display:flex}
     <div style="display:grid;grid-template-columns:1fr 12px 1fr;gap:8px;margin-bottom:14px">
       <div>
         <div style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700;text-transform:uppercase;margin-bottom:4px" id="solo-reps-lbl">Reps</div>
-        <input class="ifield" id="solo-reps" type="number" inputmode="decimal" placeholder="e.g. 10" style="margin-bottom:0;text-align:center"/>
+        <input class="ifield" id="solo-reps" type="number" inputmode="decimal" placeholder="e.g. 10" data-t-ph="phReps" style="margin-bottom:0;text-align:center"/>
       </div>
       <div></div>
       <div>
@@ -896,7 +864,7 @@ nav{display:flex}
     </div>
     <!-- sets stepper -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <span style="font-size:14px;font-weight:600;color:var(--tx)">Number of sets</span>
+      <span style="font-size:14px;font-weight:600;color:var(--tx)" data-t="numberOfSets">Number of sets</span>
       <div class="stepper">
         <button class="stpbtn" onclick="changeSoloSets(-1)"><i class="ti ti-minus"></i></button>
         <span class="stpval" id="solo-sets-val">3</span>
@@ -1249,73 +1217,32 @@ function saveCustomEx() {
   save(); closeCustomModal(); renderLib(); toast(T('exerciseAdded'));
 }
 function delCustomEx(id) {
-  if (!confirm('Delete this exercise?')) return;
+  if (!confirm(T('confirmDeleteEx'))) return;
   S.custom = S.custom.filter(function(e){ return e.id!==id; });
   save(); closeDetail(); renderLib(); toast(T('exerciseDeleted'));
 }
 
 // ---- ROUTINE PAGE ----
-function rtnId(r) {
-  if (!r.rid) r.rid = 'r' + Date.now().toString(36) + Math.floor(Math.random()*1e6).toString(36);
-  return r.rid;
-}
-function rtnIdx(rid) {
-  for (var i = 0; i < S.routines.length; i++) if (S.routines[i].rid === rid) return i;
-  return -1;
-}
-var _rtnBound = false;
-function bindRtnList() {
-  if (_rtnBound) return;
-  var box = el('rtnlist');
-  if (!box) return;
-  _rtnBound = true;
-  box.addEventListener('click', function (ev) {
-    var b = ev.target.closest ? ev.target.closest('[data-act]') : null;
-    if (!b) return;
-    var act = b.dataset.act;
-    if (act === 'gen')    { openGenerator(); return; }
-    if (act === 'import') { openImportModal(); return; }
-    var i = rtnIdx(b.dataset.rid);
-    if (i < 0) return;
-    if (act === 'start') startWO(i);
-    if (act === 'edit')  editRtn(i);
-    if (act === 'del')   delRtn(i);
-    if (act === 'share') openShareModal(i);
-  });
-}
-
 function renderRtn() {
-  bindRtnList();
-  var genBtn = '<button class="btnO" data-act="gen" style="margin-top:8px"><i class="ti ti-sparkles"><\/i> ' + GT('genCta') + '<\/button>';
-  if (S.routines.length === 0) {
-    html('rtnlist', genBtn);
-    show('rtn-empty');
-    return;
-  }
+  if (S.routines.length===0) { html('rtnlist',''); show('rtn-empty'); return; }
   hide('rtn-empty');
-  var h = '<div class="stitle">' + (T('yourRoutines') || 'Your routines') + '<\/div>';
-  for (var i = 0; i < S.routines.length; i++) {
-    var r = S.routines[i], exCnt = 0;
-    for (var j = 0; j < r.blocks.length; j++) exCnt += r.blocks[j].exercises ? r.blocks[j].exercises.length : 0;
-    var rid = rtnId(r);
-    var m = r.meta || {};
-    var badge = (m.planId && m.dayCount > 1)
-      ? '<span style="font-size:10px;font-weight:700;color:var(--ac);background:var(--acl);padding:2px 7px;border-radius:6px;margin-left:6px">' +
-        GT('day') + ' ' + m.dayIdx + '/' + m.dayCount + '<\/span>' : '';
-    h += '<div class="card" style="margin-bottom:8px">' +
+  var h = '<div class="stitle">Your routines<\/div>';
+  for (var i=0;i<S.routines.length;i++) {
+    var r=S.routines[i], exCnt=0;
+    for (var j=0;j<r.blocks.length;j++) exCnt+=r.blocks[j].exercises?r.blocks[j].exercises.length:0;
+    h+='<div class="card" style="margin-bottom:8px">' +
       '<div class="fb"><div>' +
-        '<div style="font-size:16px;font-weight:700">' + r.name + badge + '<\/div>' +
-        '<div style="font-size:12px;color:var(--tx3);margin-top:2px">' + exCnt + ' ' + T('exercises') + ' &middot; ' + r.blocks.length + ' ' + T('blocks') + '<\/div>' +
+        '<div style="font-size:16px;font-weight:700">'+r.name+'<\/div>' +
+        '<div style="font-size:12px;color:var(--tx3);margin-top:2px">'+exCnt+' '+T("exercises")+' &middot; '+r.blocks.length+' '+T("blocks")+'<\/div>' +
       '<\/div><div style="display:flex;gap:6px">' +
-        '<button class="ibt" data-act="share" data-rid="' + rid + '" style="font-size:16px" title="' + T('share') + '"><i class="ti ti-share" style="pointer-events:none"><\/i><\/button>' +
-        '<button class="ibt" data-act="edit" data-rid="' + rid + '" style="font-size:16px"><i class="ti ti-pencil" style="pointer-events:none"><\/i><\/button>' +
-        '<button class="btnD" data-act="del" data-rid="' + rid + '"><i class="ti ti-trash" style="pointer-events:none"><\/i><\/button>' +
+        '<button class="ibt" onclick="openShareModal('+i+')" style="font-size:16px" title="'+T('share')+'"><i class="ti ti-share"><\/i><\/button>' +
+        '<button class="ibt" onclick="editRtn('+i+')" style="font-size:16px"><i class="ti ti-pencil"><\/i><\/button>' +
+        '<button class="btnD" onclick="delRtn('+i+')"><i class="ti ti-trash"><\/i><\/button>' +
       '<\/div><\/div>' +
-      '<button class="btn" style="margin-top:10px" data-act="start" data-rid="' + rid + '"><i class="ti ti-player-play" style="pointer-events:none"><\/i> ' + T('startWorkout') + '<\/button>' +
+      '<button class="btn" style="margin-top:10px" onclick="startWO('+i+')"><i class="ti ti-player-play"><\/i> '+T("startWorkout")+'<\/button>' +
     '<\/div>';
   }
-  h += genBtn;
-  h += '<button class="btnO" data-act="import"><i class="ti ti-download"><\/i> ' + T('importRoutine') + '<\/button>';
+  h += '<button class="btnO" style="margin-top:8px" onclick="openImportModal()"><i class="ti ti-download"><\/i> '+T("importRoutine")+'<\/button>';
   html('rtnlist', h);
 }
 
@@ -1796,7 +1723,7 @@ function pauseWorkout() {
   try { localStorage.setItem('fitlog_paused_workout', JSON.stringify(paused)); } catch(e) {}
   WO = null;
   el('fs-workout').classList.remove('on');
-  toast('Workout gepauzeerd');
+  toast(T('workoutPaused'));
   showStartScreen();
 }
 
@@ -2105,7 +2032,7 @@ function hideSpinner() { el('spinner').classList.remove('show'); }
 function friendlyErr(err) {
   if (!err) return 'Er is een onbekende fout opgetreden.';
   var m = err.message || err.msg || String(err);
-  if (m.indexOf('network') >= 0 || m.indexOf('fetch') >= 0) return 'Geen verbinding. Controleer je internet en probeer opnieuw.';
+  if (m.indexOf('network') >= 0 || m.indexOf('fetch') >= 0) return T('noConnection');
   if (m.indexOf('JWT') >= 0 || m.indexOf('token') >= 0) return 'Je sessie is verlopen. Log opnieuw in.';
   if (m.indexOf('duplicate') >= 0 || m.indexOf('unique') >= 0) return 'Dit item bestaat al.';
   if (m.indexOf('permission') >= 0 || m.indexOf('policy') >= 0) return 'Je hebt geen toegang tot deze actie.';
@@ -2244,12 +2171,9 @@ function loadFromDB() {
     S.custom = (r.data||[]).map(function(row){ return row.data; });
     check(null);
   });
-  sb.from('routines').select('id,name,blocks,meta').eq('user_id',uid).order('created_at').then(function(r){
+  sb.from('routines').select('id,name,blocks').eq('user_id',uid).order('created_at').then(function(r){
     if (r.error) { check(r.error); return; }
-    S.routines = (r.data||[]).map(function(row){
-      var meta = row.meta || {};
-      return { _id:row.id, name:row.name, blocks:row.blocks, meta:meta, rid:meta.rid || null };
-    });
+    S.routines = (r.data||[]).map(function(row){ return { _id:row.id, name:row.name, blocks:row.blocks }; });
     check(null);
   });
   sb.from('sessions').select('id,routine_name,dur_mins,exercises,logged_at').eq('user_id',uid).order('logged_at',{ascending:false}).limit(50).then(function(r){
@@ -2271,25 +2195,17 @@ function loadFromDB() {
 // ============================================================
 // DATABASE - SAVE HELPERS (all with error handling + spinner)
 // ============================================================
-// Zorgt dat het stabiele id altijd meegaat naar de database.
-function rtnMeta(routine) {
-  var m = {}, k;
-  if (routine.meta) for (k in routine.meta) if (routine.meta.hasOwnProperty(k)) m[k] = routine.meta[k];
-  m.rid = rtnId(routine);
-  return m;
-}
-
 function dbSaveRoutine(routine) {
   var uid = CURRENT_USER.id;
   showSpinner('Routine opslaan...');
   if (routine._id) {
-    sb.from('routines').update({ name:routine.name, blocks:routine.blocks, meta:rtnMeta(routine), updated_at:new Date().toISOString() })
+    sb.from('routines').update({ name:routine.name, blocks:routine.blocks, updated_at:new Date().toISOString() })
       .eq('id',routine._id).eq('user_id',uid).then(function(r){
         hideSpinner();
         if (r.error) showErr(friendlyErr(r.error));
       });
   } else {
-    sb.from('routines').insert({ user_id:uid, name:routine.name, blocks:routine.blocks, meta:rtnMeta(routine) })
+    sb.from('routines').insert({ user_id:uid, name:routine.name, blocks:routine.blocks })
       .select('id').single().then(function(r){
         hideSpinner();
         if (r.error) { showErr(friendlyErr(r.error)); return; }
@@ -2310,7 +2226,7 @@ function dbDeleteRoutine(routine) {
 function dbSaveSession(session) {
   if (!_isOnline || !sb) {
     addToOfflineQueue('session', session);
-    toast('Workout opgeslagen (offline - sync later)');
+    toast(T('savedOffline'));
     return;
   }
   showSpinner('Workout opslaan...');
@@ -2377,7 +2293,7 @@ function saveCustomEx() {
 }
 
 function delCustomEx(id) {
-  if (!confirm('Weet je zeker dat je deze oefening wilt verwijderen?')) return;
+  if (!confirm(T('confirmDeleteEx'))) return;
   S.custom = S.custom.filter(function(e){ return e.id!==id; });
   dbDeleteCustomEx(id);
   closeDetail(); renderLib(); toast(T('exerciseDeleted'));
@@ -2406,884 +2322,6 @@ function delRtn(i) {
   dbDeleteRoutine(S.routines[i]);
   S.routines.splice(i,1);
   renderRtn(); toast(T('routineDeleted'));
-}
-
-// ============================================================
-// LOG. - ROUTINE GENERATOR
-// Pure functies. Geen DOM, geen globals uit de app behalve wat
-// er expliciet wordt meegegeven. ES5, zoals de rest van de app.
-// ============================================================
-
-// --- Oefening-metadata (goedgekeurd 2026-09-09) ---------------
-
-// Dubbele namen: deze ID's slaat de generator over. In de
-// bibliotheek blijven ze gewoon staan (PR's hangen aan die ID's).
-var GEN_SKIP = { pfd:1, frr:1, ich:1, dso:1, abd:1, fco:1 };
-
-// Staat als isolatie in de data, is in werkelijkheid compound.
-var GEN_COMPOUND = {
-  lp:1, rdl:1, hth:1, kth:1, kfl:1, scr:1, scrw:1, rwo:1, sor:1,
-  sng:1, dpd:1, bps:1, cbl:1, spr:1, olp:1, fcr:1, dpu:1, cbc:1,
-  bkk:1, sts:1, ssq:1, dbp:1, lps:1, cdc:1, psu:1, rsu:1
-};
-
-// Staat als compound in de data, is in werkelijkheid isolatie.
-var GEN_ISOLATION = {
-  rdf:1, lrc:1, drw:1, fpl:1, bnd:1, cbo:1, hcp:1, pup:1, dro:1
-};
-
-// Niet voorschrijven aan beginners.
-var GEN_ADVANCED = {
-  mcp:1, hpu:1, pbp:1, drs:1, nrc:1, sst:1, pfr:1, dbcp:1, hrs:1,
-  shrg:1, prs:1, fss:1, gmc:1, pcp:1, cbk:1, wtw:1, slpk:1
-};
-
-// Deze spiergroepen horen achteraan in de sessie, ongeacht type.
-var GEN_TAIL = { Core:1, Calves:1, Forearms:1, Traps:1 };
-
-// Bodyweight betekent niet "zonder materiaal". Deze oefeningen
-// hebben een optrekstang, rekstok, ringen of parallelle bars nodig.
-var GEN_NEEDS_BAR = {
-  pu:1, cbl:1, inv:1, sca:1, mcp:1, hgr:1, hkr:1, gdc:1,
-  dip:1, drp:1, psh:1, rfr:1
-};
-
-// En deze een bank, box, trede of stevige verhoging.
-var GEN_NEEDS_BENCH = {
-  bkk:1, tbd:1, drs:1, bxj:1, slcs:1, bfc:1, cbk:1, nrc:1, sqs:1
-};
-
-// Oefeningen op tijd in plaats van reps (holds, carries, hangs).
-// index.html moet isTimeEx() hierop uitbreiden - zie step1-patch.md.
-var GEN_TIMED = {
-  pl:1, spl:1, wls:1, hll:1, gdc:1, faw:1, bwo:1, oth:1, rev:1,
-  cbk:1, twr:1, hpr:1, swm:1, bki:1, stw:1, bwc:1, wpl:1, pgb:1, wdp:1
-};
-
-// Bodyweight-oefeningen hebben een repsondergrens: 5 push-ups is
-// geen krachttraining, dat is een warming-up.
-var GEN_BW_MIN_REPS = 8;
-
-var GEN_WARM_POOL   = ['jog','jkx','hrj','stj'];
-var GEN_FINISH_POOL = ['rwm','bcy','jpj','kbp','spr2','ssk','bpx'];
-var GEN_CIRCUIT_POOL= ['bpx','mnt','jkx','hrj','ssk','stj','bic','lgr','gbr','wls','jog','kbp'];
-
-// Antagonisten voor supersets.
-var GEN_ANTAG = {
-  Chest:['Back','Biceps'], Back:['Chest','Triceps'],
-  Biceps:['Triceps','Chest'], Triceps:['Biceps','Back'],
-  Shoulders:['Back','Biceps'], Legs:['Core','Calves'],
-  Glutes:['Core','Calves'], Core:['Calves','Glutes'],
-  Calves:['Core'], Traps:['Chest'], Forearms:['Core']
-};
-
-function genIsCompound(ex) {
-  if (GEN_COMPOUND[ex.id]) return true;
-  if (GEN_ISOLATION[ex.id]) return false;
-  var sec = ex.secondary || [];
-  return sec.length >= 2;
-}
-
-// --- Dagsjablonen --------------------------------------------
-// c:true betekent "hier hoort bij voorkeur een compound".
-
-var GEN_TPL = {
-  push:  [{m:'Chest',c:1},{m:'Shoulders',c:1},{m:'Chest',c:1},{m:'Triceps'},{m:'Shoulders'},{m:'Triceps'},{m:'Chest'}],
-  pull:  [{m:'Back',c:1},{m:'Back',c:1},{m:'Back'},{m:'Biceps'},{m:'Biceps'},{m:'Traps'},{m:'Back'}],
-  legs:  [{m:'Legs',c:1},{m:'Legs',c:1},{m:'Glutes',c:1},{m:'Legs'},{m:'Calves'},{m:'Core'},{m:'Glutes'}],
-  upper: [{m:'Chest',c:1},{m:'Back',c:1},{m:'Shoulders',c:1},{m:'Chest'},{m:'Back'},{m:'Biceps'},{m:'Triceps'}],
-  lower: [{m:'Legs',c:1},{m:'Legs',c:1},{m:'Glutes',c:1},{m:'Legs'},{m:'Calves'},{m:'Core'},{m:'Glutes'}],
-  fullA: [{m:'Legs',c:1},{m:'Chest',c:1},{m:'Back',c:1},{m:'Shoulders'},{m:'Core'},{m:'Biceps'},{m:'Calves'}],
-  fullB: [{m:'Legs',c:1},{m:'Back',c:1},{m:'Chest',c:1},{m:'Glutes'},{m:'Core'},{m:'Triceps'},{m:'Calves'}],
-  fullC: [{m:'Legs',c:1},{m:'Chest',c:1},{m:'Back',c:1},{m:'Shoulders'},{m:'Core'},{m:'Glutes'},{m:'Triceps'}]
-};
-
-// Welke dagen bij welk aantal trainingsdagen.
-function genSplit(days, level) {
-  if (days <= 1) return [{k:'fullA', key:'dayFull'}];
-  if (days === 2) return [{k:'fullA', key:'dayFull', v:'A'},{k:'fullB', key:'dayFull', v:'B'}];
-  if (days === 3) {
-    if (level === 'beg') return [{k:'fullA',key:'dayFull',v:'A'},{k:'fullB',key:'dayFull',v:'B'},{k:'fullC',key:'dayFull',v:'C'}];
-    return [{k:'push',key:'dayPush'},{k:'pull',key:'dayPull'},{k:'legs',key:'dayLegs'}];
-  }
-  if (days === 4) return [
-    {k:'upper',key:'dayUpper',v:'A'},{k:'lower',key:'dayLower',v:'A'},
-    {k:'upper',key:'dayUpper',v:'B'},{k:'lower',key:'dayLower',v:'B'}];
-  if (days === 5) return [
-    {k:'push',key:'dayPush'},{k:'pull',key:'dayPull'},{k:'legs',key:'dayLegs'},
-    {k:'upper',key:'dayUpper'},{k:'lower',key:'dayLower'}];
-  return [
-    {k:'push',key:'dayPush',v:'A'},{k:'pull',key:'dayPull',v:'A'},{k:'legs',key:'dayLegs',v:'A'},
-    {k:'push',key:'dayPush',v:'B'},{k:'pull',key:'dayPull',v:'B'},{k:'legs',key:'dayLegs',v:'B'}];
-}
-
-// --- Voorschrift: sets, reps, rust ---------------------------
-
-function genPresc(goal, compound, level) {
-  var p;
-  if (goal === 'strength')   p = compound ? {sets:4,reps:5,rest:180}  : {sets:3,reps:8,rest:90};
-  else if (goal === 'lean')  p = compound ? {sets:3,reps:12,rest:60}  : {sets:3,reps:15,rest:45};
-  else                       p = compound ? {sets:4,reps:8,rest:120}  : {sets:3,reps:12,rest:75};
-  if (level === 'beg') p.sets = Math.max(2, p.sets - 1);
-  if (level === 'adv' && compound) p.sets = Math.min(5, p.sets + 1);
-  return p;
-}
-
-function genExSecs(p)   { return p.sets * (p.reps * 4 + p.rest) + 40; }
-function genPairSecs(a,b){ var s=Math.max(a.p.sets,b.p.sets);
-  return s * (a.p.reps*4 + b.p.reps*4 + Math.max(a.p.rest,b.p.rest)) + 50; }
-
-// --- Kleine hulpjes ------------------------------------------
-
-function genRng(seed) {
-  var s = seed || 1;
-  return function() { s = (s * 1103515245 + 12345) % 2147483648; return s / 2147483648; };
-}
-function genUid(pfx) {
-  return pfx + Date.now().toString(36) + Math.floor(Math.random()*1e6).toString(36);
-}
-function genPickWeighted(list, rnd) {
-  var top = list.slice(0, 5), tot = 0, i;
-  for (i = 0; i < top.length; i++) tot += (5 - i);
-  var r = rnd() * tot, acc = 0;
-  for (i = 0; i < top.length; i++) { acc += (5 - i); if (r <= acc) return top[i]; }
-  return top[0];
-}
-
-// --- Oefeningkeuze -------------------------------------------
-
-function genCandidates(lib, muscle, cfg, usedIds, usedNames) {
-  var out = [], i, ex;
-  for (i = 0; i < lib.length; i++) {
-    ex = lib[i];
-    if (ex.muscle !== muscle) continue;
-    if (GEN_SKIP[ex.id]) continue;
-    if (usedIds[ex.id]) continue;
-    if (usedNames[ex.name.toLowerCase()]) continue;
-    if (cfg.level === 'beg' && GEN_ADVANCED[ex.id]) continue;
-    if (cfg.equip.indexOf(ex.equipment) < 0) continue;
-    if (GEN_NEEDS_BAR[ex.id]   && cfg.bar   === false) continue;
-    if (GEN_NEEDS_BENCH[ex.id] && cfg.bench === false) continue;
-    out.push(ex);
-  }
-  return out;
-}
-
-function genPickEx(lib, slot, cfg, usedIds, usedNames, rnd, planUsed) {
-  var cands = genCandidates(lib, slot.m, cfg, usedIds, usedNames);
-  if (!cands.length) return null;
-  var want = !!slot.c;
-  var first = [], rest = [], i;
-  for (i = 0; i < cands.length; i++) {
-    (genIsCompound(cands[i]) === want ? first : rest).push(cands[i]);
-  }
-  var ordered = first.concat(rest);
-  // Oefeningen die elders in ditzelfde plan al staan, achteraan sorteren.
-  // Zo lijken dag A en dag B niet op elkaar, zonder de kwaliteit te verliezen.
-  if (planUsed) {
-    var fresh = [], seen = [];
-    for (i = 0; i < ordered.length; i++) (planUsed[ordered[i].id] ? seen : fresh).push(ordered[i]);
-    ordered = fresh.concat(seen);
-  }
-  return genPickWeighted(ordered, rnd);
-}
-
-// --- Een dag genereren ---------------------------------------
-
-function genDay(dayDef, cfg, lib, records, rnd, planUsed) {
-  var tpl = GEN_TPL[dayDef.k].slice();
-
-  // Focusspieren krijgen een extra slot, maar alleen op dagen waar die
-  // spier al thuishoort. Anders krijg je borstwerk op je beendag.
-  // cfg.focus mag een string of een lijst zijn.
-  if (cfg.focus && cfg.focus.length) {
-    var fl = (typeof cfg.focus === 'string') ? [cfg.focus] : cfg.focus;
-    for (var fj = 0; fj < fl.length; fj++) {
-      var hasFocus = false, fi;
-      for (fi = 0; fi < tpl.length; fi++) if (tpl[fi].m === fl[fj]) hasFocus = true;
-      if (!hasFocus) continue;
-      tpl.splice(Math.min(3 + fj, tpl.length), 0, {m: fl[fj]});
-      tpl.push({m: fl[fj]});
-    }
-  }
-
-  var total = cfg.mins * 60;
-  var warmSecs   = (cfg.cardio === 'warm'   || cfg.cardio === 'both') ? 300 : 120;
-  var finishSecs = (cfg.cardio === 'finish' || cfg.cardio === 'both') ? 600 : 0;
-  var budget = total - warmSecs - finishSecs - 120; // 120 = buffer
-
-  var usedIds = {}, usedNames = {}, picked = [], i, ex, comp, p, secs;
-  var missing = {};
-
-  for (i = 0; i < tpl.length && picked.length < 8; i++) {
-    ex = genPickEx(lib, tpl[i], cfg, usedIds, usedNames, rnd, planUsed);
-    if (!ex) {
-      // Geen enkele optie voor deze spier met dit materiaal.
-      if (!genCandidates(lib, tpl[i].m, cfg, {}, {}).length) missing[tpl[i].m] = 1;
-      continue;
-    }
-    comp = genIsCompound(ex);
-    p = genPresc(cfg.goal, comp, cfg.level);
-    if (GEN_TIMED[ex.id]) { p.timed = 1; p.reps = (cfg.goal === 'strength') ? 30 : 45; }
-    else if (ex.equipment === 'Bodyweight' && p.reps < GEN_BW_MIN_REPS) p.reps = GEN_BW_MIN_REPS;
-    secs = genExSecs(p);
-    if (budget - secs < 0 && picked.length >= 3) continue;
-    budget -= secs;
-    usedIds[ex.id] = 1; usedNames[ex.name.toLowerCase()] = 1;
-    if (planUsed) planUsed[ex.id] = 1;
-    picked.push({ ex:ex, p:p, comp:comp, tail:!!GEN_TAIL[ex.muscle] });
-  }
-
-  // Vulling: is de dag te mager geworden doordat spiergroepen wegvielen
-  // (bijvoorbeeld rug zonder optrekstang), dan aanvullen met wat er wel
-  // beschikbaar is in plaats van een halve routine af te leveren.
-  if (picked.length < 4) {
-    var fbMuscles = ['Legs','Chest','Glutes','Core','Shoulders','Back','Calves'];
-    for (var fb = 0; fb < fbMuscles.length && picked.length < 5; fb++) {
-      for (var tries = 0; tries < 2 && picked.length < 5; tries++) {
-        var fex = genPickEx(lib, {m:fbMuscles[fb]}, cfg, usedIds, usedNames, rnd, planUsed);
-        if (!fex) break;
-        var fcomp = genIsCompound(fex), fp = genPresc(cfg.goal, fcomp, cfg.level);
-        if (GEN_TIMED[fex.id]) { fp.timed = 1; fp.reps = (cfg.goal === 'strength') ? 30 : 45; }
-        else if (fex.equipment === 'Bodyweight' && fp.reps < GEN_BW_MIN_REPS) fp.reps = GEN_BW_MIN_REPS;
-        usedIds[fex.id] = 1; usedNames[fex.name.toLowerCase()] = 1;
-        if (planUsed) planUsed[fex.id] = 1;
-        picked.push({ ex:fex, p:fp, comp:fcomp, tail:!!GEN_TAIL[fex.muscle] });
-      }
-    }
-  }
-
-  // Tail-spieren (core, kuiten, traps, onderarmen) achteraan.
-  picked.sort(function(a,b){ return (a.tail?1:0) - (b.tail?1:0); });
-
-  // Krachttraining in te weinig tijd: liever kortere rust dan uitloop.
-  var workBudget = total - warmSecs - finishSecs - 120;
-  var tight = genFit(picked, workBudget);
-
-  // Supersets bij krappe tijd of het lean-doel.
-  var pairs = {};
-  if (cfg.goal === 'lean' || budget < 240) {
-    for (i = 1; i < picked.length - 1; i++) {
-      if (pairs[i] || pairs[i+1]) continue;
-      var a = picked[i], b = picked[i+1];
-      if (a.comp && b.comp) continue;                       // nooit twee compounds
-      if (a.ex.equipment === 'Barbell' && a.comp) continue; // nooit een zware barbell-compound
-      if (b.ex.equipment === 'Barbell' && b.comp) continue;
-      var ok = (GEN_ANTAG[a.ex.muscle] || []).indexOf(b.ex.muscle) >= 0;
-      if (!ok) continue;
-      pairs[i] = i + 1; pairs[i+1] = -1;
-      budget += genExSecs(a.p) + genExSecs(b.p) - genPairSecs(a, b);
-    }
-  }
-
-  // --- Blocks opbouwen in het formaat van de builder ---------
-  var blocks = [], j;
-
-  if (cfg.cardio === 'warm' || cfg.cardio === 'both') {
-    var w = genCardioPick(lib, GEN_WARM_POOL, cfg, rnd, usedIds);
-    if (w) blocks.push({ type:'single', exercises:[
-      { id:w.id, name:w.name, reps:'', weight:'', sets:1, rest:0, gen:'warmup' } ]});
-  }
-
-  for (i = 0; i < picked.length; i++) {
-    if (pairs[i] === -1) continue;
-    var cur = picked[i];
-    var wgt = (records && records[cur.ex.id] && records[cur.ex.id].maxWeight > 0)
-      ? String(records[cur.ex.id].maxWeight) : '';
-    var exA = { id:cur.ex.id, name:cur.ex.name, reps:String(cur.p.reps),
-                weight:wgt, sets:cur.p.sets, rest:cur.p.rest };
-    if (cur.p.timed) { exA.timed = 1; exA.weight = ''; }
-    if (pairs[i] > 0) {
-      var partner = picked[pairs[i]];
-      var pw = (records && records[partner.ex.id] && records[partner.ex.id].maxWeight > 0)
-        ? String(records[partner.ex.id].maxWeight) : '';
-      blocks.push({ type:'superset', exercises:[ exA,
-        { id:partner.ex.id, name:partner.ex.name, reps:String(partner.p.reps),
-          weight:partner.p.timed ? '' : pw, sets:partner.p.sets,
-          rest:partner.p.rest, timed:partner.p.timed ? 1 : undefined } ]});
-    } else {
-      blocks.push({ type:'single', exercises:[ exA ] });
-    }
-  }
-
-  if (cfg.goal === 'lean') {
-    var used = 0;
-    for (i = 0; i < picked.length; i++) used += genExSecs(picked[i].p);
-    var left = workBudget - used;
-    if (left > 180) {
-      var circ = genCircuit(lib, cfg, rnd, usedIds, usedNames, left);
-      if (circ) blocks.push(circ);
-    }
-  }
-
-  if (cfg.cardio === 'finish' || cfg.cardio === 'both') {
-    var f = genCardioPick(lib, GEN_FINISH_POOL, cfg, rnd, usedIds);
-    if (f) blocks.push({ type:'single', exercises:[
-      { id:f.id, name:f.name, reps:'', weight:'', sets:1, rest:0, gen:'finisher' } ]});
-  }
-
-  var est = 0, b, e2;
-  for (i = 0; i < blocks.length; i++) {
-    b = blocks[i];
-    if (b.type === 'circuit') { est += genCircuitSecs(b.exercises.length, b.rounds); continue; }
-    if (b.type === 'superset') {
-      var pa = { sets:b.exercises[0].sets, reps:parseInt(b.exercises[0].reps,10), rest:b.exercises[0].rest };
-      var pb = { sets:b.exercises[1].sets, reps:parseInt(b.exercises[1].reps,10), rest:b.exercises[1].rest };
-      est += genPairSecs({p:pa}, {p:pb}); continue;
-    }
-    e2 = b.exercises[0];
-    if (e2.gen === 'warmup')   { est += 300; continue; }
-    if (e2.gen === 'finisher') { est += 600; continue; }
-    est += genExSecs({ sets:e2.sets, reps:parseInt(e2.reps,10), rest:e2.rest });
-  }
-  var warn = [];
-  for (var mk in missing) if (missing.hasOwnProperty(mk)) warn.push(mk);
-  return { blocks: blocks, tight: tight, warnings: warn, estMins: Math.round(est / 60) };
-}
-
-function genCardioPick(lib, pool, cfg, rnd, usedIds) {
-  var avail = [], i, ex;
-  for (i = 0; i < pool.length; i++) {
-    ex = genFind(lib, pool[i]);
-    if (!ex) continue;
-    if (usedIds && usedIds[ex.id]) continue;
-    if (cfg.equip.indexOf(ex.equipment) < 0) continue;
-    if (cfg.level === 'beg' && GEN_ADVANCED[ex.id]) continue;
-    if (GEN_NEEDS_BAR[ex.id]   && cfg.bar   === false) continue;
-    if (GEN_NEEDS_BENCH[ex.id] && cfg.bench === false) continue;
-    avail.push(ex);
-  }
-  if (!avail.length) return null;
-  return avail[Math.floor(rnd() * avail.length)];
-}
-
-function genCircuitSecs(nEx, rounds) { return rounds * nEx * (12 * 4 + 20); }
-
-function genCircuit(lib, cfg, rnd, usedIds, usedNames, budget) {
-  var avail = [], i, ex;
-  for (i = 0; i < GEN_CIRCUIT_POOL.length; i++) {
-    ex = genFind(lib, GEN_CIRCUIT_POOL[i]);
-    if (!ex) continue;
-    if (usedIds[ex.id]) continue;
-    if (usedNames[ex.name.toLowerCase()]) continue;
-    if (cfg.equip.indexOf(ex.equipment) < 0) continue;
-    if (cfg.level === 'beg' && GEN_ADVANCED[ex.id]) continue;
-    if (GEN_NEEDS_BAR[ex.id]   && cfg.bar   === false) continue;
-    if (GEN_NEEDS_BENCH[ex.id] && cfg.bench === false) continue;
-    avail.push(ex);
-  }
-  if (avail.length < 3) return null;
-  var n = Math.min(4, avail.length), rounds = 3;
-  while (rounds >= 2 && genCircuitSecs(n, rounds) > budget) {
-    if (n > 3) n--; else rounds--;
-  }
-  if (rounds < 2 || genCircuitSecs(n, rounds) > budget) return null;
-  var picked = [], seen = {};
-  while (picked.length < n) {
-    var c = avail[Math.floor(rnd() * avail.length)];
-    if (seen[c.id]) continue;
-    seen[c.id] = 1;
-    usedIds[c.id] = 1; usedNames[c.name.toLowerCase()] = 1;
-    picked.push({ id:c.id, name:c.name, reps:'12', weight:'' });
-  }
-  return { type:'circuit', rounds:rounds, exercises:picked };
-}
-
-// Past de routine in de beschikbare tijd: eerst rust inkorten,
-// dan sets verlagen, dan pas oefeningen laten vallen (minimaal 3).
-function genFit(picked, budget) {
-  function total() {
-    var s = 0;
-    for (var i = 0; i < picked.length; i++) s += genExSecs(picked[i].p);
-    return s;
-  }
-  var tight = false, guard = 0;
-  while (total() > budget && guard++ < 200) {
-    var changed = false, i, floor;
-    for (i = picked.length - 1; i >= 0; i--) {
-      floor = picked[i].comp ? 60 : 30;
-      if (picked[i].p.rest > floor) { picked[i].p.rest -= 15; changed = true; tight = true; break; }
-    }
-    if (changed) continue;
-    for (i = picked.length - 1; i >= 0; i--) {
-      if (picked[i].p.sets > 2) { picked[i].p.sets--; changed = true; tight = true; break; }
-    }
-    if (changed) continue;
-    if (picked.length > 3) { picked.pop(); tight = true; continue; }
-    break;
-  }
-  return tight;
-}
-
-function genFind(lib, id) {
-  for (var i = 0; i < lib.length; i++) if (lib[i].id === id) return lib[i];
-  return null;
-}
-
-// --- Publieke ingang -----------------------------------------
-// cfg = { goal:'strength'|'hyp'|'lean', days:1..6, mins:20..120,
-//         level:'beg'|'int'|'adv', equip:[...], focus:null|'Chest',
-//         cardio:'none'|'warm'|'finish'|'both', mode:'plan'|'single',
-//         bar:true|false, bench:true|false,   (undefined = wel aanwezig)
-//         seed:optioneel }
-
-function genPlan(cfg, lib, records) {
-  var rnd = genRng(cfg.seed || Math.floor(Math.random() * 2147483647));
-  var days = genSplit(cfg.days, cfg.level);
-  if (cfg.mode === 'single') {
-    var kmap = { fullA:'dayFull', push:'dayPush', pull:'dayPull',
-                 legs:'dayLegs', upper:'dayUpper', lower:'dayLower' };
-    var k = cfg.dayType || days[0].k;
-    days = [{ k:k, key:(kmap[k] || 'dayFull') }];
-  }
-
-  var planId  = genUid('p');
-  var planKey = 'plan' + (cfg.days <= 2 ? 'Full' : (cfg.days === 3 ? 'PPL' : (cfg.days === 4 ? 'UL' : 'Mixed')));
-  var out = [], i, planUsed = {};
-
-  for (i = 0; i < days.length; i++) {
-    var day = genDay(days[i], cfg, lib, records, rnd, planUsed);
-    out.push({
-      id: genUid('r'),
-      name: null,                 // UI rendert via nameKey + variant
-      nameKey: days[i].key,
-      variant: days[i].v || null,
-      blocks: day.blocks,
-      meta: {
-        gen: true,
-        planId: cfg.mode === 'single' ? null : planId,
-        planKey: cfg.mode === 'single' ? null : planKey,
-        dayIdx: i + 1,
-        dayCount: days.length,
-        tight: day.tight,
-        estMins: day.estMins,
-        warnings: day.warnings,
-        cfg: cfg
-      }
-    });
-  }
-  return out;
-}
-
-// ============================================================
-// LOG. - ROUTINE GENERATOR: WIZARD + VOORBEELDSCHERM
-// Hoort NA het DB-override-blok in index.html.
-// Vereist log-generator.js (genPlan, genCandidates, genPresc, ...)
-// ============================================================
-
-var _gw       = {};    // antwoorden uit de wizard
-var _gwStep   = 0;
-var _gwLock   = false;  // blokkeert dubbeltikken tijdens het doorschuiven
-var _genOut   = null;  // gegenereerde routines
-var _gpvDay   = 0;
-
-// --- Teksten (los van TRANSLATIONS zodat dat bestand heel blijft) ---
-var GEN_T = {
-  nl: {
-    title:'Routine maken', next:'Volgende', back:'Terug', build:'Maak routine',
-    qMode:'Wat wil je maken?', mPlan:'Een compleet weekplan', mPlanS:'Meerdere routines, verdeeld over je week',
-    mSingle:'E\u00e9n losse routine', mSingleS:'E\u00e9n training die je opslaat en herhaalt',
-    qGoal:'Waar train je voor?', gStrength:'Kracht', gStrengthS:'Zwaar, weinig reps, lange rust',
-    gHyp:'Spiermassa', gHypS:'Middelzwaar, 8 tot 12 reps', gLean:'Afvallen en conditie', gLeanS:'Hoge reps, korte rust, supersets',
-    qDays:'Hoeveel dagen per week?', dSuffix:'dagen', dOne:'1 dag',
-    qType:'Wat voor training?', tFull:'Full body', tPush:'Push', tPull:'Pull',
-    tLegs:'Benen', tUpper:'Bovenlichaam', tLower:'Onderlichaam',
-    qMins:'Hoe lang duurt een sessie?', min:'minuten',
-    qLevel:'Hoeveel ervaring heb je?', lBeg:'Beginner', lBegS:'Minder dan een jaar serieus trainen',
-    lInt:'Gevorderd', lIntS:'Je kent de basisoefeningen', lAdv:'Ervaren', lAdvS:'Meerdere jaren consistent',
-    qWhere:'Waar train je?', wGym:'Sportschool', wGymS:'Alle apparatuur beschikbaar',
-    wHome:'Thuis', wHomeS:'Dumbbells, banden, eigen lichaamsgewicht', wTravel:'Onderweg', wTravelS:'Alleen eigen lichaamsgewicht',
-    qGear:'Wat heb je tot je beschikking?', gBar:'Optrekstang of rekstok', gBarS:'Nodig voor pull-ups, dips en hangende oefeningen',
-    gBench:'Bank, box of trede', gBenchS:'Nodig voor bench dips, step-ups en box jumps', gearHint:'Zonder deze twee kunnen we je rug, biceps en triceps niet trainen.',
-    qFocus:'Wil je ergens extra aandacht aan geven?', fNone:'Nee, gelijkmatig verdelen',
-    qCardio:'Cardio toevoegen?', cNone:'Geen cardio', cWarm:'Warming-up', cWarmS:'5 minuten voor de training',
-    cFinish:'Afsluiter', cFinishS:'10 minuten na de training', cBoth:'Allebei',
-    planTitle:'Je plan', single:'Je routine', day:'Dag', regen:'Dag opnieuw', save:'Opslaan',
-    swap:'Wissel', tight:'Krappe tijd: rusttijden zijn ingekort om binnen je sessieduur te blijven.',
-    cantTrain:'Niet te trainen met dit materiaal:', warmup:'Warming-up', finisher:'Afsluiter',
-    rounds:'rondes', sets:'sets', saved:'Routines opgeslagen', savedOne:'Routine opgeslagen',
-    genCta:'Routine laten maken', multiHint:'Je kunt er meerdere kiezen.',
-    noSwap:'Geen alternatief beschikbaar', est:'ongeveer', minsShort:'min'
-  },
-  en: {
-    title:'Build a routine', next:'Next', back:'Back', build:'Build routine',
-    qMode:'What do you want to make?', mPlan:'A full weekly plan', mPlanS:'Several routines spread across your week',
-    mSingle:'A single routine', mSingleS:'One workout you save and repeat',
-    qGoal:'What are you training for?', gStrength:'Strength', gStrengthS:'Heavy, low reps, long rest',
-    gHyp:'Muscle', gHypS:'Moderate load, 8 to 12 reps', gLean:'Fat loss and conditioning', gLeanS:'High reps, short rest, supersets',
-    qDays:'How many days a week?', dSuffix:'days', dOne:'1 day',
-    qType:'What kind of session?', tFull:'Full body', tPush:'Push', tPull:'Pull',
-    tLegs:'Legs', tUpper:'Upper body', tLower:'Lower body',
-    qMins:'How long is a session?', min:'minutes',
-    qLevel:'How much experience do you have?', lBeg:'Beginner', lBegS:'Less than a year of serious training',
-    lInt:'Intermediate', lIntS:'You know the main lifts', lAdv:'Advanced', lAdvS:'Several consistent years',
-    qWhere:'Where do you train?', wGym:'Gym', wGymS:'Full equipment available',
-    wHome:'At home', wHomeS:'Dumbbells, bands, bodyweight', wTravel:'On the road', wTravelS:'Bodyweight only',
-    qGear:'What do you have available?', gBar:'Pull-up bar', gBarS:'Needed for pull-ups, dips and hanging work',
-    gBench:'Bench, box or step', gBenchS:'Needed for bench dips, step-ups and box jumps',
-    gearHint:'Without these two we cannot train your back, biceps or triceps.',
-    qFocus:'Anything you want extra work on?', fNone:'No, keep it balanced',
-    qCardio:'Add cardio?', cNone:'No cardio', cWarm:'Warm-up', cWarmS:'5 minutes before training',
-    cFinish:'Finisher', cFinishS:'10 minutes after training', cBoth:'Both',
-    planTitle:'Your plan', single:'Your routine', day:'Day', regen:'Regenerate day', save:'Save',
-    swap:'Swap', tight:'Tight on time: rest periods were shortened to fit your session length.',
-    cantTrain:'Cannot be trained with this equipment:', warmup:'Warm-up', finisher:'Finisher',
-    rounds:'rounds', sets:'sets', saved:'Routines saved', savedOne:'Routine saved',
-    genCta:'Build a routine', multiHint:'You can pick more than one.',
-    noSwap:'No alternative available', est:'about', minsShort:'min'
-  }
-};
-function GT(k) { var d = GEN_T[LANG] || GEN_T.en; return d[k] || GEN_T.en[k] || k; }
-
-var GEN_DAYNAMES = {
-  nl: { dayFull:'Full body', dayPush:'Push', dayPull:'Pull', dayLegs:'Benen', dayUpper:'Boven', dayLower:'Onder' },
-  en: { dayFull:'Full body', dayPush:'Push', dayPull:'Pull', dayLegs:'Legs', dayUpper:'Upper', dayLower:'Lower' }
-};
-function genDayName(r) {
-  var d = GEN_DAYNAMES[LANG] || GEN_DAYNAMES.en;
-  return (d[r.nameKey] || r.nameKey) + (r.variant ? ' ' + r.variant : '');
-}
-
-var GEN_MUSCLE_OPTS = ['Chest','Back','Legs','Shoulders','Glutes','Biceps'];
-
-// --- Stappen -------------------------------------------------
-
-var GW_STEPS = [
-  { k:'mode',  q:'qMode', opts:function(){ return [
-      {v:'plan',   t:GT('mPlan'),   s:GT('mPlanS')},
-      {v:'single', t:GT('mSingle'), s:GT('mSingleS')} ]; } },
-
-  { k:'goal',  q:'qGoal', opts:function(){ return [
-      {v:'strength', t:GT('gStrength'), s:GT('gStrengthS')},
-      {v:'hyp',      t:GT('gHyp'),      s:GT('gHypS')},
-      {v:'lean',     t:GT('gLean'),     s:GT('gLeanS')} ]; } },
-
-  { k:'days', q:'qDays', show:function(){ return _gw.mode === 'plan'; },
-    grid:1, opts:function(){ var o=[{v:1,t:GT('dOne')}], i;
-      for (i=2;i<=6;i++) o.push({v:i, t:i+' '+GT('dSuffix')}); return o; } },
-
-  { k:'dayType', q:'qType', show:function(){ return _gw.mode === 'single'; },
-    opts:function(){ return [
-      {v:'fullA', t:GT('tFull')}, {v:'push', t:GT('tPush')}, {v:'pull', t:GT('tPull')},
-      {v:'legs',  t:GT('tLegs')}, {v:'upper',t:GT('tUpper')},{v:'lower',t:GT('tLower')} ]; } },
-
-  { k:'mins', q:'qMins', grid:1, opts:function(){
-      return [30,45,60,75,90].map(function(m){ return {v:m, t:m+' '+GT('min')}; }); } },
-
-  { k:'level', q:'qLevel', opts:function(){ return [
-      {v:'beg', t:GT('lBeg'), s:GT('lBegS')},
-      {v:'int', t:GT('lInt'), s:GT('lIntS')},
-      {v:'adv', t:GT('lAdv'), s:GT('lAdvS')} ]; } },
-
-  { k:'where', q:'qWhere', opts:function(){ return [
-      {v:'gym',    t:GT('wGym'),    s:GT('wGymS')},
-      {v:'home',   t:GT('wHome'),   s:GT('wHomeS')},
-      {v:'travel', t:GT('wTravel'), s:GT('wTravelS')} ]; } },
-
-  { k:'gear', q:'qGear', multi:1, show:function(){ return _gw.where !== 'gym'; },
-    hint:'gearHint', opts:function(){ return [
-      {v:'bar',   t:GT('gBar'),   s:GT('gBarS')},
-      {v:'bench', t:GT('gBench'), s:GT('gBenchS')} ]; } },
-
-  { k:'focus', q:'qFocus', multi:1, opts:function(){
-      var o = [{v:'', t:GT('fNone')}], i;
-      for (i=0;i<GEN_MUSCLE_OPTS.length;i++) o.push({v:GEN_MUSCLE_OPTS[i], t:T('m'+GEN_MUSCLE_OPTS[i]) || GEN_MUSCLE_OPTS[i]});
-      return o; } },
-
-  { k:'cardio', q:'qCardio', opts:function(){ return [
-      {v:'none',   t:GT('cNone')},
-      {v:'warm',   t:GT('cWarm'),   s:GT('cWarmS')},
-      {v:'finish', t:GT('cFinish'), s:GT('cFinishS')},
-      {v:'both',   t:GT('cBoth')} ]; } }
-];
-
-function gwVisible() {
-  var out = [], i;
-  for (i = 0; i < GW_STEPS.length; i++) if (!GW_STEPS[i].show || GW_STEPS[i].show()) out.push(GW_STEPS[i]);
-  return out;
-}
-
-// --- Openen / renderen ---------------------------------------
-
-function openGenerator() {
-  _gw = { mode:'plan', goal:'hyp', days:3, dayType:'fullA', mins:60,
-          level:'int', where:'gym', gear:['bar','bench'], focus:[], cardio:'none' };
-  _gwStep = 0;
-  el('gen-title').textContent = GT('title');
-  renderGw();
-  el('fs-gen').classList.add('on');
-}
-function closeGenerator() { el('fs-gen').classList.remove('on'); }
-
-function renderGw() {
-  var steps = gwVisible();
-  if (_gwStep >= steps.length) _gwStep = steps.length - 1;
-  var st = steps[_gwStep], opts = st.opts(), h = '', i, o, sel;
-
-  h += '<div style="font-size:20px;font-weight:700;line-height:1.3;margin-bottom:16px">' + GT(st.q) + '<\/div>';
-  if (st.hint) h += '<div style="font-size:13px;color:var(--tx3);margin:-8px 0 14px;line-height:1.5">' + GT(st.hint) + '<\/div>';
-  if (st.multi) h += '<div style="font-size:13px;color:var(--tx3);margin:-8px 0 14px;line-height:1.5">' + GT('multiHint') + '<\/div>';
-
-  for (i = 0; i < opts.length; i++) {
-    o = opts[i];
-    if (st.multi) {
-      var arr = _gw[st.k] || [];
-      sel = (o.v === '') ? (arr.length === 0) : (arr.indexOf(o.v) >= 0);
-    } else {
-      sel = String(_gw[st.k]) === String(o.v);
-    }
-    h += '<div class="card gw-opt" data-act="pick" data-k="' + st.k + '" data-v="' + o.v + '"' +
-         ' style="cursor:pointer;display:flex;align-items:center;gap:12px;margin-bottom:8px;' +
-         (sel ? 'border-color:var(--ac);background:var(--acl)' : '') + '">' +
-         '<div style="flex:1;min-width:0">' +
-           '<div style="font-size:15px;font-weight:600;color:' + (sel ? 'var(--acd)' : 'var(--tx)') + '">' + o.t + '<\/div>' +
-           (o.s ? '<div style="font-size:12px;color:var(--tx3);margin-top:2px;line-height:1.4">' + o.s + '<\/div>' : '') +
-         '<\/div>' +
-         '<i class="ti ti-' + (sel ? (st.multi ? 'checkbox' : 'circle-check-filled') : (st.multi ? 'square' : 'circle')) +
-           '" style="font-size:22px;flex-shrink:0;color:' + (sel ? 'var(--ac)' : 'var(--bdm)') + '"><\/i>' +
-         '<\/div>';
-  }
-
-  html('gen-body', h);
-  el('gen-count').textContent = (_gwStep + 1) + '/' + steps.length;
-  el('gen-bar').style.width = Math.round(((_gwStep + 1) / steps.length) * 100) + '%';
-  el('gen-prev').style.visibility = _gwStep === 0 ? 'hidden' : 'visible';
-  el('gen-next').innerHTML = (_gwStep === steps.length - 1)
-    ? '<i class="ti ti-sparkles"><\/i> ' + GT('build')
-    : GT('next');
-}
-
-function gwPick(k, v) {
-  var steps = gwVisible(), st = steps[_gwStep];
-  if (st.multi) {
-    if (!_gw[k]) _gw[k] = [];
-    if (v === '') { _gw[k] = []; renderGw(); return; }
-    var idx = _gw[k].indexOf(v);
-    if (idx >= 0) _gw[k].splice(idx, 1); else _gw[k].push(v);
-    renderGw();
-    return;
-  }
-  if (_gwLock) return;
-  _gw[k] = (k === 'days' || k === 'mins') ? parseInt(v, 10) : v;
-  renderGw();
-  // Een tik is genoeg: kort de keuze laten zien, dan door.
-  // Het slot voorkomt dat dubbeltikken een stap overslaat.
-  _gwLock = true;
-  setTimeout(function(){ _gwLock = false; gwNext(); }, 140);
-}
-
-function gwNext() {
-  var steps = gwVisible();
-  if (_gwStep < steps.length - 1) { _gwStep++; renderGw(); return; }
-  runGenerator();
-}
-function gwBack() { if (_gwStep > 0) { _gwStep--; renderGw(); } }
-
-// --- Genereren -----------------------------------------------
-
-function gwConfig() {
-  var equip;
-  if (_gw.where === 'gym')       equip = ['Barbell','Dumbbell','Cable','Machine','Bodyweight','Band','Other','Cardio','Ab wheel'];
-  else if (_gw.where === 'home') equip = ['Dumbbell','Bodyweight','Band','Other'];
-  else                           equip = ['Bodyweight'];
-  return {
-    goal:_gw.goal, days:_gw.days, mins:_gw.mins, level:_gw.level,
-    equip:equip, focus:(_gw.focus && _gw.focus.length) ? _gw.focus.slice() : null, cardio:_gw.cardio,
-    mode:_gw.mode, dayType:_gw.dayType,
-    bar:  _gw.where === 'gym' ? true : _gw.gear.indexOf('bar')   >= 0,
-    bench:_gw.where === 'gym' ? true : _gw.gear.indexOf('bench') >= 0
-  };
-}
-
-function runGenerator() {
-  var cfg = gwConfig();
-  try {
-    _genOut = genPlan(cfg, allEx(), S.records || {});
-  } catch (err) {
-    toast('Generator error: ' + err.message);
-    return;
-  }
-  if (!_genOut || !_genOut.length) { toast('Generator error'); return; }
-  _gpvDay = 0;
-  closeGenerator();
-  el('gpv-title').textContent = (cfg.mode === 'single') ? GT('single') : GT('planTitle');
-  renderGpv();
-  el('fs-genprev').classList.add('on');
-}
-
-function regenDay() {
-  if (!_genOut || !_genOut.length) return;
-  var cfg = gwConfig();
-  cfg.seed = Math.floor(Math.random() * 2147483647);
-  var fresh = genPlan(cfg, allEx(), S.records || {});
-  var pick  = fresh[_gpvDay % fresh.length];
-  pick.nameKey = _genOut[_gpvDay].nameKey;
-  pick.variant = _genOut[_gpvDay].variant;
-  pick.meta.dayIdx   = _genOut[_gpvDay].meta.dayIdx;
-  pick.meta.planId   = _genOut[_gpvDay].meta.planId;
-  pick.meta.dayCount = _genOut[_gpvDay].meta.dayCount;
-  _genOut[_gpvDay] = pick;
-  renderGpv();
-}
-
-// Wissel een oefening voor een ander alternatief van dezelfde spier.
-function gpvSwap(bi, ei) {
-  var r = _genOut[_gpvDay], blk = r.blocks[bi], cur = blk.exercises[ei];
-  var curEx = getEx(cur.id);
-  if (!curEx) return;
-  var usedIds = {}, usedNames = {}, i, j;
-  for (i = 0; i < r.blocks.length; i++)
-    for (j = 0; j < r.blocks[i].exercises.length; j++) {
-      usedIds[r.blocks[i].exercises[j].id] = 1;
-      var e2 = getEx(r.blocks[i].exercises[j].id);
-      if (e2) usedNames[e2.name.toLowerCase()] = 1;
-    }
-  var cands = genCandidates(allEx(), curEx.muscle, gwConfig(), usedIds, usedNames);
-  if (!cands.length) { toast(GT('noSwap')); return; }
-  // Zelfde soort oefening terug: compound voor compound.
-  var want = genIsCompound(curEx), same = [], other = [];
-  for (i = 0; i < cands.length; i++) (genIsCompound(cands[i]) === want ? same : other).push(cands[i]);
-  var pool = same.length ? same : other;
-  var nw = pool[Math.floor(Math.random() * pool.length)];
-  cur.id = nw.id; cur.name = nw.name;
-  var rec = (S.records || {})[nw.id];
-  cur.weight = (rec && rec.maxWeight > 0) ? String(rec.maxWeight) : '';
-  renderGpv();
-}
-
-// --- Voorbeeldscherm -----------------------------------------
-
-function renderGpv() {
-  if (!_genOut || !_genOut.length) return;
-  var r = _genOut[_gpvDay], h = '', i, b, e;
-
-  // Dagtabs (alleen bij een plan)
-  if (_genOut.length > 1) {
-    var t = '';
-    for (i = 0; i < _genOut.length; i++)
-      t += '<button class="mt' + (i === _gpvDay ? ' on' : '') + '" data-act="day" data-i="' + i + '">' +
-           genDayName(_genOut[i]) + '<\/button>';
-    html('gpv-tabs', t);
-    el('gpv-tabs').style.display = 'flex';
-  } else {
-    html('gpv-tabs', '');
-    el('gpv-tabs').style.display = 'none';
-  }
-
-  h += '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">' +
-       '<div style="font-size:19px;font-weight:700">' + genDayName(r) + '<\/div>' +
-       '<div style="font-size:13px;color:var(--tx3)">' + GT('est') + ' ' + r.meta.estMins + ' ' + GT('minsShort') + '<\/div><\/div>';
-
-  if (r.meta.warnings && r.meta.warnings.length) {
-    var names = r.meta.warnings.map(function(m){ return T('m'+m) || m; }).join(', ');
-    h += '<div style="background:var(--wl);color:var(--wt);border-radius:var(--rm);padding:10px 12px;font-size:12px;line-height:1.5;margin:10px 0">' +
-         '<i class="ti ti-alert-triangle"><\/i> ' + GT('cantTrain') + ' ' + names + '<\/div>';
-  }
-  if (r.meta.tight) {
-    h += '<div style="background:var(--sf2);color:var(--tx2);border-radius:var(--rm);padding:10px 12px;font-size:12px;line-height:1.5;margin:10px 0">' +
-         '<i class="ti ti-clock"><\/i> ' + GT('tight') + '<\/div>';
-  }
-  h += '<div style="height:6px"><\/div>';
-
-  for (i = 0; i < r.blocks.length; i++) {
-    b = r.blocks[i];
-    if (b.type === 'circuit') {
-      h += '<div class="card" style="border-color:var(--ok)">' +
-           '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:6px">CIRCUIT &middot; ' + b.rounds + ' ' + GT('rounds') + '<\/div>';
-      for (var ci = 0; ci < b.exercises.length; ci++)
-        h += '<div style="font-size:14px;padding:3px 0">' + b.exercises[ci].name + ' &middot; ' + b.exercises[ci].reps + '<\/div>';
-      h += '<\/div>';
-      continue;
-    }
-    if (b.type === 'superset') {
-      h += '<div class="card" style="border-color:var(--ss)">' +
-           '<div style="font-size:11px;font-weight:700;color:var(--ss);margin-bottom:6px">SUPERSET<\/div>';
-      for (var si = 0; si < b.exercises.length; si++) h += gpvExRow(b.exercises[si], i, si, 1);
-      h += '<\/div>';
-      continue;
-    }
-    e = b.exercises[0];
-    if (e.gen) {
-      h += '<div class="card" style="background:var(--sf2);border-style:dashed">' +
-           '<div style="font-size:13px;color:var(--tx2)"><i class="ti ti-' + (e.gen === 'warmup' ? 'flame' : 'run') + '"><\/i> ' +
-           (e.gen === 'warmup' ? GT('warmup') : GT('finisher')) + ': ' + e.name + '<\/div><\/div>';
-      continue;
-    }
-    h += '<div class="card">' + gpvExRow(e, i, 0, 0) + '<\/div>';
-  }
-
-  html('gpv-body', h);
-}
-
-function gpvExRow(e, bi, ei, inner) {
-  var meta = e.sets + ' ' + GT('sets') + ' \u00d7 ' + e.reps + (e.timed ? 's' : '') +
-             (e.weight ? ' \u00b7 ' + e.weight + 'kg' : '') +
-             (e.rest ? ' \u00b7 ' + e.rest + 's' : '');
-  return '<div style="display:flex;align-items:center;gap:10px;padding:' + (inner ? '4px 0' : '0') + '">' +
-    '<div style="flex:1;min-width:0">' +
-      '<div style="font-size:15px;font-weight:600">' + e.name + '<\/div>' +
-      '<div style="font-size:12px;color:var(--tx3);margin-top:2px">' + meta + '<\/div>' +
-    '<\/div>' +
-    '<button class="ibt" data-act="swap" data-bi="' + bi + '" data-ei="' + ei + '" title="' + GT('swap') + '">' +
-      '<i class="ti ti-switch-horizontal" style="font-size:17px;pointer-events:none"><\/i><\/button>' +
-  '<\/div>';
-}
-
-// --- Opslaan --------------------------------------------------
-
-function saveGenerated() {
-  if (!_genOut || !_genOut.length) return;
-  var i, r;
-  for (i = 0; i < _genOut.length; i++) {
-    r = _genOut[i];
-    var routine = {
-      rid: r.id,
-      name: genDayName(r),
-      blocks: r.blocks,
-      meta: { rid:r.id, gen:true, nameKey:r.nameKey, variant:r.variant,
-              planId:r.meta.planId, planKey:r.meta.planKey,
-              dayIdx:r.meta.dayIdx, dayCount:r.meta.dayCount, cfg:r.meta.cfg }
-    };
-    S.routines.push(routine);
-    dbSaveRoutine(routine);
-  }
-  el('fs-genprev').classList.remove('on');
-  renderRtn();
-  SP('rtn');
-  toast(_genOut.length > 1 ? GT('saved') : GT('savedOne'));
-  _genOut = null;
-}
-
-// --- Event delegation (een keer binden bij het opstarten) -----
-
-function initGenerator() {
-  el('gen-body').addEventListener('click', function (ev) {
-    var b = ev.target.closest ? ev.target.closest('[data-act]') : null;
-    if (!b) return;
-    if (b.dataset.act === 'pick') gwPick(b.dataset.k, b.dataset.v);
-  });
-  el('gen-next').addEventListener('click', function(){ if (!_gwLock) gwNext(); });
-  el('gen-prev').addEventListener('click', gwBack);
-  el('gen-close').addEventListener('click', closeGenerator);
-
-  el('gpv-tabs').addEventListener('click', function (ev) {
-    var b = ev.target.closest ? ev.target.closest('[data-act="day"]') : null;
-    if (!b) return;
-    _gpvDay = parseInt(b.dataset.i, 10);
-    renderGpv();
-  });
-  el('gpv-body').addEventListener('click', function (ev) {
-    var b = ev.target.closest ? ev.target.closest('[data-act="swap"]') : null;
-    if (!b) return;
-    gpvSwap(parseInt(b.dataset.bi, 10), parseInt(b.dataset.ei, 10));
-  });
-  el('gpv-regen').addEventListener('click', regenDay);
-  el('gpv-save').addEventListener('click', saveGenerated);
-  el('gpv-savebtn').addEventListener('click', saveGenerated);
-  el('gpv-back').addEventListener('click', function () {
-    el('fs-genprev').classList.remove('on');
-    el('fs-gen').classList.add('on');
-  });
 }
 
 // ============================================================
@@ -3359,6 +2397,35 @@ var TRANSLATIONS = {
     lastSessionToday:'Last session today', lastSessionYesterday:'Last session yesterday', daysAgo:'days ago',
     exercisesTracked:'exercises tracked', routineWord:'routine', routinesWord:'routines',
     swapTitle:'Swap exercise', sameMuscle:'Same muscle group', allMuscles:'All exercises',
+    phEmail:'Email address', phPassword:'Password', phRoutineName:'Routine name...',
+    phSearchEx:'Search exercises...', phExampleName:'e.g. Cable pull-through', phExampleEquip:'e.g. Cable, Dumbbell',
+    phInstructions:'Step by step instructions...', phYoutube:'https://youtube.com/watch?v=...',
+    phSearchOne:'Search exercise...', phSearchPartner:'Search partner exercise...',
+    phCode:'Enter 6-digit code...', phYourName:'Your name', phSearch:'Search...',
+    phTarget:'e.g. 100', phReps:'e.g. 10',
+    ttCalculator:'Weight calculator', ttSettings:'Settings', ttSaveRoutine:'Save routine',
+    ttPause:'Pause', ttSwap:'Swap exercise', ttUp:'Move up', ttDown:'Move down',
+    ttSetDone:'Set complete', ttRoundDone:'Round complete', ttRest:'Rest timer',
+    loading:'Loading...', whereToGo:'Where do you want to go?', byLine:'LOG. by SG Apps',
+    orContinueWith:'or continue with', workoutPaused:'Workout paused',
+    startRoutineFirst:'Start a routine to log your first workout!',
+    completeToSeeProgress:'Complete sessions to see your progress here',
+    workoutComplete:'Workout complete!', skipBtn:'Skip',
+    usedForAll:'Used for all exercises',
+    howToPerform:'How to perform', tipsLbl:'Tips', primaryLbl:'Primary', secondaryLbl:'Secondary',
+    frontLbl:'Front', backLbl:'Back', createOwnEx:'Create your own exercise',
+    deleteExercise:'Delete exercise', noExFound:'No exercises found',
+    noExAdded:'No exercises added yet', noExSelected:'No exercises selected',
+    yourRoutines:'Your routines', totalLoaded:'Total loaded', barLbl:'Bar',
+    repsA:'REPS A', repsB:'REPS B', kgA:'KG A', kgB:'KG B', secLbl:'SEC', kgLbl:'KG',
+    roundLbl:'Round', restBtn:'Rest', allLbl:'All',
+    swapSaveToRoutine:'Also save this to your routine', swapOnlyNow:'Swapped for this workout only',
+    routineNotFound:'Routine not found', routineUpdatedNext:'Routine updated for next time',
+    savedOffline:'Workout saved offline, will sync later',
+    noConnection:'No connection. Check your internet and try again.',
+    deleteAllPermanently:'Permanently delete all data?',
+    confirmDeleteEx:'Are you sure you want to delete this exercise?',
+    enterDesc:'Add a short description for this routine (optional)',
     lang:'EN'
   },
   nl: {
@@ -3429,6 +2496,35 @@ var TRANSLATIONS = {
     lastSessionToday:'Laatste sessie vandaag', lastSessionYesterday:'Laatste sessie gisteren', daysAgo:'dagen geleden',
     exercisesTracked:'oefeningen bijgehouden', routineWord:'routine', routinesWord:'routines',
     swapTitle:'Wissel oefening', sameMuscle:'Zelfde spiergroep', allMuscles:'Alle oefeningen',
+    phEmail:'E-mailadres', phPassword:'Wachtwoord', phRoutineName:'Naam routine...',
+    phSearchEx:'Oefeningen zoeken...', phExampleName:'bijv. Cable pull-through', phExampleEquip:'bijv. Kabel, Dumbbell',
+    phInstructions:'Stap voor stap instructies...', phYoutube:'https://youtube.com/watch?v=...',
+    phSearchOne:'Oefening zoeken...', phSearchPartner:'Partneroefening zoeken...',
+    phCode:'Voer 6-cijferige code in...', phYourName:'Je naam', phSearch:'Zoeken...',
+    phTarget:'bijv. 100', phReps:'bijv. 10',
+    ttCalculator:'Gewichtscalculator', ttSettings:'Instellingen', ttSaveRoutine:'Routine opslaan',
+    ttPause:'Pauzeren', ttSwap:'Oefening wisselen', ttUp:'Omhoog', ttDown:'Omlaag',
+    ttSetDone:'Set voltooid', ttRoundDone:'Ronde voltooid', ttRest:'Rusttimer',
+    loading:'Laden...', whereToGo:'Waar wil je heen?', byLine:'LOG. by SG Apps',
+    orContinueWith:'of ga verder met', workoutPaused:'Workout gepauzeerd',
+    startRoutineFirst:'Start een routine om je eerste workout vast te leggen!',
+    completeToSeeProgress:'Rond workouts af om hier je voortgang te zien',
+    workoutComplete:'Workout voltooid!', skipBtn:'Overslaan',
+    usedForAll:'Geldt voor alle oefeningen',
+    howToPerform:'Uitvoering', tipsLbl:'Tips', primaryLbl:'Primair', secondaryLbl:'Secundair',
+    frontLbl:'Voorkant', backLbl:'Achterkant', createOwnEx:'Maak je eigen oefening',
+    deleteExercise:'Oefening verwijderen', noExFound:'Geen oefeningen gevonden',
+    noExAdded:'Nog geen oefeningen toegevoegd', noExSelected:'Geen oefeningen geselecteerd',
+    yourRoutines:'Jouw routines', totalLoaded:'Totaal geladen', barLbl:'Stang',
+    repsA:'REPS A', repsB:'REPS B', kgA:'KG A', kgB:'KG B', secLbl:'SEC', kgLbl:'KG',
+    roundLbl:'Ronde', restBtn:'Rust', allLbl:'Alles',
+    swapSaveToRoutine:'Dit ook opslaan in je routine', swapOnlyNow:'Alleen voor deze workout gewisseld',
+    routineNotFound:'Routine niet gevonden', routineUpdatedNext:'Routine bijgewerkt voor de volgende keer',
+    savedOffline:'Workout offline opgeslagen, wordt later gesynchroniseerd',
+    noConnection:'Geen verbinding. Controleer je internet en probeer opnieuw.',
+    deleteAllPermanently:'Alle gegevens permanent verwijderen?',
+    confirmDeleteEx:'Weet je zeker dat je deze oefening wilt verwijderen?',
+    enterDesc:'Geef een korte omschrijving van deze routine (optioneel)',
     lang:'NL'
   }
 };
@@ -3451,12 +2547,26 @@ function toggleLang() {
 function applyLang() {
   var btn = el('lang-btn');
   if (btn) btn.textContent = T('lang');
-  // Update all data-t elements
+  // Visible text
   var els = document.querySelectorAll('[data-t]');
   for (var i = 0; i < els.length; i++) {
     var key = els[i].getAttribute('data-t');
     var val = T(key);
     if (val && val !== key) els[i].textContent = val;
+  }
+  // Input placeholders
+  var phs = document.querySelectorAll('[data-t-ph]');
+  for (var p = 0; p < phs.length; p++) {
+    var pk = phs[p].getAttribute('data-t-ph');
+    var pv = T(pk);
+    if (pv && pv !== pk) phs[p].setAttribute('placeholder', pv);
+  }
+  // Button tooltips
+  var tls = document.querySelectorAll('[data-t-title]');
+  for (var q = 0; q < tls.length; q++) {
+    var qk = tls[q].getAttribute('data-t-title');
+    var qv = T(qk);
+    if (qv && qv !== qk) tls[q].setAttribute('title', qv);
   }
   // Re-render all pages
   renderLib();
@@ -3628,8 +2738,8 @@ function blockArrows(bi) {
   var up   = bi > 0;
   var down = bi < B.blocks.length - 1;
   var s = '<span class="ord-group">';
-  s += '<button class="ord-btn"' + (up ? '' : ' disabled') + ' onclick="moveBlock(' + bi + ',-1)" aria-label="Omhoog"><i class="ti ti-chevron-up"><\/i><\/button>';
-  s += '<button class="ord-btn"' + (down ? '' : ' disabled') + ' onclick="moveBlock(' + bi + ',1)" aria-label="Omlaag"><i class="ti ti-chevron-down"><\/i><\/button>';
+  s += '<button class="ord-btn"' + (up ? '' : ' disabled') + ' onclick="moveBlock(' + bi + ',-1)" aria-label="' + T('ttUp') + '"><i class="ti ti-chevron-up"><\/i><\/button>';
+  s += '<button class="ord-btn"' + (down ? '' : ' disabled') + ' onclick="moveBlock(' + bi + ',1)" aria-label="' + T('ttDown') + '"><i class="ti ti-chevron-down"><\/i><\/button>';
   s += '<\/span>';
   return s;
 }
@@ -3640,8 +2750,8 @@ function exArrows(bi, ei, total) {
   var up   = ei > 0;
   var down = ei < total - 1;
   var s = '<span class="ord-group">';
-  s += '<button class="ord-btn sm"' + (up ? '' : ' disabled') + ' onclick="moveExInBlock(' + bi + ',' + ei + ',-1)" aria-label="Omhoog"><i class="ti ti-chevron-up"><\/i><\/button>';
-  s += '<button class="ord-btn sm"' + (down ? '' : ' disabled') + ' onclick="moveExInBlock(' + bi + ',' + ei + ',1)" aria-label="Omlaag"><i class="ti ti-chevron-down"><\/i><\/button>';
+  s += '<button class="ord-btn sm"' + (up ? '' : ' disabled') + ' onclick="moveExInBlock(' + bi + ',' + ei + ',-1)" aria-label="' + T('ttUp') + '"><i class="ti ti-chevron-up"><\/i><\/button>';
+  s += '<button class="ord-btn sm"' + (down ? '' : ' disabled') + ' onclick="moveExInBlock(' + bi + ',' + ei + ',1)" aria-label="' + T('ttDown') + '"><i class="ti ti-chevron-down"><\/i><\/button>';
   s += '<\/span>';
   return s;
 }
@@ -3817,8 +2927,8 @@ function renderWO() {
       h += '<div style="border:1.5px solid var(--ss);border-radius:var(--rl);padding:12px 14px;margin-bottom:10px;background:var(--sf)">';
       h += '<span class="sslbl" style="margin-bottom:12px"><i class="ti ti-layers-intersect"><\/i> Superset<\/span>';
       h += '<div style="display:flex;gap:8px;margin-bottom:10px">';
-      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ss);display:flex;align-items:center;justify-content:space-between;gap:4px">' + '<span>A. ' + (exA ? exA.name : '') + '<\/span>' + '<button class="swap-btn" data-bi="'+bi+'" data-ei="0" onclick="openSwapEx(this)" title="Wissel oefening"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
-      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;justify-content:space-between;gap:4px">' + '<span>B. ' + (exB ? exB.name : '') + '<\/span>' + '<button class="swap-btn" data-bi="'+bi+'" data-ei="1" onclick="openSwapEx(this)" title="Wissel oefening"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
+      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ss);display:flex;align-items:center;justify-content:space-between;gap:4px">' + '<span>A. ' + (exA ? exA.name : '') + '<\/span>' + '<button class="swap-btn" data-bi="'+bi+'" data-ei="0" onclick="openSwapEx(this)" title="' + T('ttSwap') + '"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
+      h += '<div style="flex:1;font-size:13px;font-weight:700;color:var(--ac);display:flex;align-items:center;justify-content:space-between;gap:4px">' + '<span>B. ' + (exB ? exB.name : '') + '<\/span>' + '<button class="swap-btn" data-bi="'+bi+'" data-ei="1" onclick="openSwapEx(this)" title="' + T('ttSwap') + '"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
       h += '<\/div>';
       h += '<div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 30px;gap:6px;align-items:center;margin-bottom:6px">';
       h += '<span><\/span>';
@@ -3855,7 +2965,7 @@ function renderWO() {
         // Round header
         h += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:' + (roundDone ? 'var(--okl)' : 'var(--sf2)') + '">';
         h += '<span style="font-size:13px;font-weight:700;color:var(--ok)">Ronde ' + (ri+1) + '<\/span>';
-        h += '<button class="cbtn' + (roundDone ? ' on' : '') + '" data-bi="' + bi + '" data-ri="' + ri + '" onclick="toggleCircuitRound(this)" aria-label="Ronde voltooid"><i class="ti ti-check"><\/i><\/button>';
+        h += '<button class="cbtn' + (roundDone ? ' on' : '') + '" data-bi="' + bi + '" data-ri="' + ri + '" onclick="toggleCircuitRound(this)" aria-label="' + T('ttRoundDone') + '"><i class="ti ti-check"><\/i><\/button>';
         h += '<\/div>';
         // Exercises in this round
         for (var ei = 0; ei < blk.exercises.length; ei++) {
@@ -3895,9 +3005,9 @@ function renderLiveEx(ex, bi, ei, isSS, isCircuit) {
   var rec = S.records[ex.id];
   var pr  = rec && rec.maxWeight > 0 ? '<span class="prbadge"><i class="ti ti-trophy"><\/i> PR ' + rec.maxWeight + 'kg<\/span>' : '';
   var prefix = isSS ? String.fromCharCode(65+ei) + '. ' : isCircuit ? (ei+1) + '. ' : '';
-  var timeMode = isTimeEx(ex.name, ex.id);
+  var timeMode = isTimeEx(ex.name);
   var h = '<div>';
-  h += '<div style="font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px">' + '<span>' + prefix + ex.name + pr + '<\/span>' + '<button class="swap-btn" data-bi="' + bi + '" data-ei="' + ei + '" onclick="openSwapEx(this)" title="Wissel oefening"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
+  h += '<div style="font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px">' + '<span>' + prefix + ex.name + pr + '<\/span>' + '<button class="swap-btn" data-bi="' + bi + '" data-ei="' + ei + '" onclick="openSwapEx(this)" title="' + T('ttSwap') + '"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
   h += '<div style="display:grid;grid-template-columns:24px 1fr 8px 1fr 8px 30px 30px;gap:6px;align-items:center;margin-bottom:4px">';
   h += '<span><\/span><span style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700">'+(timeMode?'SEC':'REPS')+'<\/span><span><\/span>';
   h += '<span style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700">'+(timeMode?'TIMER':'KG')+'<\/span><span><\/span><span><\/span><span><\/span><\/div>';
@@ -3921,8 +3031,8 @@ function renderLiveEx(ex, bi, ei, isSS, isCircuit) {
       h += '<input class="linput" type="number" inputmode="decimal" value="' + s.weight + '"' + dAttr + ' data-f="weight" onchange="updateWOAttr(this)"\/>';
     }
     h += '<span><\/span>';
-    h += '<button class="cbtn' + (s.done ? ' on' : '') + '" data-bi="' + bi + '" data-ei="' + ei + '" data-si="' + si + '" onclick="toggleDoneAttr(this)" aria-label="Set voltooid"><i class="ti ti-check"><\/i><\/button>';
-    h += '<button class="rest-set-btn" onclick="startRest()" aria-label="Rest"><i class="ti ti-clock-play"><\/i><\/button>';
+    h += '<button class="cbtn' + (s.done ? ' on' : '') + '" data-bi="' + bi + '" data-ei="' + ei + '" data-si="' + si + '" onclick="toggleDoneAttr(this)" aria-label="' + T('ttSetDone') + '"><i class="ti ti-check"><\/i><\/button>';
+    h += '<button class="rest-set-btn" onclick="startRest()" aria-label="' + T('ttRest') + '"><i class="ti ti-clock-play"><\/i><\/button>';
     h += '<\/div>';
   }
   h += '<\/div>'; return h;
@@ -4329,7 +3439,7 @@ function signOutFromSettings() {
 
 function deleteAccount() {
   if (!confirm('Are you sure? This will permanently delete your account and all data. This cannot be undone.')) return;
-  if (!confirm('Last chance - delete everything?')) return;
+  if (!confirm(T('deleteAllPermanently'))) return;
   // Delete all user data then sign out
   var uid = CURRENT_USER.id;
   Promise.all([
@@ -4534,14 +3644,14 @@ function saveProgression(bi, ei) {
   var weight = (el('prog-weight-'+bi+'-'+ei) || {}).value || '';
   var rtn = S.routines.find(function(r) { return r.name === WO.name; });
   if (!rtn || !rtn.blocks[bi] || !rtn.blocks[bi].exercises[ei]) {
-    toast('Routine niet gevonden'); return;
+    toast(T('routineNotFound')); return;
   }
   rtn.blocks[bi].exercises[ei].reps   = reps;
   rtn.blocks[bi].exercises[ei].weight = weight;
   dbSaveRoutine(rtn);
   var banner = document.getElementById('prog-banner-' + bi + '-' + ei);
   if (banner) banner.remove();
-  toast('Routine bijgewerkt voor volgende keer!');
+  toast(T('routineUpdatedNext'));
 }
 
 
@@ -4826,19 +3936,17 @@ function chooseSwapEx(node) {
       rtn.blocks[_swapBi].exercises[_swapEi].id   = newEx.id;
       rtn.blocks[_swapBi].exercises[_swapEi].name = newEx.name;
       dbSaveRoutine(rtn);
-      toast('Routine bijgewerkt');
+      toast(T('routineUpdated'));
     } else {
-      toast('Gewisseld voor deze workout');
+      toast(T('swapOnlyNow'));
     }
   } else {
-    toast('Gewisseld voor deze workout');
+    toast(T('swapOnlyNow'));
   }
 }
 
 
 window.onload = function() {
-
-  initGenerator();
 
   // Intercept Android/browser back button while Settings is open
   // so unsaved changes are saved instead of silently discarded
@@ -4931,13 +4039,7 @@ window.onload = function() {
 };
 
 
-var TIMED_IDS = {
-  pl:1, spl:1, wls:1, hll:1, gdc:1, faw:1, bwo:1, oth:1, rev:1,
-  cbk:1, twr:1, hpr:1, swm:1, bki:1, stw:1, bwc:1, wpl:1, pgb:1, wdp:1
-};
-function isTimeEx(name, id) {
-  if (id && TIMED_IDS[id]) return true;
-  if (id) { var e = getEx(id); if (e && e.muscle === 'Cardio') return true; }
+function isTimeEx(name) {
   return name && name.toLowerCase().indexOf('plank') >= 0;
 }
 
@@ -4952,7 +4054,7 @@ function isTimeEx(name, id) {
       </div>
       <button class="ibt" onclick="el('m-swap').classList.remove('on')" style="border-color:transparent;font-size:20px;color:var(--tx3)"><i class="ti ti-x"></i></button>
     </div>
-    <input class="ifield" id="swap-search" placeholder="Zoeken..." oninput="renderSwapList()" style="margin:12px 0 8px;flex-shrink:0"/>
+    <input class="ifield" id="swap-search" placeholder="Zoeken..." data-t-ph="phSearch" oninput="renderSwapList()" style="margin:12px 0 8px;flex-shrink:0"/>
     <div style="display:flex;gap:6px;margin-bottom:10px;flex-shrink:0">
       <button class="calc-bar-btn on" id="swap-filter-same" onclick="setSwapFilter(true)" data-t="sameMuscle">Zelfde spiergroep</button>
       <button class="calc-bar-btn" id="swap-filter-all" onclick="setSwapFilter(false)" data-t="allMuscles">Alle oefeningen</button>
@@ -4977,7 +4079,7 @@ function isTimeEx(name, id) {
     <div style="margin-bottom:16px">
       <div style="font-size:12px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:6px" data-t="targetWeight">Target total weight</div>
       <div style="display:flex;gap:8px;align-items:center">
-        <input class="ifield" id="calc-target" type="number" inputmode="decimal" placeholder="e.g. 100" oninput="calcWeights()" style="margin:0;flex:1;font-size:20px;font-weight:700;text-align:center"/>
+        <input class="ifield" id="calc-target" type="number" inputmode="decimal" placeholder="e.g. 100" data-t-ph="phTarget" oninput="calcWeights()" style="margin:0;flex:1;font-size:20px;font-weight:700;text-align:center"/>
         <span id="calc-unit-label" style="font-size:16px;font-weight:700;color:var(--tx3);min-width:28px">kg</span>
       </div>
     </div>
