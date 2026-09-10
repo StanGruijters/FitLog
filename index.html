@@ -1315,7 +1315,7 @@ function bindRtnList() {
 
 function renderRtn() {
   bindRtnList();
-  var genBtn = '<button class="btnO" data-act="gen" style="margin-top:8px"><i class="ti ti-sparkles"><\/i> ' + GT('genCta') + '<\/button>';
+  var genBtn = '<button class="btnO" data-act="gen" style="margin-top:8px"><i class="ti ti-sparkles"><\/i> ' + T('genCta') + '<\/button>';
   if (S.routines.length === 0) {
     html('rtnlist', genBtn);
     show('rtn-empty');
@@ -2934,9 +2934,13 @@ var _gpvDay   = 0;
 // De wizard gebruikt hetzelfde woordenboek als de rest van de app;
 // de sleutels staan daar met het voorvoegsel 'gen'.
 function GT(k) {
-  var key = 'gen' + k.charAt(0).toUpperCase() + k.slice(1);
+  // Sleutels die het voorvoegsel al hebben niet nog eens voorvoegen,
+  // anders zoekt hij naar genGenCta en toont hij de sleutelnaam zelf.
+  var key = (k.indexOf('gen') === 0) ? k : 'gen' + k.charAt(0).toUpperCase() + k.slice(1);
   var v = T(key);
-  return (v && v !== key) ? v : k;
+  if (v && v !== key) return v;
+  v = T(k);
+  return (v && v !== k) ? v : k;
 }
 
 function genDayName(r) {
