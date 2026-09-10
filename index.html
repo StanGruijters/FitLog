@@ -17,7 +17,17 @@
 // Show a clear error if Supabase fails to load (no internet, CDN blocked, etc.)
 window.addEventListener('load', function() {
   if (typeof supabase === 'undefined') {
-    document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#1A1F36;color:#fff;padding:32px;text-align:center"><div style="font-size:48px;margin-bottom:16px">&#9888;<\/div><div style="font-size:18px;font-weight:700;margin-bottom:8px">Could not connect<\/div><div style="font-size:14px;color:rgba(255,255,255,.6);max-width:300px">Make sure you have an internet connection and reload the page. The app requires a connection to start.<\/div><button onclick="location.reload()" style="margin-top:24px;padding:12px 28px;background:#FF7900;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer">Reload<\/button><\/div>';
+    // Draait voordat TRANSLATIONS bestaat, dus taal rechtstreeks uit de opslag.
+    var _l = 'en';
+    try { _l = localStorage.getItem('fitlog_lang') || 'en'; } catch (e) {}
+    var _t = (_l === 'nl')
+      ? { t:'Verbinding mislukt',
+          m:'Controleer je internetverbinding en herlaad de pagina. De app heeft verbinding nodig om te starten.',
+          b:'Herladen' }
+      : { t:'Could not connect',
+          m:'Make sure you have an internet connection and reload the page. The app needs a connection to start.',
+          b:'Reload' };
+    document.body.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#1A1F36;color:#fff;padding:32px;text-align:center"><div style="font-size:20px;font-weight:700;margin-bottom:10px">' + _t.t + '<\/div><div style="font-size:14px;opacity:.75;line-height:1.55;max-width:340px">' + _t.m + '<\/div><button onclick="location.reload()" style="margin-top:22px;padding:12px 26px;background:#00A3C4;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600">' + _t.b + '<\/button><\/div>';
   }
 });
 </script>
@@ -306,7 +316,7 @@ nav{display:flex}
 <!-- ---- OFFLINE BAR ---- -->
 <div id="offline-bar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:510;background:#FF6B35;color:#fff;font-size:13px;font-weight:600;padding:10px 16px;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.2)">
   <i class="ti ti-wifi-off" style="font-size:16px;flex-shrink:0"></i>
-  <span>Je bent offline. Workouts worden lokaal opgeslagen en later gesynchroniseerd.</span>
+  <span data-t="offlineMsg">You are offline. Workouts are saved locally and synced later.</span>
 </div>
 
 <!-- ---- SPINNER ---- -->
@@ -379,14 +389,14 @@ nav{display:flex}
     <div style="text-align:center;margin-bottom:32px"><img src="data:image/webp;base64,UklGRrIKAABXRUJQVlA4IKYKAAAQMwCdASqgAKAAPikUiEKhoSER+q0MGAKEsTdwGCzEH/h6MtQj/GPxm1+vlv47/lV8otU/ov3t/nX7PfID+zdpHQHlK+Rfj39q/pf7l/5H3zf4j2KeYB+kH9//rP7c9oD9oPUB/Mv59/p/7F71X4ge4b0AP5t/WusG/cD2AP4//e/Vo/0n/p/ynwSftH/4f818CH80/tf/Y/PXQSe13+ucrgfB/oP6R5md9/AC/F/49/m/yj4PGwHoBe0n1X/X+FZ/K+inbb8clQA/lf9c89n/k/wnnl+kf+77hX8t/rX/E/u/aO/aT2Yv2qISljHv0BKauyKeFYSh2MyJHLRz0ACLHKxShXzzlLZxRva/4twASkwNFypGpd0u/RmAzfQ+RSAjv3zl0gIznIiNF8wxFPVSLdqjpVXoXlvFAZ/z0Qx+mCp0CjehapzEj77NrYWgCMRsF45dJglHDxkUHlvj88tOaBF4l1cDXLBnfpIbC76qnbrgKcpMetlpSDkKyhk2ueWMLTm/2lHfGQMjY09fNk1XGSG5lsEHZq66auyKeFY9yAAA/v8JuIvi53mLQI2CRt2q2ND+F0yvNo9z8xOu6gtXfOKpXfOa/R1X4jlfg8HKb5tUIUUKcgAmIA6vpqfasASZMN9m3KaFFhW6Af0Kq5AAfQATzkBrk6hnyusmXpdU4wqc22IZ2+fsxpU4FsRWCr1HJXX9Ccf5tYuPlzDy0Me3O6gf5os8o+DSo5bnphp1WmLe8hakzpIDlry5g1ab6c8xa1rGZhH/YBbOR87DirUK7yrlT0nUstz+nYG1ZbsdyN4r8VcI6tK8OPiuZ2yJ/YHmhefVCClySoRkbl0yDxla6o7MfT7vozfn08z2M6fb4/9pmdW3a0vprKK19M6kDdtF1HToUr/gLeniOxs0XfMZ3JdhPNlDyLvRe8P0ORBv80N2BYYpKNP0CzpQHPQwdQhmUNmQU626/KQcB71rZzb2tDsw//H+U0gNQmRJR1wr21/bBzMZHtXo/dDCoV1rS4EQpO4NtYMf4Qrmi+QyviB1yLl+u6WQXJsOnWf1H97/oI+Yem7mJiXcYhnrYS5ZYctAKlhYuI1ZOHdLlq4/cPM/YFXUX+hGRIbAJ2s4EXmYlCoQWkYkZn/Pt+OC2IZGxeWuLaXnCCx100b50nD5Nxqdlg/3f9VCBiNicBviuv0mArcuIkDzgKUtw0QuLCHX8/ZeoBj2BA7JXGwUFpIAmk4N9Cv1I/k9UYZi6osCIhcBp/uU5+1rf3Ohtjgt3RjOXbIXLM0PUIKE/Yo9cb9aWHCWWOVdCnT7O0JRl43aNeO2kyl4Bm2lII/vQig3C7pUPZblAGq70YH00JxApup0f9FNGHcvxhv6ozG3Prjlkv8fsoMKaECMOJtUZ9KGArTdTHxiofEbUnhySqx0Q9PMCUK55adeWCWRK7l5elcMUidgJVvuqn4WTJ2m34//4rj0KPUt8UADhiPqYP9831iAzeFbqnZv/3D7tu6+kk2h2H+48v0b20faqOaom8USmdOJBJ4V4/kFXZm1l658MavTHe/8Jr48s6sKwZwucwEzWe16HlVxac+eKkAx2lEH2csvWZoRnc1eaHLarF27zQrYf96Rufv9vvP718eVDQuWfGBGpeNn/USC+h/V//MOumiJvG0AodZDNYGU/YBe9EdY1kJ1DXweoF1Rxmqnzicg8CD+fWYiLJV99GMcv9//Lln62zWVsNTsDAAqrYyfFzLowamqlTIK39Pi+QPQFZtH++MWj3rv7Xq6AiXwDrIurfB4j4OXE/tkAZLgy0LSMr5zWEvru5i4VVW6Wt7+feGTd/1Xt6I1VEA5Cu3M1vqg/pGWnqGqHQy6whG69xvxgIBgx+/5DFcomgO0HrNwvRqtlExJc4GyYHRTlwKoFB/0o+Ag6VMrqM96WCYfvHZRk+Cb7HwKk5pKE253Ecg3aWgc7TVAqvIvlv2f2cFIDmoCQWAp801G8jRNFXLHvxVnBBK8MwGM6ArIbJZdW2MQLHaSCCOcxZUXToxpvpyLsEUQBmdYs3BaoZy2ovNwQMqmosl+DD/t8pMtJHB/njJkjpn07azil/eL+XFA3oFt+o5W2zqrQmO+bYKkjoWV6gy7sXYQtqPNe0zdr8WfxOf4F6VUFHxbEwzARQHHigisQZcamdoYB9M0kH0ObCHG5N+5oQdufCza4IkqHoQTtObBfOZSNJDHBOwaNtvkOV/5PcIeNEktHB2WlGpgOF1Cwks4YYOLFMap80wId+Ou+jF838MZYXhsKx6Tgm5BfENm/pTnmOm8V0kKAe2xh7vS6DI3A53Cde1r/wTfu7bJRmDROUdm2cHxlsAQD07lPObm+j8Z3wNtfcQz0urmjfaD7yidVBeUVU3qerQ3QaxvKsVveLU9iqqWW8Y2H2AQPaNu8Uufc3xEcBF0/FBYrm2r0u0JhpNT9VAls1t3vI/lukefcyP6gcIGG2gDwoUpIgwBRYEkru9LNDc6MR/8E0wOdcA1tGU8BXgS1AcjUiR0bD+l5egPEDrSUjkVWAv/LQEF1q9hb+NlWkQJVZbMCy35HnnLCOxgfK8RX2i668+WBL+SbCvKF3TqShjkRr8jAaLaO7+RPyBWToi+Cw8+OtOjaQAPbgpbdkTe7jzEiYQ6KLHK+1TtnQ3w41aJlxSYRjm0CSg7wL+XQccC5m5YKTAyIJLoOH+fjiCor39y9mmulqSBJjLwVnDvfzei8YLAjuK+oe3PLT38VjlzHj/wdq3bhn6ZtVuFzkpYwgu3xbJe+7F9zrx5/AxNDSV3/oXc8awgM6pVwuWlayPBil70YjhGSNDYA6HgCbVr6cgKC+i/tXiPob9DY2qis3ncOB4bgDpBfzS7Etsx+HQYkR6cf5usk/Y5VRgQ2tzMpP2tJqOvF3V+AFxG+Yh9Y0lFv+pACX1/PDXB/ffzdMP3FSY9JXW/sEvSsTQNSX+wPcKcSHEkq4fv/gLPrlFXpr1oQPeITjoaoXvnwn1IpeBm/UqR5nsk/FGPpPi47l/GZ/aIGwvGtKiVFeMnE0IxBeK9zc/EfFb+sPEmxZ4qpfg+DNvOQlAVfguJTRIzB4/+uJEDIRrtpqiJgZ+HDK/HkNule1POma/MUYzcChGPgKr08jtnIAhi17S5co0mdujBG4g42dsROamQVRuWhv+R/VXNXwMEudn3IuGjlZzfPQmgK47Z+miIyyy20iY5EEsr3KdlHSnhzA1r21/kr2vHtziYqjM8HaC57MfQsgO0M1oHtT/kA0R/+jqYarf3D/4W90rmulo1HqBWIYznv3gWWgCcPFLst/aK42UeZpRJRYKU6b4R/dGw4rquViPjomQjYQbPkBMaBzXr30wETzwruveTdCABxvmrW6gfOeabbnOLzK/Sos9SmPmv7xQ7D9hXdYC9KjakpBh+y6uJzu89P2zZ1yV3fMz1pJFZx9Tg96Uv31e7qtGennU3Ise9+LZ4DAmodPba83YvMoy6cotpHcu3H28TxxVpm67iw9//7yNff92HThx8KLWUvCha5VRSSKWEquZvqyjNL4oCH/t8e0Zp+aILRvYZGbq3cwWcDo3ABmq/yITRF5SnatMTYxSYyQOlRMO3HFCotvhGWRqP0jUnMAAAAA==" alt="LOG. by SG Apps" style="width:120px;height:120px;border-radius:24px;object-fit:cover"/></div>
     <!-- Tab switcher -->
     <div style="display:flex;background:rgba(255,255,255,.08);border-radius:var(--rm);padding:3px;margin-bottom:24px">
-      <button id="tab-signin" onclick="switchTab('signin')" style="flex:1;padding:8px;border:none;border-radius:var(--rs);background:var(--ac);color:#fff;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" data-t="signInBtn">Sign in</button>
-      <button id="tab-signup" onclick="switchTab('signup')" style="flex:1;padding:8px;border:none;border-radius:var(--rs);background:transparent;color:rgba(255,255,255,.6);font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" data-t="signUpBtn">Sign up</button>
+      <button id="tab-signin" onclick="switchTab('signin')" style="flex:1;padding:8px;border:none;border-radius:var(--rs);background:var(--ac);color:#fff;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" data-t="signInBtn" data-t="signInTab">Sign in</button>
+      <button id="tab-signup" onclick="switchTab('signup')" style="flex:1;padding:8px;border:none;border-radius:var(--rs);background:transparent;color:rgba(255,255,255,.6);font-weight:600;font-size:14px;cursor:pointer;font-family:inherit" data-t="signUpBtn" data-t="signUpTab">Sign up</button>
     </div>
     <!-- Form -->
     <div id="auth-error" style="display:none;background:rgba(226,75,74,.2);border:1px solid var(--er);color:#FFB3B3;padding:10px 12px;border-radius:var(--rs);font-size:13px;margin-bottom:14px"></div>
     <input id="auth-email" type="email" placeholder="Email address" data-t-ph="phEmail" style="width:100%;height:46px;border:1px solid rgba(255,255,255,.15);border-radius:var(--rm);background:rgba(255,255,255,.08);color:#fff;font-size:15px;padding:0 14px;font-family:inherit;margin-bottom:12px"/>
     <input id="auth-password" type="password" placeholder="Password" data-t-ph="phPassword" style="width:100%;height:46px;border:1px solid rgba(255,255,255,.15);border-radius:var(--rm);background:rgba(255,255,255,.08);color:#fff;font-size:15px;padding:0 14px;font-family:inherit;margin-bottom:16px"/>
-    <button id="auth-submit" onclick="submitAuth()" style="width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:var(--rm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px">Sign in</button>
+    <button id="auth-submit" onclick="submitAuth()" style="width:100%;padding:13px;background:var(--ac);color:#fff;border:none;border-radius:var(--rm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:16px" data-t="signInBtn">Sign in</button>
     <!-- Divider -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
       <div style="flex:1;height:.5px;background:rgba(255,255,255,.15)"></div>
@@ -487,6 +497,38 @@ nav{display:flex}
   </div>
 </div>
 
+<!-- ═══ ROUTINE GENERATOR — WIZARD ═══════════════════════════ -->
+<div class="fs" id="fs-gen">
+  <div class="fsh" style="flex-shrink:0">
+    <button class="ibt" id="gen-close" style="border-color:transparent"><i class="ti ti-arrow-left"></i></button>
+    <div class="fstitle" id="gen-title" data-t="genTitle">Build a routine</div>
+    <div id="gen-count" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.55)"></div>
+  </div>
+  <div style="height:3px;background:var(--bd);flex-shrink:0">
+    <div id="gen-bar" style="height:100%;width:0;background:var(--ac);transition:width .18s ease"></div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:22px 16px 8px" id="gen-body"></div>
+  <div style="padding:12px 16px calc(env(safe-area-inset-bottom,0) + 12px);border-top:.5px solid var(--bd);display:flex;gap:10px;flex-shrink:0">
+    <button class="btnO" id="gen-prev" style="margin-top:0;flex:1" data-t="genBack">Back</button>
+    <button class="btn" id="gen-next" style="flex:2">Next</button>
+  </div>
+</div>
+
+<!-- ═══ ROUTINE GENERATOR — VOORBEELD ════════════════════════ -->
+<div class="fs" id="fs-genprev">
+  <div class="fsh" style="flex-shrink:0">
+    <button class="ibt" id="gpv-back" style="border-color:transparent"><i class="ti ti-arrow-left"></i></button>
+    <div class="fstitle" id="gpv-title" data-t="genPlanTitle">Your plan</div>
+    <button class="ibt" id="gpv-save" style="background:var(--ac);border-color:var(--ac);color:#fff;font-size:18px"><i class="ti ti-device-floppy"></i></button>
+  </div>
+  <div class="mtabs" id="gpv-tabs" style="padding:10px 16px 0;flex-shrink:0"></div>
+  <div style="flex:1;overflow-y:auto;padding:14px 16px 8px" id="gpv-body"></div>
+  <div style="padding:12px 16px calc(env(safe-area-inset-bottom,0) + 12px);border-top:.5px solid var(--bd);display:flex;gap:10px;flex-shrink:0">
+    <button class="btnO" id="gpv-regen" style="margin-top:0;flex:1"><i class="ti ti-refresh"></i> <span data-t="genRegen">Regenerate day</span></button>
+    <button class="btn" id="gpv-savebtn" style="flex:2"><i class="ti ti-device-floppy"></i> <span data-t="genSave">Save</span></button>
+  </div>
+</div>
+
 <!-- DETAIL SCREEN -->
 <div class="fs" id="fs-detail">
   <div class="fsh">
@@ -542,7 +584,7 @@ nav{display:flex}
 <div id="rest-overlay">
   <div class="rest-dur-row">
     <button class="rest-dur-btn" onclick="adjustRestDur(-15)"><i class="ti ti-minus"></i></button>
-    <span class="rest-dur-val" id="rest-dur-lbl">90 sec rust</span>
+    <span class="rest-dur-val" id="rest-dur-lbl">90 sec rest</span>
     <button class="rest-dur-btn" onclick="adjustRestDur(15)"><i class="ti ti-plus"></i></button>
   </div>
   <div class="rest-ring-wrap">
@@ -566,9 +608,9 @@ nav{display:flex}
     <span class="flbl" data-t="exerciseName">Name</span><input class="ifield" id="cx-name" placeholder="e.g. Cable pull-through" data-t-ph="phExampleName"/>
     <span class="flbl" data-t="muscleGroup">Muscle group</span><select class="sfield" id="cx-muscle"></select>
     <span class="flbl" data-t="equipment">Equipment</span><input class="ifield" id="cx-equip" placeholder="e.g. Cable, Dumbbell" data-t-ph="phExampleEquip"/>
-    <span class="flbl">Instructions (one per line, optional)</span>
+    <span class="flbl" data-t="lblInstructions">Instructions (one per line, optional)</span>
     <textarea class="tfield" id="cx-instr" placeholder="Step by step instructions..." data-t-ph="phInstructions"></textarea>
-    <span class="flbl">YouTube link (optional)</span>
+    <span class="flbl" data-t="lblYoutube">YouTube link (optional)</span>
     <input class="ifield" id="cx-yt" placeholder="https://youtube.com/watch?v=..."/>
     <div class="mact">
       <button class="btnO" style="margin:0" onclick="closeCustomModal()" data-t="cancelBtn">Cancel</button>
@@ -626,12 +668,12 @@ nav{display:flex}
       </div>
       <!-- circuit partner exercises, hidden until circuit toggled on -->
       <div id="cfg-circuit-partner" style="display:none;background:var(--okl);border-radius:var(--rm);padding:10px 12px;margin-bottom:8px">
-        <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px">Add more exercises to circuit:</div>
+        <div style="font-size:12px;font-weight:700;color:var(--ok);margin-bottom:8px" data-t="addMoreCircuit">Add more exercises to circuit:</div>
         <div id="cfg-circuit-selected" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;min-height:24px"></div>
         <input class="bsearch" id="cfg-circuit-search" placeholder="Search exercise..." data-t-ph="phSearchOne" oninput="renderCfgCircuitList()" style="margin-bottom:6px"/>
         <div id="cfg-circuit-list" style="max-height:25vh;overflow-y:auto;border:.5px solid var(--bd);border-radius:var(--rm);background:#fff"></div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
-          <span style="font-size:13px;color:var(--ok);font-weight:600">Rounds:</span>
+          <span style="font-size:13px;color:var(--ok);font-weight:600" data-t="roundsColon">Rounds:</span>
           <div class="stepper">
             <button class="stpbtn" onclick="cfgCircuitRounds(-1)" style="border-color:var(--ok);color:var(--ok)"><i class="ti ti-minus"></i></button>
             <span class="stpval" id="cfg-circuit-rounds">3</span>
@@ -650,12 +692,12 @@ nav{display:flex}
             <i class="ti ti-layers-intersect"></i> Exercise B — <span id="cfg-ss-bname"></span>
           </div>
           <div class="cfg-row">
-            <div><div class="cfg-lbl">Reps</div><input class="cfg-inp" id="cfg-b-reps" type="number" inputmode="decimal" placeholder="10" style="background:var(--sf)"/></div>
+            <div><div class="cfg-lbl" data-t="reps">Reps</div><input class="cfg-inp" id="cfg-b-reps" type="number" inputmode="decimal" placeholder="10" style="background:var(--sf)"/></div>
             <div></div>
             <div><div class="cfg-lbl">Kg</div><input class="cfg-inp" id="cfg-b-weight" type="number" inputmode="decimal" placeholder="0" style="background:var(--sf)"/></div>
           </div>
           <div style="display:flex;align-items:center;justify-content:space-between">
-            <span style="font-size:13px;color:var(--ss);font-weight:600">Sets</span>
+            <span style="font-size:13px;color:var(--ss);font-weight:600" data-t="sets">Sets</span>
             <div class="stepper">
               <button class="stpbtn" onclick="cfgBSets(-1)" style="border-color:var(--ss);color:var(--ss)"><i class="ti ti-minus"></i></button>
               <span class="stpval" id="cfg-b-sets-val">3</span>
@@ -712,7 +754,7 @@ nav{display:flex}
     <input class="ssearch" id="circuit-search" placeholder="Search exercise..." oninput="renderCircuitPicker()"/>
     <div class="sslist" id="circuit-list" style="max-height:38vh"></div>
     <div style="margin-top:10px">
-      <span id="circuit-rounds-lbl" style="font-size:13px;color:var(--tx3)">Rounds:</span>
+      <span id="circuit-rounds-lbl" style="font-size:13px;color:var(--tx3)" data-t="roundsColon">Rounds:</span>
       <div class="stepper" style="margin-top:8px">
         <button class="stpbtn" onclick="changeCircuitRounds(-1)"><i class="ti ti-minus"></i></button>
         <span class="stpval" id="circuit-rounds-val">3</span>
@@ -720,7 +762,7 @@ nav{display:flex}
       </div>
     </div>
     <div class="mact" style="margin-top:12px">
-      <button class="btnO" style="margin:0" onclick="closeCircuitModal()">Cancel</button>
+      <button class="btnO" style="margin:0" onclick="closeCircuitModal()" data-t="cancelBtn">Cancel</button>
       <button class="btn" style="flex:1;margin:0" onclick="confirmCircuit()" data-t="addCircuit">Add circuit</button>
     </div>
   </div>
@@ -733,7 +775,7 @@ nav{display:flex}
     <div id="ql-sets-wrap"></div>
     <button class="btnO" onclick="addQLSet()" style="margin-bottom:12px"><i class="ti ti-plus"></i> <span id="ql-add-set" data-t="addSetBtn">Add set</span></button>
     <div class="mact">
-      <button class="btnO" style="margin:0" onclick="el('m-quicklog').classList.remove('on')">Cancel</button>
+      <button class="btnO" style="margin:0" onclick="el('m-quicklog').classList.remove('on')" data-t="cancelBtn">Cancel</button>
       <button class="btn" style="flex:1;margin:0" onclick="saveQuickLog()" data-t="saveBtn">Save</button>
     </div>
   </div>
@@ -756,7 +798,7 @@ nav{display:flex}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div>
-          <span class="flbl">Age</span>
+          <span class="flbl" data-t="age">Age</span>
           <input class="ifield" id="s-age" type="number" inputmode="decimal" placeholder="25" style="margin-bottom:0"/>
         </div>
         <div>
@@ -805,7 +847,7 @@ nav{display:flex}
           <button class="stpbtn" onclick="changeDefaultRest(15)"><i class="ti ti-plus"></i></button>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--tx3)">Range: 15 – 300 seconds</div>
+      <div style="font-size:11px;color:var(--tx3)" data-t="restRange">Range: 15 - 300 seconds</div>
     </div>
 
     <!-- Language section -->
@@ -864,12 +906,12 @@ nav{display:flex}
     <!-- reps + weight -->
     <div style="display:grid;grid-template-columns:1fr 12px 1fr;gap:8px;margin-bottom:14px">
       <div>
-        <div style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700;text-transform:uppercase;margin-bottom:4px" id="solo-reps-lbl">Reps</div>
+        <div style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700;text-transform:uppercase;margin-bottom:4px" id="solo-reps-lbl" data-t="reps">Reps</div>
         <input class="ifield" id="solo-reps" type="number" inputmode="decimal" placeholder="e.g. 10" data-t-ph="phReps" style="margin-bottom:0;text-align:center"/>
       </div>
       <div></div>
       <div>
-        <div style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700;text-transform:uppercase;margin-bottom:4px">Weight (kg)</div>
+        <div style="font-size:10px;color:var(--tx3);text-align:center;font-weight:700;text-transform:uppercase;margin-bottom:4px" data-t="weightKgLbl">Weight (kg)</div>
         <input class="ifield" id="solo-weight" type="number" inputmode="decimal" placeholder="0" style="margin-bottom:0;text-align:center"/>
       </div>
     </div>
@@ -905,6 +947,19 @@ for (var i = 0; i < RAW.length; i++) {
 
 // Build muscle list
 var MUSCLES = ['All'];
+// Spiergroepnaam vertaald weergeven; valt terug op de Engelse naam.
+function mLbl(m) {
+  var k = 'm' + String(m).replace(/ /g, '');
+  var v = T(k);
+  return (v && v !== k) ? v : m;
+}
+
+// Zelfde principe voor materiaal: eqBarbell, eqDumbbell, ...
+function eqLbl(e) {
+  var k = 'eq' + String(e).replace(/ /g, '');
+  var v = T(k);
+  return (v && v !== k) ? v : e;
+}
 var _seen = {};
 for (var i = 0; i < EX.length; i++) {
   if (!_seen[EX[i].muscle]) { _seen[EX[i].muscle] = 1; MUSCLES.push(EX[i].muscle); }
@@ -1005,7 +1060,7 @@ function renderLib() {
   var filter = _libMuscle;
   var tabs = '';
   for (var i=0;i<MUSCLES.length;i++) {
-    var mKey = 'm' + MUSCLES[i].replace(/ /g,''); var mLabel = T(mKey) !== mKey ? T(mKey) : MUSCLES[i];
+    var mLabel = mLbl(MUSCLES[i]);
     tabs += '<button class="mt' + (MUSCLES[i]===filter?' on':'') + '" onclick="filterLib(\'' + MUSCLES[i] + '\')">' + mLabel + '<\/button>';
   }
   html('mtabs', tabs);
@@ -1013,14 +1068,14 @@ function renderLib() {
   var list = filter==='All' ? allEx() : allEx().filter(function(e){return e.muscle===filter;});
   var h = '<div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="openCustomModal()">' +
     '<div style="width:34px;height:34px;border-radius:50%;border:.5px dashed var(--ac);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ac);flex-shrink:0"><i class="ti ti-plus"><\/i><\/div>' +
-    '<div><div style="font-size:14px;font-weight:600;color:var(--ac)">'+T('addCustom')+'<\/div><div style="font-size:12px;color:var(--tx3)">Create your own exercise<\/div><\/div><\/div>';
+    '<div><div style="font-size:14px;font-weight:600;color:var(--ac)">'+T('addCustom')+'<\/div><div style="font-size:12px;color:var(--tx3)">'+T('createOwnEx')+'<\/div><\/div><\/div>';
 
   for (var i=0;i<list.length;i++) {
     var ex = list[i];
     h += '<div class="card" style="display:flex;align-items:center;gap:10px">' +
       '<div style="flex:1;cursor:pointer" onclick="openDetail(\'' + ex.id + '\')">' +
         '<div style="font-size:14px;font-weight:600">' + ex.name + '<\/div>' +
-        '<div style="font-size:12px;color:var(--tx3)">' + ex.muscle + ' &middot; ' + ex.equipment + '<\/div>' +
+        '<div style="font-size:12px;color:var(--tx3)">' + mLbl(ex.muscle) + ' &middot; ' + eqLbl(ex.equipment) + '<\/div>' +
       '<\/div>' +
       '<button class="ibt" style="font-size:16px;color:var(--ac);border-color:var(--ac)" onclick="openDetail(\'' + ex.id + '\')">' +
         '<i class="ti ti-info-circle"><\/i><\/button><\/div>';
@@ -1105,9 +1160,9 @@ function muscleSVG(ex) {
   var hasFront = Object.keys(fm).length > 0;
   var hasBack  = Object.keys(bm).length > 0;
   var out = '<div class="mdiag">';
-  if (hasFront) out += '<div class="mfig">' + front(fm) + '<p>Front<\/p><\/div>';
-  if (hasBack)  out += '<div class="mfig">' + back(bm)  + '<p>Back<\/p><\/div>';
-  if (!hasFront && !hasBack) out += '<div class="mfig">' + front({}) + '<p>Front<\/p><\/div>';
+  if (hasFront) out += '<div class="mfig">' + front(fm) + '<p>' + T('frontLbl') + '<\/p><\/div>';
+  if (hasBack)  out += '<div class="mfig">' + back(bm)  + '<p>' + T('backLbl') + '<\/p><\/div>';
+  if (!hasFront && !hasBack) out += '<div class="mfig">' + front({}) + '<p>' + T('frontLbl') + '<\/p><\/div>';
   out += '<\/div><div class="mleg">' +
     '<div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2)"><div class="mldot" style="background:#185FA5"><\/div>Primary<\/div>' +
     '<div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--tx2)"><div class="mldot" style="background:#93C5FD"><\/div>Secondary<\/div>' +
@@ -1185,15 +1240,15 @@ function openDetail(id) {
   var h = '<div id="det-visual"><\/div>' +
     '<div class="card" style="margin-bottom:10px">' +
       '<div style="display:flex;gap:16px">' +
-        '<div style="flex:1"><span style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase">Primary<\/span><br><span style="font-size:13px;font-weight:600">' + (ex.primary.join(', ')||'-') + '<\/span><\/div>' +
-        '<div style="flex:1"><span style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase">Secondary<\/span><br><span style="font-size:13px">' + (ex.secondary.join(', ')||'-') + '<\/span><\/div>' +
+        '<div style="flex:1"><span style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase">'+T('primaryLbl')+'<\/span><br><span style="font-size:13px;font-weight:600">' + (ex.primary.join(', ')||'-') + '<\/span><\/div>' +
+        '<div style="flex:1"><span style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase">'+T('secondaryLbl')+'<\/span><br><span style="font-size:13px">' + (ex.secondary.join(', ')||'-') + '<\/span><\/div>' +
       '<\/div><\/div>';
-  if (steps) h += '<div class="icard"><h3>How to perform<\/h3>' + steps + '<\/div>';
-  if (tips)  h += '<div class="icard"><h3>Tips<\/h3>' + tips + '<\/div>';
+  if (steps) h += '<div class="icard"><h3>'+T('howToPerform')+'<\/h3>' + steps + '<\/div>';
+  if (tips)  h += '<div class="icard"><h3>'+T('tipsLbl')+'<\/h3>' + tips + '<\/div>';
   h += '<button class="ytbtn" onclick="window.open(\'' + ythref + '\',\'_blank\')">' +
     '<svg width="22" height="16" viewBox="0 0 22 16" fill="none"><path d="M21.5 2.5A2.75 2.75 0 0 0 19.05.08C17.4 0 11 0 11 0S4.6 0 2.95.08A2.75 2.75 0 0 0 .5 2.5C.41 4.16.41 8 .41 8s0 3.84.09 5.5a2.75 2.75 0 0 0 2.45 2.42C4.6 16 11 16 11 16s6.4 0 8.05-.08a2.75 2.75 0 0 0 2.45-2.42c.09-1.66.09-5.5.09-5.5s0-3.84-.09-5.5z" fill="#fff"/><path d="M8.75 11.5v-7l6 3.5-6 3.5z" fill="#FF0000"/><\/svg>' +
     'Watch tutorial on YouTube<\/button>';
-  if (isCustom) h += '<button class="btn" style="margin-top:8px;background:var(--er);border-color:var(--er)" onclick="delCustomEx(\'' + id + '\')">Delete exercise<\/button>';
+  if (isCustom) h += '<button class="btn" style="margin-top:8px;background:var(--er);border-color:var(--er)" onclick="delCustomEx(\'' + id + '\')">'+T('deleteExercise')+'<\/button>';
   // Workout button (no quick log)
   h += '<button class="btn" style="width:100%;margin-top:14px" data-id="' + id + '" onclick="openSoloConfig(this.dataset.id)"><i class="ti ti-player-play"><\/i> Start workout<\/button>';
   html('det-body', h);
@@ -1206,7 +1261,7 @@ function closeDetail() { el('fs-detail').classList.remove('on'); }
 function openCustomModal() {
   var sel = el('cx-muscle');
   var opts = '';
-  for (var i=1;i<MUSCLES.length;i++) opts += '<option value="'+MUSCLES[i]+'">'+MUSCLES[i]+'<\/option>';
+  for (var i=1;i<MUSCLES.length;i++) opts += '<option value="'+MUSCLES[i]+'">'+mLbl(MUSCLES[i])+'<\/option>';
   sel.innerHTML = opts;
   el('m-custom').classList.add('on');
 }
@@ -1229,26 +1284,67 @@ function saveCustomEx() {
 }
 
 // ---- ROUTINE PAGE ----
+function rtnId(r) {
+  if (!r.rid) r.rid = 'r' + Date.now().toString(36) + Math.floor(Math.random()*1e6).toString(36);
+  return r.rid;
+}
+function rtnIdx(rid) {
+  for (var i = 0; i < S.routines.length; i++) if (S.routines[i].rid === rid) return i;
+  return -1;
+}
+var _rtnBound = false;
+function bindRtnList() {
+  if (_rtnBound) return;
+  var box = el('rtnlist');
+  if (!box) return;
+  _rtnBound = true;
+  box.addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('[data-act]') : null;
+    if (!b) return;
+    var act = b.dataset.act;
+    if (act === 'gen')    { openGenerator(); return; }
+    if (act === 'import') { openImportModal(); return; }
+    var i = rtnIdx(b.dataset.rid);
+    if (i < 0) return;
+    if (act === 'start') startWO(i);
+    if (act === 'edit')  editRtn(i);
+    if (act === 'del')   delRtn(i);
+    if (act === 'share') openShareModal(i);
+  });
+}
+
 function renderRtn() {
-  if (S.routines.length===0) { html('rtnlist',''); show('rtn-empty'); return; }
+  bindRtnList();
+  var genBtn = '<button class="btnO" data-act="gen" style="margin-top:8px"><i class="ti ti-sparkles"><\/i> ' + GT('genCta') + '<\/button>';
+  if (S.routines.length === 0) {
+    html('rtnlist', genBtn);
+    show('rtn-empty');
+    return;
+  }
   hide('rtn-empty');
-  var h = '<div class="stitle">Your routines<\/div>';
-  for (var i=0;i<S.routines.length;i++) {
-    var r=S.routines[i], exCnt=0;
-    for (var j=0;j<r.blocks.length;j++) exCnt+=r.blocks[j].exercises?r.blocks[j].exercises.length:0;
-    h+='<div class="card" style="margin-bottom:8px">' +
+  var h = '<div class="stitle">' + (T('yourRoutines') || 'Your routines') + '<\/div>';
+  for (var i = 0; i < S.routines.length; i++) {
+    var r = S.routines[i], exCnt = 0;
+    for (var j = 0; j < r.blocks.length; j++) exCnt += r.blocks[j].exercises ? r.blocks[j].exercises.length : 0;
+    var rid = rtnId(r);
+    var m = r.meta || {};
+    var badge = (m.planId && m.dayCount > 1)
+      ? '<span style="font-size:10px;font-weight:700;color:var(--ac);background:var(--acl);padding:2px 7px;border-radius:6px;margin-left:6px">' +
+        GT('day') + ' ' + m.dayIdx + '/' + m.dayCount + '<\/span>' : '';
+    h += '<div class="card" style="margin-bottom:8px">' +
       '<div class="fb"><div>' +
-        '<div style="font-size:16px;font-weight:700">'+r.name+'<\/div>' +
-        '<div style="font-size:12px;color:var(--tx3);margin-top:2px">'+exCnt+' '+T("exercises")+' &middot; '+r.blocks.length+' '+T("blocks")+'<\/div>' +
+        '<div style="font-size:16px;font-weight:700">' + r.name + badge + '<\/div>' +
+        '<div style="font-size:12px;color:var(--tx3);margin-top:2px">' + exCnt + ' ' + T('exercises') + ' &middot; ' + r.blocks.length + ' ' + T('blocks') + '<\/div>' +
       '<\/div><div style="display:flex;gap:6px">' +
-        '<button class="ibt" onclick="openShareModal('+i+')" style="font-size:16px" title="'+T('share')+'"><i class="ti ti-share"><\/i><\/button>' +
-        '<button class="ibt" onclick="editRtn('+i+')" style="font-size:16px"><i class="ti ti-pencil"><\/i><\/button>' +
-        '<button class="btnD" onclick="delRtn('+i+')"><i class="ti ti-trash"><\/i><\/button>' +
+        '<button class="ibt" data-act="share" data-rid="' + rid + '" style="font-size:16px" title="' + T('share') + '"><i class="ti ti-share" style="pointer-events:none"><\/i><\/button>' +
+        '<button class="ibt" data-act="edit" data-rid="' + rid + '" style="font-size:16px"><i class="ti ti-pencil" style="pointer-events:none"><\/i><\/button>' +
+        '<button class="btnD" data-act="del" data-rid="' + rid + '"><i class="ti ti-trash" style="pointer-events:none"><\/i><\/button>' +
       '<\/div><\/div>' +
-      '<button class="btn" style="margin-top:10px" onclick="startWO('+i+')"><i class="ti ti-player-play"><\/i> '+T("startWorkout")+'<\/button>' +
+      '<button class="btn" style="margin-top:10px" data-act="start" data-rid="' + rid + '"><i class="ti ti-player-play" style="pointer-events:none"><\/i> ' + T('startWorkout') + '<\/button>' +
     '<\/div>';
   }
-  h += '<button class="btnO" style="margin-top:8px" onclick="openImportModal()"><i class="ti ti-download"><\/i> '+T("importRoutine")+'<\/button>';
+  h += genBtn;
+  h += '<button class="btnO" data-act="import"><i class="ti ti-download"><\/i> ' + T('importRoutine') + '<\/button>';
   html('rtnlist', h);
 }
 
@@ -1295,7 +1391,7 @@ function renderBldTabs() {
   var h='';
   for (var i=0;i<MUSCLES.length;i++) {
     var m=MUSCLES[i];
-    h+='<button class="mt'+(m===_bMuscle?' on':'')+'" data-m="'+m+'" onclick="setBldMuscle(this.dataset.m)">'+m+'<\/button>';
+    h+='<button class="mt'+(m===_bMuscle?' on':'')+'" data-m="'+m+'" onclick="setBldMuscle(this.dataset.m)">'+mLbl(m)+'<\/button>';
   }
   html('bld-tabs', h);
 }
@@ -1324,12 +1420,12 @@ function renderBldList() {
     h+='<div class="bld-ex'+(isAdded?' added':'')+'" data-id="'+ex.id+'" onclick="openCfg(this.dataset.id)">' +
       '<div style="flex:1;min-width:0">' +
         '<div style="font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px">'+ex.name+' '+pbBadge+'<\/div>' +
-        '<div style="font-size:12px;color:var(--tx3);margin-top:2px">'+ex.muscle+' &middot; '+ex.equipment+'<\/div>' +
+        '<div style="font-size:12px;color:var(--tx3);margin-top:2px">'+mLbl(ex.muscle)+' &middot; '+eqLbl(ex.equipment)+'<\/div>' +
       '<\/div>' +
       '<i class="ti ti-'+(isAdded?'check':'plus')+'" style="color:'+(isAdded?'var(--ok)':'var(--ac)')+';font-size:20px;flex-shrink:0"><\/i>' +
     '<\/div>';
   }
-  html('bld-list', h||'<div style="padding:20px;text-align:center;font-size:13px;color:var(--tx3)">No exercises found<\/div>');
+  html('bld-list', h||'<div style="padding:20px;text-align:center;font-size:13px;color:var(--tx3)">'+T('noExFound')+'<\/div>');
 }
 
 // Routine blocks panel
@@ -1346,7 +1442,7 @@ function saveRoutine() {
   if(!B.blocks||B.blocks.length===0){toast(T('addOneEx'));return;}
   var r={name:name,blocks:JSON.parse(JSON.stringify(B.blocks))};
   if(B.idx>=0) S.routines[B.idx]=r; else S.routines.push(r);
-  save(); closeBuilder(); SP('rtn'); toast(B.idx>=0?'Routine updated!':'Routine saved!');
+  save(); closeBuilder(); SP('rtn'); toast(B.idx>=0?T('routineUpdated'):T('routineSaved'));
 }
 
 // ---- CONFIG SHEET ----
@@ -1432,10 +1528,10 @@ function renderCfgCircuitList() {
     var ex = list[i];
     h += '<div class="ssitem" data-id="' + ex.id + '" onclick="addToCfgCircuit(this.dataset.id)">';
     h += '<div><div style="font-size:13px;font-weight:600">' + ex.name + '<\/div>';
-    h += '<div style="font-size:11px;color:var(--tx3)">' + ex.muscle + '<\/div><\/div>';
+    h += '<div style="font-size:11px;color:var(--tx3)">' + mLbl(ex.muscle) + '<\/div><\/div>';
     h += '<i class="ti ti-plus" style="color:var(--ok);font-size:17px"><\/i><\/div>';
   }
-  html('cfg-circuit-list', h || '<div style="padding:12px;text-align:center;font-size:13px;color:var(--tx3)">No exercises found<\/div>');
+  html('cfg-circuit-list', h || '<div style="padding:12px;text-align:center;font-size:13px;color:var(--tx3)">'+T('noExFound')+'<\/div>');
 }
 
 function addToCfgCircuit(id) {
@@ -1457,11 +1553,11 @@ function renderCfgCircuitSelected() {
   _cfgCircuitExercises.forEach(function(e, i) {
     h += '<div style="display:flex;align-items:center;justify-content:space-between;background:var(--sf2);border-radius:var(--rs);padding:8px 10px;margin-bottom:6px">';
     h += '<div><div style="font-size:13px;font-weight:600">'+(i+1)+'. '+e.name+'<\/div>';
-    h += '<div style="font-size:11px;color:var(--tx3)">'+e.muscle+'<\/div><\/div>';
+    h += '<div style="font-size:11px;color:var(--tx3)">'+mLbl(e.muscle)+'<\/div><\/div>';
     h += '<button data-i="'+i+'" onclick="removeCfgCircuit(parseInt(this.dataset.i))" style="background:none;border:none;cursor:pointer;color:var(--er);font-size:18px;padding:4px;line-height:1"><i class="ti ti-x"><\/i><\/button>';
     h += '<\/div>';
   });
-  if (!h) h = '<div style="font-size:12px;color:var(--tx3);padding:6px 0">No exercises added yet<\/div>';
+  if (!h) h = '<div style="font-size:12px;color:var(--tx3);padding:6px 0">'+T('noExAdded')+'<\/div>';
   html('cfg-circuit-selected', h);
 }
 
@@ -1505,11 +1601,11 @@ function renderPartnerList() {
     var ex=list[i];
     var sel=_cfgPartner&&_cfgPartner.id===ex.id;
     h+='<div class="ss-pair-item" style="'+(sel?'background:var(--ssl)':'')+'" data-id="'+ex.id+'" onclick="pickPartner(this.dataset.id)">' +
-      '<div><div style="font-size:13px;font-weight:600">'+ex.name+'<\/div><div style="font-size:11px;color:var(--tx3)">'+ex.muscle+'<\/div><\/div>' +
+      '<div><div style="font-size:13px;font-weight:600">'+ex.name+'<\/div><div style="font-size:11px;color:var(--tx3)">'+mLbl(ex.muscle)+'<\/div><\/div>' +
       '<i class="ti ti-'+(sel?'check':'plus')+'" style="color:var(--ss);font-size:17px"><\/i>' +
     '<\/div>';
   }
-  html('cfg-ss-list', h||'<div style="padding:12px;text-align:center;font-size:13px;color:var(--tx3)">No exercises found<\/div>');
+  html('cfg-ss-list', h||'<div style="padding:12px;text-align:center;font-size:13px;color:var(--tx3)">'+T('noExFound')+'<\/div>');
 }
 
 function pickPartner(id) {
@@ -1517,7 +1613,7 @@ function pickPartner(id) {
   if (!_cfgPartner) return;
   _cfgBSets=3;
   el('cfg-ss-selected').style.display='block';
-  el('cfg-ss-selected').textContent='Partner: '+_cfgPartner.name;
+  el('cfg-ss-selected').textContent=T('partnerLbl')+' '+_cfgPartner.name;
   // show exercise B config fields
   el('cfg-ss-bname').textContent=_cfgPartner.name;
   el('cfg-b-reps').value='';
@@ -1546,7 +1642,7 @@ function confirmCfg() {
       { id:_cfgEx.id, name:_cfgEx.name, reps:reps, weight:weight, sets:sets },
       { id:_cfgPartner.id, name:_cfgPartner.name, reps:bReps, weight:bWeight, sets:_cfgBSets }
     ]});
-    toast(_cfgEx.name+' + '+_cfgPartner.name+' added as superset');
+    toast(_cfgEx.name+' + '+_cfgPartner.name+' - '+T('supersetAdded'));
   } else {
     B.blocks.push({ type:'single', exercises:[
       { id:_cfgEx.id, name:_cfgEx.name, reps:reps, weight:weight, sets:sets }
@@ -1776,7 +1872,7 @@ var CIRCUM = 377; // 2 * PI * 60
 
 function startRest() {
   _restLeft = _restDur;
-  el('rest-dur-lbl').textContent = _restDur + ' sec rust';
+  el('rest-dur-lbl').textContent = _restDur + ' ' + T('secRest');
   el('rest-countdown').textContent = _restLeft;
   el('rest-ring').style.strokeDashoffset = '0';
   el('rest-overlay').classList.add('show');
@@ -1805,7 +1901,7 @@ function adjustRestDur(delta) {
     _restLeft = Math.max(1, _restLeft + delta);
     el('rest-countdown').textContent = _restLeft;
   }
-  el('rest-dur-lbl').textContent = _restDur + ' sec rust';
+  el('rest-dur-lbl').textContent = _restDur + ' ' + T('secRest');
 }
 
 // ---- WORKOUT FINISH + SUMMARY ----
@@ -1873,7 +1969,7 @@ function finishWorkout(){
       '<\/div>';
     }
   } else {
-    prsHTML = '<div style="text-align:center;padding:8px 0;font-size:13px;color:var(--tx3)">Blijf trainen voor nieuwe PR\'s!<\/div>';
+    prsHTML = '<div style="text-align:center;padding:8px 0;font-size:13px;color:var(--tx3)">'+T('keepGoing')+'<\/div>';
   }
   html('wo-sum-prs', prsHTML);
 
@@ -2011,7 +2107,7 @@ function renderPrg(){
       }
       h += '<\/div>';
       // Sessions count
-      h += '<div style="font-size:11px;color:var(--tx3);margin-top:8px">'+e.sessions+' session'+(e.sessions!==1?'s':'')+' logged<\/div>';
+      h += '<div style="font-size:11px;color:var(--tx3);margin-top:8px">'+e.sessions+' '+(e.sessions!==1?T('sessionsWord'):T('sessionWord'))+' '+T('loggedWord')+'<\/div>';
       h += '<\/div>';
     }
   }
@@ -2067,7 +2163,7 @@ function switchTab(mode) {
   el('tab-signin').style.color = isSignin ? '#fff' : 'rgba(255,255,255,.6)';
   el('tab-signup').style.background = !isSignin ? 'var(--ac)' : 'transparent';
   el('tab-signup').style.color = !isSignin ? '#fff' : 'rgba(255,255,255,.6)';
-  el('auth-submit').textContent = isSignin ? 'Inloggen' : 'Account aanmaken';
+  el('auth-submit').textContent = isSignin ? T('signInBtn') : T('createAccount');
   el('auth-error').style.display = 'none';
   el('auth-msg').style.display = 'none';
 }
@@ -2076,19 +2172,19 @@ function submitAuth() {
   var email = el('auth-email').value.trim();
   var pass  = el('auth-password').value;
   if (!email || !pass) { showAuthError('Vul je e-mailadres en wachtwoord in'); return; }
-  el('auth-submit').textContent = 'Even wachten...';
+  el('auth-submit').textContent = T('oneMoment');
   el('auth-submit').disabled = true;
   if (_authMode === 'signin') {
     sb.auth.signInWithPassword({ email:email, password:pass }).then(function(res) {
       el('auth-submit').disabled = false;
-      el('auth-submit').textContent = 'Inloggen';
+      el('auth-submit').textContent = T('signInBtn');
       if (res.error) showAuthError(res.error.message === 'Invalid login credentials' ? 'Onjuist e-mailadres of wachtwoord.' : res.error.message);
     });
   } else {
     sb.auth.signUp({ email:email, password:pass })
     .then(function(res) {
       el('auth-submit').disabled = false;
-      el('auth-submit').textContent = 'Create account';
+      el('auth-submit').textContent = T('createAccount');
       var errObj = res.error || {};
       var status = errObj.status || 0;
       var errMsg = errObj.message || errObj.msg || '';
@@ -2108,7 +2204,7 @@ function submitAuth() {
     })
     .catch(function(err) {
       el('auth-submit').disabled = false;
-      el('auth-submit').textContent = 'Create account';
+      el('auth-submit').textContent = T('createAccount');
       showAuthError('Network error: ' + (err.message || JSON.stringify(err)));
     });
   }
@@ -2176,7 +2272,7 @@ function loadFromDB() {
     done++;
     if (done === 4) {
       hideSpinner();
-      if (errors > 0) showErr('Sommige data kon niet worden geladen. Ververs de pagina.');
+      if (errors > 0) showErr(T('errPartialLoad'));
       renderLib(); renderRtn(); updateStartStats();
       renderRtn();
     }
@@ -2187,9 +2283,12 @@ function loadFromDB() {
     S.custom = (r.data||[]).map(function(row){ return row.data; });
     check(null);
   });
-  sb.from('routines').select('id,name,blocks').eq('user_id',uid).order('created_at').then(function(r){
+  sb.from('routines').select('id,name,blocks,meta').eq('user_id',uid).order('created_at').then(function(r){
     if (r.error) { check(r.error); return; }
-    S.routines = (r.data||[]).map(function(row){ return { _id:row.id, name:row.name, blocks:row.blocks }; });
+    S.routines = (r.data||[]).map(function(row){
+      var meta = row.meta || {};
+      return { _id:row.id, name:row.name, blocks:row.blocks, meta:meta, rid:meta.rid || null };
+    });
     check(null);
   });
   sb.from('sessions').select('id,routine_name,dur_mins,exercises,logged_at').eq('user_id',uid).order('logged_at',{ascending:false}).limit(50).then(function(r){
@@ -2211,17 +2310,25 @@ function loadFromDB() {
 // ============================================================
 // DATABASE - SAVE HELPERS (all with error handling + spinner)
 // ============================================================
+// Zorgt dat het stabiele id altijd meegaat naar de database.
+function rtnMeta(routine) {
+  var m = {}, k;
+  if (routine.meta) for (k in routine.meta) if (routine.meta.hasOwnProperty(k)) m[k] = routine.meta[k];
+  m.rid = rtnId(routine);
+  return m;
+}
+
 function dbSaveRoutine(routine) {
   var uid = CURRENT_USER.id;
   showSpinner('Routine opslaan...');
   if (routine._id) {
-    sb.from('routines').update({ name:routine.name, blocks:routine.blocks, updated_at:new Date().toISOString() })
+    sb.from('routines').update({ name:routine.name, blocks:routine.blocks, meta:rtnMeta(routine), updated_at:new Date().toISOString() })
       .eq('id',routine._id).eq('user_id',uid).then(function(r){
         hideSpinner();
         if (r.error) showErr(friendlyErr(r.error));
       });
   } else {
-    sb.from('routines').insert({ user_id:uid, name:routine.name, blocks:routine.blocks })
+    sb.from('routines').insert({ user_id:uid, name:routine.name, blocks:routine.blocks, meta:rtnMeta(routine) })
       .select('id').single().then(function(r){
         hideSpinner();
         if (r.error) { showErr(friendlyErr(r.error)); return; }
@@ -2355,11 +2462,940 @@ function _doDelRtn(i) {
 }
 
 // ============================================================
+// LOG. - ROUTINE GENERATOR
+// Pure functies. Geen DOM, geen globals uit de app behalve wat
+// er expliciet wordt meegegeven. ES5, zoals de rest van de app.
+// ============================================================
+
+// --- Oefening-metadata (goedgekeurd 2026-09-09) ---------------
+
+// Dubbele namen: deze ID's slaat de generator over. In de
+// bibliotheek blijven ze gewoon staan (PR's hangen aan die ID's).
+var GEN_SKIP = { pfd:1, frr:1, ich:1, dso:1, abd:1, fco:1 };
+
+// Staat als isolatie in de data, is in werkelijkheid compound.
+var GEN_COMPOUND = {
+  lp:1, rdl:1, hth:1, kth:1, kfl:1, scr:1, scrw:1, rwo:1, sor:1,
+  sng:1, dpd:1, bps:1, cbl:1, spr:1, olp:1, fcr:1, dpu:1, cbc:1,
+  bkk:1, sts:1, ssq:1, dbp:1, lps:1, cdc:1, psu:1, rsu:1
+};
+
+// Staat als compound in de data, is in werkelijkheid isolatie.
+var GEN_ISOLATION = {
+  rdf:1, lrc:1, drw:1, fpl:1, bnd:1, cbo:1, hcp:1, pup:1, dro:1
+};
+
+// Niet voorschrijven aan beginners.
+var GEN_ADVANCED = {
+  mcp:1, hpu:1, pbp:1, drs:1, nrc:1, sst:1, pfr:1, dbcp:1, hrs:1,
+  shrg:1, prs:1, fss:1, gmc:1, pcp:1, cbk:1, wtw:1, slpk:1
+};
+
+// Deze spiergroepen horen achteraan in de sessie, ongeacht type.
+var GEN_TAIL = { Core:1, Calves:1, Forearms:1, Traps:1 };
+
+// Bodyweight betekent niet "zonder materiaal". Deze oefeningen
+// hebben een optrekstang, rekstok, ringen of parallelle bars nodig.
+var GEN_NEEDS_BAR = {
+  pu:1, cbl:1, inv:1, sca:1, mcp:1, hgr:1, hkr:1, gdc:1,
+  dip:1, drp:1, psh:1, rfr:1
+};
+
+// En deze een bank, box, trede of stevige verhoging.
+var GEN_NEEDS_BENCH = {
+  bkk:1, tbd:1, drs:1, bxj:1, slcs:1, bfc:1, cbk:1, nrc:1, sqs:1
+};
+
+// Oefeningen op tijd in plaats van reps (holds, carries, hangs).
+// index.html moet isTimeEx() hierop uitbreiden - zie step1-patch.md.
+var GEN_TIMED = {
+  pl:1, spl:1, wls:1, hll:1, gdc:1, faw:1, bwo:1, oth:1, rev:1,
+  cbk:1, twr:1, hpr:1, swm:1, bki:1, stw:1, bwc:1, wpl:1, pgb:1, wdp:1
+};
+
+// Bodyweight-oefeningen hebben een repsondergrens: 5 push-ups is
+// geen krachttraining, dat is een warming-up.
+var GEN_BW_MIN_REPS = 8;
+
+var GEN_WARM_POOL   = ['jog','jkx','hrj','stj'];
+var GEN_FINISH_POOL = ['rwm','bcy','jpj','kbp','spr2','ssk','bpx'];
+var GEN_CIRCUIT_POOL= ['bpx','mnt','jkx','hrj','ssk','stj','bic','lgr','gbr','wls','jog','kbp'];
+
+// Antagonisten voor supersets.
+var GEN_ANTAG = {
+  Chest:['Back','Biceps'], Back:['Chest','Triceps'],
+  Biceps:['Triceps','Chest'], Triceps:['Biceps','Back'],
+  Shoulders:['Back','Biceps'], Legs:['Core','Calves'],
+  Glutes:['Core','Calves'], Core:['Calves','Glutes'],
+  Calves:['Core'], Traps:['Chest'], Forearms:['Core']
+};
+
+function genIsCompound(ex) {
+  if (GEN_COMPOUND[ex.id]) return true;
+  if (GEN_ISOLATION[ex.id]) return false;
+  var sec = ex.secondary || [];
+  return sec.length >= 2;
+}
+
+// --- Dagsjablonen --------------------------------------------
+// c:true betekent "hier hoort bij voorkeur een compound".
+
+var GEN_TPL = {
+  push:  [{m:'Chest',c:1},{m:'Shoulders',c:1},{m:'Chest',c:1},{m:'Triceps'},{m:'Shoulders'},{m:'Triceps'},{m:'Chest'}],
+  pull:  [{m:'Back',c:1},{m:'Back',c:1},{m:'Back'},{m:'Biceps'},{m:'Biceps'},{m:'Traps'},{m:'Back'}],
+  legs:  [{m:'Legs',c:1},{m:'Legs',c:1},{m:'Glutes',c:1},{m:'Legs'},{m:'Calves'},{m:'Core'},{m:'Glutes'}],
+  upper: [{m:'Chest',c:1},{m:'Back',c:1},{m:'Shoulders',c:1},{m:'Chest'},{m:'Back'},{m:'Biceps'},{m:'Triceps'}],
+  lower: [{m:'Legs',c:1},{m:'Legs',c:1},{m:'Glutes',c:1},{m:'Legs'},{m:'Calves'},{m:'Core'},{m:'Glutes'}],
+  fullA: [{m:'Legs',c:1},{m:'Chest',c:1},{m:'Back',c:1},{m:'Shoulders'},{m:'Core'},{m:'Biceps'},{m:'Calves'}],
+  fullB: [{m:'Legs',c:1},{m:'Back',c:1},{m:'Chest',c:1},{m:'Glutes'},{m:'Core'},{m:'Triceps'},{m:'Calves'}],
+  fullC: [{m:'Legs',c:1},{m:'Chest',c:1},{m:'Back',c:1},{m:'Shoulders'},{m:'Core'},{m:'Glutes'},{m:'Triceps'}]
+};
+
+// Welke dagen bij welk aantal trainingsdagen.
+function genSplit(days, level) {
+  if (days <= 1) return [{k:'fullA', key:'dayFull'}];
+  if (days === 2) return [{k:'fullA', key:'dayFull', v:'A'},{k:'fullB', key:'dayFull', v:'B'}];
+  if (days === 3) {
+    if (level === 'beg') return [{k:'fullA',key:'dayFull',v:'A'},{k:'fullB',key:'dayFull',v:'B'},{k:'fullC',key:'dayFull',v:'C'}];
+    return [{k:'push',key:'dayPush'},{k:'pull',key:'dayPull'},{k:'legs',key:'dayLegs'}];
+  }
+  if (days === 4) return [
+    {k:'upper',key:'dayUpper',v:'A'},{k:'lower',key:'dayLower',v:'A'},
+    {k:'upper',key:'dayUpper',v:'B'},{k:'lower',key:'dayLower',v:'B'}];
+  if (days === 5) return [
+    {k:'push',key:'dayPush'},{k:'pull',key:'dayPull'},{k:'legs',key:'dayLegs'},
+    {k:'upper',key:'dayUpper'},{k:'lower',key:'dayLower'}];
+  return [
+    {k:'push',key:'dayPush',v:'A'},{k:'pull',key:'dayPull',v:'A'},{k:'legs',key:'dayLegs',v:'A'},
+    {k:'push',key:'dayPush',v:'B'},{k:'pull',key:'dayPull',v:'B'},{k:'legs',key:'dayLegs',v:'B'}];
+}
+
+// --- Voorschrift: sets, reps, rust ---------------------------
+
+function genPresc(goal, compound, level) {
+  var p;
+  if (goal === 'strength')   p = compound ? {sets:4,reps:5,rest:180}  : {sets:3,reps:8,rest:90};
+  else if (goal === 'lean')  p = compound ? {sets:3,reps:12,rest:60}  : {sets:3,reps:15,rest:45};
+  else                       p = compound ? {sets:4,reps:8,rest:120}  : {sets:3,reps:12,rest:75};
+  if (level === 'beg') p.sets = Math.max(2, p.sets - 1);
+  if (level === 'adv' && compound) p.sets = Math.min(5, p.sets + 1);
+  return p;
+}
+
+function genExSecs(p)   { return p.sets * (p.reps * 4 + p.rest) + 40; }
+function genPairSecs(a,b){ var s=Math.max(a.p.sets,b.p.sets);
+  return s * (a.p.reps*4 + b.p.reps*4 + Math.max(a.p.rest,b.p.rest)) + 50; }
+
+// --- Kleine hulpjes ------------------------------------------
+
+function genRng(seed) {
+  var s = seed || 1;
+  return function() { s = (s * 1103515245 + 12345) % 2147483648; return s / 2147483648; };
+}
+function genUid(pfx) {
+  return pfx + Date.now().toString(36) + Math.floor(Math.random()*1e6).toString(36);
+}
+function genPickWeighted(list, rnd) {
+  var top = list.slice(0, 5), tot = 0, i;
+  for (i = 0; i < top.length; i++) tot += (5 - i);
+  var r = rnd() * tot, acc = 0;
+  for (i = 0; i < top.length; i++) { acc += (5 - i); if (r <= acc) return top[i]; }
+  return top[0];
+}
+
+// --- Oefeningkeuze -------------------------------------------
+
+function genCandidates(lib, muscle, cfg, usedIds, usedNames) {
+  var out = [], i, ex;
+  for (i = 0; i < lib.length; i++) {
+    ex = lib[i];
+    if (ex.muscle !== muscle) continue;
+    if (GEN_SKIP[ex.id]) continue;
+    if (usedIds[ex.id]) continue;
+    if (usedNames[ex.name.toLowerCase()]) continue;
+    if (cfg.level === 'beg' && GEN_ADVANCED[ex.id]) continue;
+    if (cfg.equip.indexOf(ex.equipment) < 0) continue;
+    if (GEN_NEEDS_BAR[ex.id]   && cfg.bar   === false) continue;
+    if (GEN_NEEDS_BENCH[ex.id] && cfg.bench === false) continue;
+    out.push(ex);
+  }
+  return out;
+}
+
+function genPickEx(lib, slot, cfg, usedIds, usedNames, rnd, planUsed) {
+  var cands = genCandidates(lib, slot.m, cfg, usedIds, usedNames);
+  if (!cands.length) return null;
+  var want = !!slot.c;
+  var first = [], rest = [], i;
+  for (i = 0; i < cands.length; i++) {
+    (genIsCompound(cands[i]) === want ? first : rest).push(cands[i]);
+  }
+  var ordered = first.concat(rest);
+  // Oefeningen die elders in ditzelfde plan al staan, achteraan sorteren.
+  // Zo lijken dag A en dag B niet op elkaar, zonder de kwaliteit te verliezen.
+  if (planUsed) {
+    var fresh = [], seen = [];
+    for (i = 0; i < ordered.length; i++) (planUsed[ordered[i].id] ? seen : fresh).push(ordered[i]);
+    ordered = fresh.concat(seen);
+  }
+  return genPickWeighted(ordered, rnd);
+}
+
+// --- Een dag genereren ---------------------------------------
+
+function genDay(dayDef, cfg, lib, records, rnd, planUsed) {
+  var tpl = GEN_TPL[dayDef.k].slice();
+
+  // Focusspieren krijgen een extra slot, maar alleen op dagen waar die
+  // spier al thuishoort. Anders krijg je borstwerk op je beendag.
+  // cfg.focus mag een string of een lijst zijn.
+  if (cfg.focus && cfg.focus.length) {
+    var fl = (typeof cfg.focus === 'string') ? [cfg.focus] : cfg.focus;
+    for (var fj = 0; fj < fl.length; fj++) {
+      var hasFocus = false, fi;
+      for (fi = 0; fi < tpl.length; fi++) if (tpl[fi].m === fl[fj]) hasFocus = true;
+      if (!hasFocus) continue;
+      tpl.splice(Math.min(3 + fj, tpl.length), 0, {m: fl[fj]});
+      tpl.push({m: fl[fj]});
+    }
+  }
+
+  var total = cfg.mins * 60;
+  var warmSecs   = (cfg.cardio === 'warm'   || cfg.cardio === 'both') ? 300 : 120;
+  var finishSecs = (cfg.cardio === 'finish' || cfg.cardio === 'both') ? 600 : 0;
+  var budget = total - warmSecs - finishSecs - 120; // 120 = buffer
+
+  var usedIds = {}, usedNames = {}, picked = [], i, ex, comp, p, secs;
+  var missing = {};
+
+  for (i = 0; i < tpl.length && picked.length < 8; i++) {
+    ex = genPickEx(lib, tpl[i], cfg, usedIds, usedNames, rnd, planUsed);
+    if (!ex) {
+      // Geen enkele optie voor deze spier met dit materiaal.
+      if (!genCandidates(lib, tpl[i].m, cfg, {}, {}).length) missing[tpl[i].m] = 1;
+      continue;
+    }
+    comp = genIsCompound(ex);
+    p = genPresc(cfg.goal, comp, cfg.level);
+    if (GEN_TIMED[ex.id]) { p.timed = 1; p.reps = (cfg.goal === 'strength') ? 30 : 45; }
+    else if (ex.equipment === 'Bodyweight' && p.reps < GEN_BW_MIN_REPS) p.reps = GEN_BW_MIN_REPS;
+    secs = genExSecs(p);
+    if (budget - secs < 0 && picked.length >= 3) continue;
+    budget -= secs;
+    usedIds[ex.id] = 1; usedNames[ex.name.toLowerCase()] = 1;
+    if (planUsed) planUsed[ex.id] = 1;
+    picked.push({ ex:ex, p:p, comp:comp, tail:!!GEN_TAIL[ex.muscle] });
+  }
+
+  // Vulling: is de dag te mager geworden doordat spiergroepen wegvielen
+  // (bijvoorbeeld rug zonder optrekstang), dan aanvullen met wat er wel
+  // beschikbaar is in plaats van een halve routine af te leveren.
+  if (picked.length < 4) {
+    var fbMuscles = ['Legs','Chest','Glutes','Core','Shoulders','Back','Calves'];
+    for (var fb = 0; fb < fbMuscles.length && picked.length < 5; fb++) {
+      for (var tries = 0; tries < 2 && picked.length < 5; tries++) {
+        var fex = genPickEx(lib, {m:fbMuscles[fb]}, cfg, usedIds, usedNames, rnd, planUsed);
+        if (!fex) break;
+        var fcomp = genIsCompound(fex), fp = genPresc(cfg.goal, fcomp, cfg.level);
+        if (GEN_TIMED[fex.id]) { fp.timed = 1; fp.reps = (cfg.goal === 'strength') ? 30 : 45; }
+        else if (fex.equipment === 'Bodyweight' && fp.reps < GEN_BW_MIN_REPS) fp.reps = GEN_BW_MIN_REPS;
+        usedIds[fex.id] = 1; usedNames[fex.name.toLowerCase()] = 1;
+        if (planUsed) planUsed[fex.id] = 1;
+        picked.push({ ex:fex, p:fp, comp:fcomp, tail:!!GEN_TAIL[fex.muscle] });
+      }
+    }
+  }
+
+  // Tail-spieren (core, kuiten, traps, onderarmen) achteraan.
+  picked.sort(function(a,b){ return (a.tail?1:0) - (b.tail?1:0); });
+
+  // Krachttraining in te weinig tijd: liever kortere rust dan uitloop.
+  var workBudget = total - warmSecs - finishSecs - 120;
+  var tight = genFit(picked, workBudget);
+
+  // Supersets bij krappe tijd of het lean-doel.
+  var pairs = {};
+  if (cfg.goal === 'lean' || budget < 240) {
+    for (i = 1; i < picked.length - 1; i++) {
+      if (pairs[i] || pairs[i+1]) continue;
+      var a = picked[i], b = picked[i+1];
+      if (a.comp && b.comp) continue;                       // nooit twee compounds
+      if (a.ex.equipment === 'Barbell' && a.comp) continue; // nooit een zware barbell-compound
+      if (b.ex.equipment === 'Barbell' && b.comp) continue;
+      var ok = (GEN_ANTAG[a.ex.muscle] || []).indexOf(b.ex.muscle) >= 0;
+      if (!ok) continue;
+      pairs[i] = i + 1; pairs[i+1] = -1;
+      budget += genExSecs(a.p) + genExSecs(b.p) - genPairSecs(a, b);
+    }
+  }
+
+  // --- Blocks opbouwen in het formaat van de builder ---------
+  var blocks = [], j;
+
+  if (cfg.cardio === 'warm' || cfg.cardio === 'both') {
+    var w = genCardioPick(lib, GEN_WARM_POOL, cfg, rnd, usedIds);
+    if (w) blocks.push({ type:'single', exercises:[
+      { id:w.id, name:w.name, reps:'', weight:'', sets:1, rest:0, gen:'warmup' } ]});
+  }
+
+  for (i = 0; i < picked.length; i++) {
+    if (pairs[i] === -1) continue;
+    var cur = picked[i];
+    var wgt = (records && records[cur.ex.id] && records[cur.ex.id].maxWeight > 0)
+      ? String(records[cur.ex.id].maxWeight) : '';
+    var exA = { id:cur.ex.id, name:cur.ex.name, reps:String(cur.p.reps),
+                weight:wgt, sets:cur.p.sets, rest:cur.p.rest };
+    if (cur.p.timed) { exA.timed = 1; exA.weight = ''; }
+    if (pairs[i] > 0) {
+      var partner = picked[pairs[i]];
+      var pw = (records && records[partner.ex.id] && records[partner.ex.id].maxWeight > 0)
+        ? String(records[partner.ex.id].maxWeight) : '';
+      blocks.push({ type:'superset', exercises:[ exA,
+        { id:partner.ex.id, name:partner.ex.name, reps:String(partner.p.reps),
+          weight:partner.p.timed ? '' : pw, sets:partner.p.sets,
+          rest:partner.p.rest, timed:partner.p.timed ? 1 : undefined } ]});
+    } else {
+      blocks.push({ type:'single', exercises:[ exA ] });
+    }
+  }
+
+  if (cfg.goal === 'lean') {
+    var used = 0;
+    for (i = 0; i < picked.length; i++) used += genExSecs(picked[i].p);
+    var left = workBudget - used;
+    if (left > 180) {
+      var circ = genCircuit(lib, cfg, rnd, usedIds, usedNames, left);
+      if (circ) blocks.push(circ);
+    }
+  }
+
+  if (cfg.cardio === 'finish' || cfg.cardio === 'both') {
+    var f = genCardioPick(lib, GEN_FINISH_POOL, cfg, rnd, usedIds);
+    if (f) blocks.push({ type:'single', exercises:[
+      { id:f.id, name:f.name, reps:'', weight:'', sets:1, rest:0, gen:'finisher' } ]});
+  }
+
+  var est = 0, b, e2;
+  for (i = 0; i < blocks.length; i++) {
+    b = blocks[i];
+    if (b.type === 'circuit') { est += genCircuitSecs(b.exercises.length, b.rounds); continue; }
+    if (b.type === 'superset') {
+      var pa = { sets:b.exercises[0].sets, reps:parseInt(b.exercises[0].reps,10), rest:b.exercises[0].rest };
+      var pb = { sets:b.exercises[1].sets, reps:parseInt(b.exercises[1].reps,10), rest:b.exercises[1].rest };
+      est += genPairSecs({p:pa}, {p:pb}); continue;
+    }
+    e2 = b.exercises[0];
+    if (e2.gen === 'warmup')   { est += 300; continue; }
+    if (e2.gen === 'finisher') { est += 600; continue; }
+    est += genExSecs({ sets:e2.sets, reps:parseInt(e2.reps,10), rest:e2.rest });
+  }
+  var warn = [];
+  for (var mk in missing) if (missing.hasOwnProperty(mk)) warn.push(mk);
+  return { blocks: blocks, tight: tight, warnings: warn, estMins: Math.round(est / 60) };
+}
+
+function genCardioPick(lib, pool, cfg, rnd, usedIds) {
+  var avail = [], i, ex;
+  for (i = 0; i < pool.length; i++) {
+    ex = genFind(lib, pool[i]);
+    if (!ex) continue;
+    if (usedIds && usedIds[ex.id]) continue;
+    if (cfg.equip.indexOf(ex.equipment) < 0) continue;
+    if (cfg.level === 'beg' && GEN_ADVANCED[ex.id]) continue;
+    if (GEN_NEEDS_BAR[ex.id]   && cfg.bar   === false) continue;
+    if (GEN_NEEDS_BENCH[ex.id] && cfg.bench === false) continue;
+    avail.push(ex);
+  }
+  if (!avail.length) return null;
+  return avail[Math.floor(rnd() * avail.length)];
+}
+
+function genCircuitSecs(nEx, rounds) { return rounds * nEx * (12 * 4 + 20); }
+
+function genCircuit(lib, cfg, rnd, usedIds, usedNames, budget) {
+  var avail = [], i, ex;
+  for (i = 0; i < GEN_CIRCUIT_POOL.length; i++) {
+    ex = genFind(lib, GEN_CIRCUIT_POOL[i]);
+    if (!ex) continue;
+    if (usedIds[ex.id]) continue;
+    if (usedNames[ex.name.toLowerCase()]) continue;
+    if (cfg.equip.indexOf(ex.equipment) < 0) continue;
+    if (cfg.level === 'beg' && GEN_ADVANCED[ex.id]) continue;
+    if (GEN_NEEDS_BAR[ex.id]   && cfg.bar   === false) continue;
+    if (GEN_NEEDS_BENCH[ex.id] && cfg.bench === false) continue;
+    avail.push(ex);
+  }
+  if (avail.length < 3) return null;
+  var n = Math.min(4, avail.length), rounds = 3;
+  while (rounds >= 2 && genCircuitSecs(n, rounds) > budget) {
+    if (n > 3) n--; else rounds--;
+  }
+  if (rounds < 2 || genCircuitSecs(n, rounds) > budget) return null;
+  var picked = [], seen = {};
+  while (picked.length < n) {
+    var c = avail[Math.floor(rnd() * avail.length)];
+    if (seen[c.id]) continue;
+    seen[c.id] = 1;
+    usedIds[c.id] = 1; usedNames[c.name.toLowerCase()] = 1;
+    picked.push({ id:c.id, name:c.name, reps:'12', weight:'' });
+  }
+  return { type:'circuit', rounds:rounds, exercises:picked };
+}
+
+// Past de routine in de beschikbare tijd: eerst rust inkorten,
+// dan sets verlagen, dan pas oefeningen laten vallen (minimaal 3).
+function genFit(picked, budget) {
+  function total() {
+    var s = 0;
+    for (var i = 0; i < picked.length; i++) s += genExSecs(picked[i].p);
+    return s;
+  }
+  var tight = false, guard = 0;
+  while (total() > budget && guard++ < 200) {
+    var changed = false, i, floor;
+    for (i = picked.length - 1; i >= 0; i--) {
+      floor = picked[i].comp ? 60 : 30;
+      if (picked[i].p.rest > floor) { picked[i].p.rest -= 15; changed = true; tight = true; break; }
+    }
+    if (changed) continue;
+    for (i = picked.length - 1; i >= 0; i--) {
+      if (picked[i].p.sets > 2) { picked[i].p.sets--; changed = true; tight = true; break; }
+    }
+    if (changed) continue;
+    if (picked.length > 3) { picked.pop(); tight = true; continue; }
+    break;
+  }
+  return tight;
+}
+
+function genFind(lib, id) {
+  for (var i = 0; i < lib.length; i++) if (lib[i].id === id) return lib[i];
+  return null;
+}
+
+// --- Publieke ingang -----------------------------------------
+// cfg = { goal:'strength'|'hyp'|'lean', days:1..6, mins:20..120,
+//         level:'beg'|'int'|'adv', equip:[...], focus:null|'Chest',
+//         cardio:'none'|'warm'|'finish'|'both', mode:'plan'|'single',
+//         bar:true|false, bench:true|false,   (undefined = wel aanwezig)
+//         seed:optioneel }
+
+function genPlan(cfg, lib, records) {
+  var rnd = genRng(cfg.seed || Math.floor(Math.random() * 2147483647));
+  var days = genSplit(cfg.days, cfg.level);
+  if (cfg.mode === 'single') {
+    var kmap = { fullA:'dayFull', push:'dayPush', pull:'dayPull',
+                 legs:'dayLegs', upper:'dayUpper', lower:'dayLower' };
+    var k = cfg.dayType || days[0].k;
+    days = [{ k:k, key:(kmap[k] || 'dayFull') }];
+  }
+
+  var planId  = genUid('p');
+  var planKey = 'plan' + (cfg.days <= 2 ? 'Full' : (cfg.days === 3 ? 'PPL' : (cfg.days === 4 ? 'UL' : 'Mixed')));
+  var out = [], i, planUsed = {};
+
+  for (i = 0; i < days.length; i++) {
+    var day = genDay(days[i], cfg, lib, records, rnd, planUsed);
+    out.push({
+      id: genUid('r'),
+      name: null,                 // UI rendert via nameKey + variant
+      nameKey: days[i].key,
+      variant: days[i].v || null,
+      blocks: day.blocks,
+      meta: {
+        gen: true,
+        planId: cfg.mode === 'single' ? null : planId,
+        planKey: cfg.mode === 'single' ? null : planKey,
+        dayIdx: i + 1,
+        dayCount: days.length,
+        tight: day.tight,
+        estMins: day.estMins,
+        warnings: day.warnings,
+        cfg: cfg
+      }
+    });
+  }
+  return out;
+}
+
+// ============================================================
+// LOG. - ROUTINE GENERATOR: WIZARD + VOORBEELDSCHERM
+// Hoort NA het DB-override-blok in index.html.
+// Vereist log-generator.js (genPlan, genCandidates, genPresc, ...)
+// ============================================================
+
+var _gw       = {};    // antwoorden uit de wizard
+var _gwStep   = 0;
+var _gwLock   = false;  // blokkeert dubbeltikken tijdens het doorschuiven
+var _genOut   = null;  // gegenereerde routines
+var _gpvDay   = 0;
+
+// --- Teksten (los van TRANSLATIONS zodat dat bestand heel blijft) ---
+// De wizard gebruikt hetzelfde woordenboek als de rest van de app;
+// de sleutels staan daar met het voorvoegsel 'gen'.
+function GT(k) {
+  var key = 'gen' + k.charAt(0).toUpperCase() + k.slice(1);
+  var v = T(key);
+  return (v && v !== key) ? v : k;
+}
+
+function genDayName(r) {
+  return GT(r.nameKey) + (r.variant ? ' ' + r.variant : '');
+}
+
+var GEN_MUSCLE_OPTS = ['Chest','Back','Legs','Shoulders','Glutes','Biceps'];
+
+// --- Stappen -------------------------------------------------
+
+var GW_STEPS = [
+  { k:'mode',  q:'qMode', opts:function(){ return [
+      {v:'plan',   t:GT('mPlan'),   s:GT('mPlanS')},
+      {v:'single', t:GT('mSingle'), s:GT('mSingleS')} ]; } },
+
+  { k:'goal',  q:'qGoal', opts:function(){ return [
+      {v:'strength', t:GT('gStrength'), s:GT('gStrengthS')},
+      {v:'hyp',      t:GT('gHyp'),      s:GT('gHypS')},
+      {v:'lean',     t:GT('gLean'),     s:GT('gLeanS')} ]; } },
+
+  { k:'days', q:'qDays', show:function(){ return _gw.mode === 'plan'; },
+    grid:1, opts:function(){ var o=[{v:1,t:GT('dOne')}], i;
+      for (i=2;i<=6;i++) o.push({v:i, t:i+' '+GT('dSuffix')}); return o; } },
+
+  { k:'dayType', q:'qType', show:function(){ return _gw.mode === 'single'; },
+    opts:function(){ return [
+      {v:'fullA', t:GT('tFull')}, {v:'push', t:GT('tPush')}, {v:'pull', t:GT('tPull')},
+      {v:'legs',  t:GT('tLegs')}, {v:'upper',t:GT('tUpper')},{v:'lower',t:GT('tLower')} ]; } },
+
+  { k:'mins', q:'qMins', grid:1, opts:function(){
+      return [30,45,60,75,90].map(function(m){ return {v:m, t:m+' '+GT('min')}; }); } },
+
+  { k:'level', q:'qLevel', opts:function(){ return [
+      {v:'beg', t:GT('lBeg'), s:GT('lBegS')},
+      {v:'int', t:GT('lInt'), s:GT('lIntS')},
+      {v:'adv', t:GT('lAdv'), s:GT('lAdvS')} ]; } },
+
+  { k:'where', q:'qWhere', opts:function(){ return [
+      {v:'gym',    t:GT('wGym'),    s:GT('wGymS')},
+      {v:'home',   t:GT('wHome'),   s:GT('wHomeS')},
+      {v:'travel', t:GT('wTravel'), s:GT('wTravelS')} ]; } },
+
+  { k:'gear', q:'qGear', multi:1, show:function(){ return _gw.where !== 'gym'; },
+    hint:'gearHint', opts:function(){ return [
+      {v:'bar',   t:GT('gBar'),   s:GT('gBarS')},
+      {v:'bench', t:GT('gBench'), s:GT('gBenchS')} ]; } },
+
+  { k:'focus', q:'qFocus', multi:1, opts:function(){
+      var o = [{v:'', t:GT('fNone')}], i;
+      for (i=0;i<GEN_MUSCLE_OPTS.length;i++) o.push({v:GEN_MUSCLE_OPTS[i], t:T('m'+GEN_MUSCLE_OPTS[i]) || GEN_MUSCLE_OPTS[i]});
+      return o; } },
+
+  { k:'cardio', q:'qCardio', opts:function(){ return [
+      {v:'none',   t:GT('cNone')},
+      {v:'warm',   t:GT('cWarm'),   s:GT('cWarmS')},
+      {v:'finish', t:GT('cFinish'), s:GT('cFinishS')},
+      {v:'both',   t:GT('cBoth')} ]; } }
+];
+
+function gwVisible() {
+  var out = [], i;
+  for (i = 0; i < GW_STEPS.length; i++) if (!GW_STEPS[i].show || GW_STEPS[i].show()) out.push(GW_STEPS[i]);
+  return out;
+}
+
+// --- Openen / renderen ---------------------------------------
+
+function openGenerator() {
+  _gw = { mode:'plan', goal:'hyp', days:3, dayType:'fullA', mins:60,
+          level:'int', where:'gym', gear:['bar','bench'], focus:[], cardio:'none' };
+  _gwStep = 0;
+  el('gen-title').textContent = GT('title');
+  renderGw();
+  el('fs-gen').classList.add('on');
+}
+function closeGenerator() { el('fs-gen').classList.remove('on'); }
+
+function renderGw() {
+  var steps = gwVisible();
+  if (_gwStep >= steps.length) _gwStep = steps.length - 1;
+  var st = steps[_gwStep], opts = st.opts(), h = '', i, o, sel;
+
+  h += '<div style="font-size:20px;font-weight:700;line-height:1.3;margin-bottom:16px">' + GT(st.q) + '<\/div>';
+  if (st.hint) h += '<div style="font-size:13px;color:var(--tx3);margin:-8px 0 14px;line-height:1.5">' + GT(st.hint) + '<\/div>';
+  if (st.multi) h += '<div style="font-size:13px;color:var(--tx3);margin:-8px 0 14px;line-height:1.5">' + GT('multiHint') + '<\/div>';
+
+  for (i = 0; i < opts.length; i++) {
+    o = opts[i];
+    if (st.multi) {
+      var arr = _gw[st.k] || [];
+      sel = (o.v === '') ? (arr.length === 0) : (arr.indexOf(o.v) >= 0);
+    } else {
+      sel = String(_gw[st.k]) === String(o.v);
+    }
+    h += '<div class="card gw-opt" data-act="pick" data-k="' + st.k + '" data-v="' + o.v + '"' +
+         ' style="cursor:pointer;display:flex;align-items:center;gap:12px;margin-bottom:8px;' +
+         (sel ? 'border-color:var(--ac);background:var(--acl)' : '') + '">' +
+         '<div style="flex:1;min-width:0">' +
+           '<div style="font-size:15px;font-weight:600;color:' + (sel ? 'var(--acd)' : 'var(--tx)') + '">' + o.t + '<\/div>' +
+           (o.s ? '<div style="font-size:12px;color:var(--tx3);margin-top:2px;line-height:1.4">' + o.s + '<\/div>' : '') +
+         '<\/div>' +
+         '<i class="ti ti-' + (sel ? (st.multi ? 'checkbox' : 'circle-check-filled') : (st.multi ? 'square' : 'circle')) +
+           '" style="font-size:22px;flex-shrink:0;color:' + (sel ? 'var(--ac)' : 'var(--bdm)') + '"><\/i>' +
+         '<\/div>';
+  }
+
+  html('gen-body', h);
+  el('gen-count').textContent = (_gwStep + 1) + '/' + steps.length;
+  el('gen-bar').style.width = Math.round(((_gwStep + 1) / steps.length) * 100) + '%';
+  el('gen-prev').style.visibility = _gwStep === 0 ? 'hidden' : 'visible';
+  el('gen-prev').textContent = GT('back');
+  el('gen-next').innerHTML = (_gwStep === steps.length - 1)
+    ? '<i class="ti ti-sparkles"><\/i> ' + GT('build')
+    : GT('next');
+}
+
+function gwPick(k, v) {
+  var steps = gwVisible(), st = steps[_gwStep];
+  if (st.multi) {
+    if (!_gw[k]) _gw[k] = [];
+    if (v === '') { _gw[k] = []; renderGw(); return; }
+    var idx = _gw[k].indexOf(v);
+    if (idx >= 0) _gw[k].splice(idx, 1); else _gw[k].push(v);
+    renderGw();
+    return;
+  }
+  if (_gwLock) return;
+  _gw[k] = (k === 'days' || k === 'mins') ? parseInt(v, 10) : v;
+  renderGw();
+  // Een tik is genoeg: kort de keuze laten zien, dan door.
+  // Het slot voorkomt dat dubbeltikken een stap overslaat.
+  _gwLock = true;
+  setTimeout(function(){ _gwLock = false; gwNext(); }, 140);
+}
+
+function gwNext() {
+  var steps = gwVisible();
+  if (_gwStep < steps.length - 1) { _gwStep++; renderGw(); return; }
+  runGenerator();
+}
+function gwBack() { if (_gwStep > 0) { _gwStep--; renderGw(); } }
+
+// --- Genereren -----------------------------------------------
+
+function gwConfig() {
+  var equip;
+  if (_gw.where === 'gym')       equip = ['Barbell','Dumbbell','Cable','Machine','Bodyweight','Band','Other','Cardio','Ab wheel'];
+  else if (_gw.where === 'home') equip = ['Dumbbell','Bodyweight','Band','Other'];
+  else                           equip = ['Bodyweight'];
+  return {
+    goal:_gw.goal, days:_gw.days, mins:_gw.mins, level:_gw.level,
+    equip:equip, focus:(_gw.focus && _gw.focus.length) ? _gw.focus.slice() : null, cardio:_gw.cardio,
+    mode:_gw.mode, dayType:_gw.dayType,
+    bar:  _gw.where === 'gym' ? true : _gw.gear.indexOf('bar')   >= 0,
+    bench:_gw.where === 'gym' ? true : _gw.gear.indexOf('bench') >= 0
+  };
+}
+
+function runGenerator() {
+  var cfg = gwConfig();
+  try {
+    _genOut = genPlan(cfg, allEx(), S.records || {});
+  } catch (err) {
+    toast(T('genFailed'));
+    return;
+  }
+  if (!_genOut || !_genOut.length) { toast(T('genFailed')); return; }
+  _gpvDay = 0;
+  closeGenerator();
+  el('gpv-title').textContent = (cfg.mode === 'single') ? GT('single') : GT('planTitle');
+  renderGpv();
+  el('fs-genprev').classList.add('on');
+}
+
+function regenDay() {
+  if (!_genOut || !_genOut.length) return;
+  var cfg = gwConfig();
+  cfg.seed = Math.floor(Math.random() * 2147483647);
+  var fresh = genPlan(cfg, allEx(), S.records || {});
+  var pick  = fresh[_gpvDay % fresh.length];
+  pick.nameKey = _genOut[_gpvDay].nameKey;
+  pick.variant = _genOut[_gpvDay].variant;
+  pick.meta.dayIdx   = _genOut[_gpvDay].meta.dayIdx;
+  pick.meta.planId   = _genOut[_gpvDay].meta.planId;
+  pick.meta.dayCount = _genOut[_gpvDay].meta.dayCount;
+  _genOut[_gpvDay] = pick;
+  renderGpv();
+}
+
+// Wissel een oefening voor een ander alternatief van dezelfde spier.
+function gpvSwap(bi, ei) {
+  var r = _genOut[_gpvDay], blk = r.blocks[bi], cur = blk.exercises[ei];
+  var curEx = getEx(cur.id);
+  if (!curEx) return;
+  var usedIds = {}, usedNames = {}, i, j;
+  for (i = 0; i < r.blocks.length; i++)
+    for (j = 0; j < r.blocks[i].exercises.length; j++) {
+      usedIds[r.blocks[i].exercises[j].id] = 1;
+      var e2 = getEx(r.blocks[i].exercises[j].id);
+      if (e2) usedNames[e2.name.toLowerCase()] = 1;
+    }
+  var cands = genCandidates(allEx(), curEx.muscle, gwConfig(), usedIds, usedNames);
+  if (!cands.length) { toast(GT('noSwap')); return; }
+  // Zelfde soort oefening terug: compound voor compound.
+  var want = genIsCompound(curEx), same = [], other = [];
+  for (i = 0; i < cands.length; i++) (genIsCompound(cands[i]) === want ? same : other).push(cands[i]);
+  var pool = same.length ? same : other;
+  var nw = pool[Math.floor(Math.random() * pool.length)];
+  cur.id = nw.id; cur.name = nw.name;
+  var rec = (S.records || {})[nw.id];
+  cur.weight = (rec && rec.maxWeight > 0) ? String(rec.maxWeight) : '';
+  renderGpv();
+}
+
+// --- Voorbeeldscherm -----------------------------------------
+
+function renderGpv() {
+  if (!_genOut || !_genOut.length) return;
+  var r = _genOut[_gpvDay], h = '', i, b, e;
+
+  // Dagtabs (alleen bij een plan)
+  if (_genOut.length > 1) {
+    var t = '';
+    for (i = 0; i < _genOut.length; i++)
+      t += '<button class="mt' + (i === _gpvDay ? ' on' : '') + '" data-act="day" data-i="' + i + '">' +
+           genDayName(_genOut[i]) + '<\/button>';
+    html('gpv-tabs', t);
+    el('gpv-tabs').style.display = 'flex';
+  } else {
+    html('gpv-tabs', '');
+    el('gpv-tabs').style.display = 'none';
+  }
+
+  h += '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">' +
+       '<div style="font-size:19px;font-weight:700">' + genDayName(r) + '<\/div>' +
+       '<div style="font-size:13px;color:var(--tx3)">' + GT('est') + ' ' + r.meta.estMins + ' ' + GT('minsShort') + '<\/div><\/div>';
+
+  if (r.meta.warnings && r.meta.warnings.length) {
+    var names = r.meta.warnings.map(function(m){ return T('m'+m) || m; }).join(', ');
+    h += '<div style="background:var(--wl);color:var(--wt);border-radius:var(--rm);padding:10px 12px;font-size:12px;line-height:1.5;margin:10px 0">' +
+         '<i class="ti ti-alert-triangle"><\/i> ' + GT('cantTrain') + ' ' + names + '<\/div>';
+  }
+  if (r.meta.tight) {
+    h += '<div style="background:var(--sf2);color:var(--tx2);border-radius:var(--rm);padding:10px 12px;font-size:12px;line-height:1.5;margin:10px 0">' +
+         '<i class="ti ti-clock"><\/i> ' + GT('tight') + '<\/div>';
+  }
+  h += '<div style="height:6px"><\/div>';
+
+  for (i = 0; i < r.blocks.length; i++) {
+    b = r.blocks[i];
+    if (b.type === 'circuit') {
+      h += '<div class="card" style="border-color:var(--ok)">' +
+           '<div style="font-size:11px;font-weight:700;color:var(--ok);margin-bottom:6px">CIRCUIT &middot; ' + b.rounds + ' ' + GT('rounds') + '<\/div>';
+      for (var ci = 0; ci < b.exercises.length; ci++)
+        h += '<div style="font-size:14px;padding:3px 0">' + b.exercises[ci].name + ' &middot; ' + b.exercises[ci].reps + '<\/div>';
+      h += '<\/div>';
+      continue;
+    }
+    if (b.type === 'superset') {
+      h += '<div class="card" style="border-color:var(--ss)">' +
+           '<div style="font-size:11px;font-weight:700;color:var(--ss);margin-bottom:6px">SUPERSET<\/div>';
+      for (var si = 0; si < b.exercises.length; si++) h += gpvExRow(b.exercises[si], i, si, 1);
+      h += '<\/div>';
+      continue;
+    }
+    e = b.exercises[0];
+    if (e.gen) {
+      h += '<div class="card" style="background:var(--sf2);border-style:dashed">' +
+           '<div style="font-size:13px;color:var(--tx2)"><i class="ti ti-' + (e.gen === 'warmup' ? 'flame' : 'run') + '"><\/i> ' +
+           (e.gen === 'warmup' ? GT('warmup') : GT('finisher')) + ': ' + e.name + '<\/div><\/div>';
+      continue;
+    }
+    h += '<div class="card">' + gpvExRow(e, i, 0, 0) + '<\/div>';
+  }
+
+  html('gpv-body', h);
+  el('gpv-regen').innerHTML   = '<i class="ti ti-refresh"><\/i> ' + GT('regen');
+  el('gpv-savebtn').innerHTML = '<i class="ti ti-device-floppy"><\/i> ' + GT('save');
+}
+
+function gpvExRow(e, bi, ei, inner) {
+  var meta = e.sets + ' ' + GT('sets') + ' \u00d7 ' + e.reps + (e.timed ? 's' : '') +
+             (e.weight ? ' \u00b7 ' + e.weight + 'kg' : '') +
+             (e.rest ? ' \u00b7 ' + e.rest + 's' : '');
+  return '<div style="display:flex;align-items:center;gap:10px;padding:' + (inner ? '4px 0' : '0') + '">' +
+    '<div style="flex:1;min-width:0">' +
+      '<div style="font-size:15px;font-weight:600">' + e.name + '<\/div>' +
+      '<div style="font-size:12px;color:var(--tx3);margin-top:2px">' + meta + '<\/div>' +
+    '<\/div>' +
+    '<button class="ibt" data-act="swap" data-bi="' + bi + '" data-ei="' + ei + '" title="' + GT('swap') + '">' +
+      '<i class="ti ti-switch-horizontal" style="font-size:17px;pointer-events:none"><\/i><\/button>' +
+  '<\/div>';
+}
+
+// --- Opslaan --------------------------------------------------
+
+function saveGenerated() {
+  if (!_genOut || !_genOut.length) return;
+  var i, r;
+  for (i = 0; i < _genOut.length; i++) {
+    r = _genOut[i];
+    var routine = {
+      rid: r.id,
+      name: genDayName(r),
+      blocks: r.blocks,
+      meta: { rid:r.id, gen:true, nameKey:r.nameKey, variant:r.variant,
+              planId:r.meta.planId, planKey:r.meta.planKey,
+              dayIdx:r.meta.dayIdx, dayCount:r.meta.dayCount, cfg:r.meta.cfg }
+    };
+    S.routines.push(routine);
+    dbSaveRoutine(routine);
+  }
+  el('fs-genprev').classList.remove('on');
+  renderRtn();
+  SP('rtn');
+  toast(_genOut.length > 1 ? GT('saved') : GT('savedOne'));
+  _genOut = null;
+}
+
+// --- Event delegation (een keer binden bij het opstarten) -----
+
+function initGenerator() {
+  el('gen-body').addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('[data-act]') : null;
+    if (!b) return;
+    if (b.dataset.act === 'pick') gwPick(b.dataset.k, b.dataset.v);
+  });
+  el('gen-next').addEventListener('click', function(){ if (!_gwLock) gwNext(); });
+  el('gen-prev').addEventListener('click', gwBack);
+  el('gen-close').addEventListener('click', closeGenerator);
+
+  el('gpv-tabs').addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('[data-act="day"]') : null;
+    if (!b) return;
+    _gpvDay = parseInt(b.dataset.i, 10);
+    renderGpv();
+  });
+  el('gpv-body').addEventListener('click', function (ev) {
+    var b = ev.target.closest ? ev.target.closest('[data-act="swap"]') : null;
+    if (!b) return;
+    gpvSwap(parseInt(b.dataset.bi, 10), parseInt(b.dataset.ei, 10));
+  });
+  el('gpv-regen').addEventListener('click', regenDay);
+  el('gpv-save').addEventListener('click', saveGenerated);
+  el('gpv-savebtn').addEventListener('click', saveGenerated);
+  el('gpv-back').addEventListener('click', function () {
+    el('fs-genprev').classList.remove('on');
+    el('fs-gen').classList.add('on');
+  });
+}
+
+// ============================================================
 // LANGUAGE SYSTEM
 // ============================================================
 var LANG = 'en';
 var TRANSLATIONS = {
   en: {
+    // --- aanvullingen en routinegenerator ---
+    addMoreCircuit:'Add more exercises to circuit:',
+    createAccount:'Create account',
+    errConnM:'Make sure you have an internet connection and reload the page.',
+    errConnT:'Could not connect',
+    genBack:'Back',
+    genBuild:'Build routine',
+    genCBoth:'Both',
+    genCFinish:'Finisher',
+    genCFinishS:'10 minutes after training',
+    genCNone:'No cardio',
+    genCWarm:'Warm-up',
+    genCWarmS:'5 minutes before training',
+    genCantTrain:'Cannot be trained with this equipment:',
+    genCta:'Build a routine',
+    genDOne:'1 day',
+    genDSuffix:'days',
+    genDay:'Day',
+    genDayFull:'Full body',
+    genDayLegs:'Legs',
+    genDayLower:'Lower',
+    genDayPull:'Pull',
+    genDayPush:'Push',
+    genDayUpper:'Upper',
+    genEst:'about',
+    genFNone:'No, keep it balanced',
+    genFailed:'Could not build a routine',
+    genFinisher:'Finisher',
+    genGBar:'Pull-up bar',
+    genGBarS:'Needed for pull-ups, dips and hanging work',
+    genGBench:'Bench, box or step',
+    genGBenchS:'Needed for bench dips, step-ups and box jumps',
+    genGHyp:'Muscle',
+    genGHypS:'Moderate load, 8 to 12 reps',
+    genGLean:'Fat loss and conditioning',
+    genGLeanS:'High reps, short rest, supersets',
+    genGStrength:'Strength',
+    genGStrengthS:'Heavy, low reps, long rest',
+    genGearHint:'Without these two we cannot train your back, biceps or triceps.',
+    genLAdv:'Advanced',
+    genLAdvS:'Several consistent years',
+    genLBeg:'Beginner',
+    genLBegS:'Less than a year of serious training',
+    genLInt:'Intermediate',
+    genLIntS:'You know the main lifts',
+    genMPlan:'A full weekly plan',
+    genMPlanS:'Several routines spread across your week',
+    genMSingle:'A single routine',
+    genMSingleS:'One workout you save and repeat',
+    genMin:'minutes',
+    genMinsShort:'min',
+    genMultiHint:'You can pick more than one.',
+    genNext:'Next',
+    genNoSwap:'No alternative available',
+    genPlanTitle:'Your plan',
+    genQCardio:'Add cardio?',
+    genQDays:'How many days a week?',
+    genQFocus:'Anything you want extra work on?',
+    genQGear:'What do you have available?',
+    genQGoal:'What are you training for?',
+    genQLevel:'How much experience do you have?',
+    genQMins:'How long is a session?',
+    genQMode:'What do you want to make?',
+    genQType:'What kind of session?',
+    genQWhere:'Where do you train?',
+    genRegen:'Regenerate day',
+    genRounds:'rounds',
+    genSave:'Save',
+    genSaved:'Routines saved',
+    genSavedOne:'Routine saved',
+    genSets:'sets',
+    genSingle:'Your routine',
+    genSwap:'Swap',
+    genTFull:'Full body',
+    genTLegs:'Legs',
+    genTLower:'Lower body',
+    genTPull:'Pull',
+    genTPush:'Push',
+    genTUpper:'Upper body',
+    genTight:'Tight on time: rest periods were shortened to fit your session length.',
+    genTitle:'Build a routine',
+    genWGym:'Gym',
+    genWGymS:'Full equipment available',
+    genWHome:'At home',
+    genWHomeS:'Dumbbells, bands, bodyweight',
+    genWTravel:'On the road',
+    genWTravelS:'Bodyweight only',
+    genWarmup:'Warm-up',
+    lblInstructions:'Instructions (one per line, optional)',
+    lblYoutube:'YouTube link (optional)',
+    noPlatesFit:'No standard plates fit - try a different target',
+    offlineMsg:'You are offline. Workouts are saved locally and synced later.',
+    oneMoment:'One moment...',
+    reloadBtn:'Reload',
+    repsWeightAll:'Reps & weight (copied to all sets)',
+    restRange:'Range: 15 - 300 seconds',
+    roundsColon:'Rounds:',
+    secRest:'sec rest',
+    setsColon:'Sets:',
+    supersetAdded:'Superset added!',
+    syncedWorkouts:'workouts synced!',
+    weightKgLbl:'Weight (kg)',
     // Nav
     navLib:'Library', navRtn:'Routine', navSes:'Sessions', navPrg:'Progress',
     // Muscle groups
@@ -2444,6 +3480,11 @@ var TRANSLATIONS = {
     usedForAll:'Used for all exercises',
     howToPerform:'How to perform', tipsLbl:'Tips', primaryLbl:'Primary', secondaryLbl:'Secondary',
     frontLbl:'Front', backLbl:'Back', createOwnEx:'Create your own exercise',
+    errPartialLoad:'Some data could not be loaded. Please refresh the page.',
+    signInTab:'Sign in', signUpTab:'Sign up',
+    eqBarbell:'Barbell', eqDumbbell:'Dumbbell', eqCable:'Cable', eqMachine:'Machine',
+    eqBodyweight:'Bodyweight', eqBand:'Band', eqOther:'Other', eqCardio:'Cardio', eqAbwheel:'Ab wheel',
+    partnerLbl:'Partner:', sessionWord:'session', sessionsWord:'sessions', loggedWord:'logged',
     deleteExercise:'Delete exercise', noExFound:'No exercises found',
     noExAdded:'No exercises added yet', noExSelected:'No exercises selected',
     yourRoutines:'Your routines', totalLoaded:'Total loaded', barLbl:'Bar',
@@ -2475,6 +3516,108 @@ var TRANSLATIONS = {
     lang:'EN'
   },
   nl: {
+    // --- aanvullingen en routinegenerator ---
+    addMoreCircuit:'Meer oefeningen aan het circuit:',
+    createAccount:'Account aanmaken',
+    errConnM:'Controleer je internetverbinding en herlaad de pagina.',
+    errConnT:'Verbinding mislukt',
+    genBack:'Terug',
+    genBuild:'Maak routine',
+    genCBoth:'Allebei',
+    genCFinish:'Afsluiter',
+    genCFinishS:'10 minuten na de training',
+    genCNone:'Geen cardio',
+    genCWarm:'Warming-up',
+    genCWarmS:'5 minuten voor de training',
+    genCantTrain:'Niet te trainen met dit materiaal:',
+    genCta:'Routine laten maken',
+    genDOne:'1 dag',
+    genDSuffix:'dagen',
+    genDay:'Dag',
+    genDayFull:'Full body',
+    genDayLegs:'Benen',
+    genDayLower:'Onder',
+    genDayPull:'Pull',
+    genDayPush:'Push',
+    genDayUpper:'Boven',
+    genEst:'ongeveer',
+    genFNone:'Nee, gelijkmatig verdelen',
+    genFailed:'Routine maken mislukt',
+    genFinisher:'Afsluiter',
+    genGBar:'Optrekstang of rekstok',
+    genGBarS:'Nodig voor pull-ups, dips en hangende oefeningen',
+    genGBench:'Bank, box of trede',
+    genGBenchS:'Nodig voor bench dips, step-ups en box jumps',
+    genGHyp:'Spiermassa',
+    genGHypS:'Middelzwaar, 8 tot 12 reps',
+    genGLean:'Afvallen en conditie',
+    genGLeanS:'Hoge reps, korte rust, supersets',
+    genGStrength:'Kracht',
+    genGStrengthS:'Zwaar, weinig reps, lange rust',
+    genGearHint:'Zonder deze twee kunnen we je rug, biceps en triceps niet trainen.',
+    genLAdv:'Ervaren',
+    genLAdvS:'Meerdere jaren consistent',
+    genLBeg:'Beginner',
+    genLBegS:'Minder dan een jaar serieus trainen',
+    genLInt:'Gevorderd',
+    genLIntS:'Je kent de basisoefeningen',
+    genMPlan:'Een compleet weekplan',
+    genMPlanS:'Meerdere routines, verdeeld over je week',
+    genMSingle:'E\u00e9n losse routine',
+    genMSingleS:'E\u00e9n training die je opslaat en herhaalt',
+    genMin:'minuten',
+    genMinsShort:'min',
+    genMultiHint:'Je kunt er meerdere kiezen.',
+    genNext:'Volgende',
+    genNoSwap:'Geen alternatief beschikbaar',
+    genPlanTitle:'Je plan',
+    genQCardio:'Cardio toevoegen?',
+    genQDays:'Hoeveel dagen per week?',
+    genQFocus:'Wil je ergens extra aandacht aan geven?',
+    genQGear:'Wat heb je tot je beschikking?',
+    genQGoal:'Waar train je voor?',
+    genQLevel:'Hoeveel ervaring heb je?',
+    genQMins:'Hoe lang duurt een sessie?',
+    genQMode:'Wat wil je maken?',
+    genQType:'Wat voor training?',
+    genQWhere:'Waar train je?',
+    genRegen:'Dag opnieuw',
+    genRounds:'rondes',
+    genSave:'Opslaan',
+    genSaved:'Routines opgeslagen',
+    genSavedOne:'Routine opgeslagen',
+    genSets:'sets',
+    genSingle:'Je routine',
+    genSwap:'Wissel',
+    genTFull:'Full body',
+    genTLegs:'Benen',
+    genTLower:'Onderlichaam',
+    genTPull:'Pull',
+    genTPush:'Push',
+    genTUpper:'Bovenlichaam',
+    genTight:'Krappe tijd: rusttijden zijn ingekort om binnen je sessieduur te blijven.',
+    genTitle:'Routine maken',
+    genWGym:'Sportschool',
+    genWGymS:'Alle apparatuur beschikbaar',
+    genWHome:'Thuis',
+    genWHomeS:'Dumbbells, banden, eigen lichaamsgewicht',
+    genWTravel:'Onderweg',
+    genWTravelS:'Alleen eigen lichaamsgewicht',
+    genWarmup:'Warming-up',
+    lblInstructions:'Instructies (een per regel, optioneel)',
+    lblYoutube:'YouTube-link (optioneel)',
+    noPlatesFit:'Geen standaard schijven passen - probeer een ander doel',
+    offlineMsg:'Je bent offline. Workouts worden lokaal opgeslagen en later gesynchroniseerd.',
+    oneMoment:'Even wachten...',
+    reloadBtn:'Herladen',
+    repsWeightAll:'Reps & gewicht (naar alle sets gekopieerd)',
+    restRange:'Bereik: 15 - 300 seconden',
+    roundsColon:'Rondes:',
+    secRest:'sec rust',
+    setsColon:'Sets:',
+    supersetAdded:'Superset toegevoegd!',
+    syncedWorkouts:'workouts gesynchroniseerd!',
+    weightKgLbl:'Gewicht (kg)',
     // Nav
     navLib:'Bibliotheek', navRtn:'Routine', navSes:'Sessies', navPrg:'Voortgang',
     // Spiergroepen
@@ -2489,7 +3632,7 @@ var TRANSLATIONS = {
     noRoutines:''+T('noRoutines')+'', tapPlus:''+T('tapPlus')+'',
     editRoutine:'Routine bewerken', newRoutine:'Nieuwe routine',
     // Workout
-    startWorkout:'Start workout', finishWorkout:'Workout afronden', discardWorkout:'Wil je stoppen?',
+    startWorkout:'Workout starten', finishWorkout:'Workout afronden', discardWorkout:'Wil je stoppen?',
     workoutDone:'Workout voltooid!', minutes:'Minuten', volume:'Volume',
     newPRs:'Nieuwe persoonlijke records', keepGoing:'Blijf trainen voor nieuwe PRs!',
     restOver:'Rust voorbij! Volgende set.', closeBtn:'Klaar', restTimer:'Rusttimer',
@@ -2559,6 +3702,11 @@ var TRANSLATIONS = {
     usedForAll:'Geldt voor alle oefeningen',
     howToPerform:'Uitvoering', tipsLbl:'Tips', primaryLbl:'Primair', secondaryLbl:'Secundair',
     frontLbl:'Voorkant', backLbl:'Achterkant', createOwnEx:'Maak je eigen oefening',
+    errPartialLoad:'Sommige data kon niet worden geladen. Ververs de pagina.',
+    signInTab:'Inloggen', signUpTab:'Registreren',
+    eqBarbell:'Barbell', eqDumbbell:'Dumbbell', eqCable:'Kabel', eqMachine:'Machine',
+    eqBodyweight:'Eigen gewicht', eqBand:'Weerstandsband', eqOther:'Overig', eqCardio:'Cardio', eqAbwheel:'Ab wheel',
+    partnerLbl:'Partner:', sessionWord:'sessie', sessionsWord:'sessies', loggedWord:'vastgelegd',
     deleteExercise:'Oefening verwijderen', noExFound:'Geen oefeningen gevonden',
     noExAdded:'Nog geen oefeningen toegevoegd', noExSelected:'Geen oefeningen geselecteerd',
     yourRoutines:'Jouw routines', totalLoaded:'Totaal geladen', barLbl:'Stang',
@@ -2670,10 +3818,10 @@ function renderCircuitPicker() {
     var ex = list[i];
     h += '<div class="ssitem" data-id="' + ex.id + '" onclick="addToCircuit(this.dataset.id)">' +
       '<div><div style="font-size:13px;font-weight:600">' + ex.name + '<\/div>' +
-      '<div style="font-size:11px;color:var(--tx3)">' + ex.muscle + '<\/div><\/div>' +
+      '<div style="font-size:11px;color:var(--tx3)">' + mLbl(ex.muscle) + '<\/div><\/div>' +
       '<i class="ti ti-plus" style="color:var(--ok);font-size:17px"><\/i><\/div>';
   }
-  html('circuit-list', h || '<div style="padding:12px;text-align:center;font-size:13px;color:var(--tx3)">No exercises found<\/div>');
+  html('circuit-list', h || '<div style="padding:12px;text-align:center;font-size:13px;color:var(--tx3)">'+T('noExFound')+'<\/div>');
 }
 
 function renderCircuitSelected() {
@@ -2682,7 +3830,7 @@ function renderCircuitSelected() {
     h += '<div style="display:flex;align-items:center;gap:4px;background:var(--okl);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;color:var(--ok)">' +
       ex.name + '<button onclick="removeFromCircuit(' + i + ')" style="background:none;border:none;cursor:pointer;color:var(--ok);font-size:14px;padding:0;line-height:1;margin-left:2px">&times;<\/button><\/div>';
   });
-  html('circuit-selected', h || '<span style="font-size:12px;color:var(--tx3)">No exercises selected<\/span>');
+  html('circuit-selected', h || '<span style="font-size:12px;color:var(--tx3)">'+T('noExSelected')+'<\/span>');
 }
 
 function addToCircuit(id) {
@@ -2726,16 +3874,16 @@ function renderExConfig(ex, bi, ei) {
   var sets = ex.sets || 3;
   return '<div>' +
     (ei>0?'<div style="font-size:13px;font-weight:600;color:var(--ss);margin-bottom:6px">'+String.fromCharCode(65+ei)+'. '+ex.name+'<\/div>':'') +
-    '<div class="fb" style="margin-bottom:8px"><span style="font-size:12px;color:var(--tx3)">Reps &amp; weight (copied to all sets)<\/span>'+pbh+'<\/div>' +
+    '<div class="fb" style="margin-bottom:8px"><span style="font-size:12px;color:var(--tx3)">'+T('repsWeightAll')+'<\/span>'+pbh+'<\/div>' +
     '<div style="display:grid;grid-template-columns:1fr 12px 1fr;gap:8px;margin-bottom:10px">' +
-      '<div><div style="font-size:10px;color:var(--tx3);text-align:center;margin-bottom:4px;font-weight:700;text-transform:uppercase">Reps<\/div>' +
+      '<div><div style="font-size:10px;color:var(--tx3);text-align:center;margin-bottom:4px;font-weight:700;text-transform:uppercase">'+T('reps')+'<\/div>' +
       '<input class="sinput" type="number" inputmode="decimal" placeholder="e.g. 10" value="'+ex.reps+'" data-bi="'+bi+'" data-ei="'+ei+'" data-field="reps" onchange="updateBuilderEx(this)"/><\/div>' +
       '<div><\/div>' +
       '<div><div style="font-size:10px;color:var(--tx3);text-align:center;margin-bottom:4px;font-weight:700;text-transform:uppercase">Kg<\/div>' +
       '<input class="sinput" type="number" inputmode="decimal" placeholder="e.g. 60" value="'+ex.weight+'" data-bi="'+bi+'" data-ei="'+ei+'" data-field="weight" onchange="updateBuilderEx(this)"/><\/div>' +
     '<\/div>' +
     '<div style="display:flex;align-items:center;gap:12px">' +
-      '<span style="font-size:12px;color:var(--tx3);flex-shrink:0">Sets:<\/span>' +
+      '<span style="font-size:12px;color:var(--tx3);flex-shrink:0">'+T('setsColon')+'<\/span>' +
       '<div style="display:flex;align-items:center;gap:10px">' +
         '<button class="spbtn" data-bi="'+bi+'" data-ei="'+ei+'" data-d="-1" onclick="changeSetsAttr(this)"><i class="ti ti-minus"><\/i><\/button>' +
         '<span class="spval" id="sv-'+bi+'-'+ei+'">'+sets+'<\/span>' +
@@ -2994,9 +4142,9 @@ function renderWO() {
       h += '<\/div>';
       h += '<div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr 1fr 30px;gap:6px;align-items:center;margin-bottom:6px">';
       h += '<span><\/span>';
-      h += '<span style="font-size:9px;color:var(--tx3);text-align:center;font-weight:700">REPS A<\/span>';
+      h += '<span style="font-size:9px;color:var(--tx3);text-align:center;font-weight:700">'+T('repsA')+'<\/span>';
       h += '<span style="font-size:9px;color:var(--tx3);text-align:center;font-weight:700">KG A<\/span>';
-      h += '<span style="font-size:9px;color:var(--tx3);text-align:center;font-weight:700">REPS B<\/span>';
+      h += '<span style="font-size:9px;color:var(--tx3);text-align:center;font-weight:700">'+T('repsB')+'<\/span>';
       h += '<span style="font-size:9px;color:var(--tx3);text-align:center;font-weight:700">KG B<\/span>';
       h += '<span><\/span><\/div>';
       for (var si = 0; si < numSets; si++) {
@@ -3037,7 +4185,7 @@ function renderWO() {
           h += '<div style="display:grid;grid-template-columns:1fr 80px 80px;gap:8px;align-items:center;padding:8px 12px;' + exBg + '">';
           h += '<span style="font-size:13px;font-weight:600">' + ex.name + '<\/span>';
           h += '<div style="text-align:center">';
-          h += '<div style="font-size:9px;color:var(--tx3);font-weight:700;margin-bottom:2px">REPS<\/div>';
+          h += '<div style="font-size:9px;color:var(--tx3);font-weight:700;margin-bottom:2px">'+T('reps').toUpperCase()+'<\/div>';
           h += '<input class="linput" type="number" inputmode="decimal" value="' + s.reps + '" data-bi="' + bi + '" data-ei="' + ei + '" data-si="' + ri + '" data-f="reps" onchange="updateWOAttr(this)" style="border-color:var(--ok)"\/>'; 
           h += '<\/div>';
           h += '<div style="text-align:center">';
@@ -3067,7 +4215,7 @@ function renderLiveEx(ex, bi, ei, isSS, isCircuit) {
   var rec = S.records[ex.id];
   var pr  = rec && rec.maxWeight > 0 ? '<span class="prbadge"><i class="ti ti-trophy"><\/i> PR ' + rec.maxWeight + 'kg<\/span>' : '';
   var prefix = isSS ? String.fromCharCode(65+ei) + '. ' : isCircuit ? (ei+1) + '. ' : '';
-  var timeMode = isTimeEx(ex.name);
+  var timeMode = isTimeEx(ex.name, ex.id);
   var h = '<div>';
   h += '<div style="font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px">' + '<span>' + prefix + ex.name + pr + '<\/span>' + '<button class="swap-btn" data-bi="' + bi + '" data-ei="' + ei + '" onclick="openSwapEx(this)" title="' + T('ttSwap') + '"><i class="ti ti-refresh"><\/i><\/button>' + '<\/div>';
   h += '<div style="display:grid;grid-template-columns:24px 1fr 8px 1fr 8px 30px 30px;gap:6px;align-items:center;margin-bottom:4px">';
@@ -3145,7 +4293,7 @@ function renderQLSets() {
     h += '<div class="ql-set-row">';
     h += '<span class="ql-set-num">Set ' + (i+1) + '<\/span>';
     h += '<input class="ql-inp" type="number" inputmode="decimal" placeholder="reps" value="' + s.reps + '" data-idx="' + i + '" data-f="reps" onchange="qlUpdateAttr(this)"\/>';
-    h += '<span style="font-size:12px;color:var(--tx3)">reps<\/span>';
+    h += '<span style="font-size:12px;color:var(--tx3)">'+T('reps').toLowerCase()+'<\/span>';
     h += '<input class="ql-inp" type="number" inputmode="decimal" placeholder="kg" value="' + s.weight + '" data-idx="' + i + '" data-f="weight" onchange="qlUpdateAttr(this)"\/>';
     h += '<span style="font-size:12px;color:var(--tx3)">kg<\/span>';
     h += '<\/div>';
@@ -3405,7 +4553,7 @@ function syncOfflineQueue() {
   Promise.all(promises).then(function() {
     if (synced > 0) {
       setOfflineQueue([]);
-      toast(synced + ' workout' + (synced !== 1 ? 's' : '') + ' gesynchroniseerd!');
+      toast(synced + ' ' + T('syncedWorkouts'));
       loadFromDB();
     }
   });
@@ -3759,7 +4907,7 @@ function openCalc() {
   var unit = SETTINGS.unit || 'kg';
   setCalcUnit(unit);
   el('calc-target').value = '';
-  html('calc-result', '<div style="font-size:13px;color:var(--tx3);text-align:center">Enter a target weight above<\/div>');
+  html('calc-result', '<div style="font-size:13px;color:var(--tx3);text-align:center">'+T('enterTargetWeight')+'<\/div>');
   el('m-calc').classList.add('on');
   setTimeout(function() { el('calc-target').focus(); }, 150);
 }
@@ -3804,7 +4952,7 @@ function calcWeights() {
   var target = parseFloat(el('calc-target').value);
   var resultEl = el('calc-result');
   if (!target || target <= 0) {
-    html('calc-result', '<div style="font-size:13px;color:var(--tx3);text-align:center">Enter a target weight above<\/div>');
+    html('calc-result', '<div style="font-size:13px;color:var(--tx3);text-align:center">'+T('enterTargetWeight')+'<\/div>');
     return;
   }
   if (target <= _calcBar) {
@@ -3829,7 +4977,7 @@ function calcWeights() {
   h += '<div style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:8px">Per side (' + remaining.toFixed(2).replace(/\.?0+$/, '') + ' ' + _calcUnit + ' each)<\/div>';
   h += '<div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px;margin-bottom:12px">';
   if (result.length === 0) {
-    h += '<div style="color:var(--tx3);font-size:13px">No standard plates fit -- try a different target<\/div>';
+    h += '<div style="color:var(--tx3);font-size:13px">'+T('noPlatesFit')+'<\/div>';
   }
   for (var j = 0; j < result.length; j++) {
     var color = PLATE_COLORS[String(result[j].w)] || '#888';
@@ -3846,11 +4994,11 @@ function calcWeights() {
   // Summary
   h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
   h += '<div style="background:var(--sf);border-radius:var(--rs);padding:10px;text-align:center">';
-  h += '<div style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Bar<\/div>';
+  h += '<div style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">'+T('barLbl')+'<\/div>';
   h += '<div style="font-size:16px;font-weight:700">' + _calcBar + ' ' + _calcUnit + '<\/div>';
   h += '<\/div>';
   h += '<div style="background:var(--sf);border-radius:var(--rs);padding:10px;text-align:center">';
-  h += '<div style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">Total loaded<\/div>';
+  h += '<div style="font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase;margin-bottom:4px">'+T('totalLoaded')+'<\/div>';
   h += '<div style="font-size:16px;font-weight:700;color:' + (Math.abs(diff) < 0.01 ? 'var(--ok)' : 'var(--er)') + '">' + totalLoaded + ' ' + _calcUnit + '<\/div>';
   h += '<\/div>';
   h += '<\/div>';
@@ -3972,7 +5120,7 @@ function renderSwapList() {
   });
 
   if (!list.length) {
-    html('swap-list', '<div style="text-align:center;padding:20px;font-size:13px;color:var(--tx3)">Geen oefeningen gevonden<\/div>');
+    html('swap-list', '<div style="text-align:center;padding:20px;font-size:13px;color:var(--tx3)">'+T('noExFound')+'<\/div>');
     return;
   }
 
@@ -3983,7 +5131,7 @@ function renderSwapList() {
     h += '<div class="swap-item" data-id="' + e.id + '" onclick="chooseSwapEx(this)">';
     h += '<div style="min-width:0;flex:1">';
     h += '<div class="swap-item-name">' + e.name + '<\/div>';
-    h += '<div class="swap-item-meta">' + e.muscle + ' \u00b7 ' + e.equipment + (pb ? ' \u00b7 PR ' + pb + 'kg' : '') + '<\/div>';
+    h += '<div class="swap-item-meta">' + mLbl(e.muscle) + ' \u00b7 ' + eqLbl(e.equipment) + (pb ? ' \u00b7 PR ' + pb + 'kg' : '') + '<\/div>';
     h += '<\/div>';
     h += '<i class="ti ti-chevron-right" style="color:var(--tx3);flex-shrink:0"><\/i>';
     h += '<\/div>';
@@ -4091,6 +5239,8 @@ function setupConfirmDialog() {
 
 
 window.onload = function() {
+
+  initGenerator();
   setupConfirmDialog();
 
   // Intercept Android/browser back button while Settings is open
@@ -4184,7 +5334,13 @@ window.onload = function() {
 };
 
 
-function isTimeEx(name) {
+var TIMED_IDS = {
+  pl:1, spl:1, wls:1, hll:1, gdc:1, faw:1, bwo:1, oth:1, rev:1,
+  cbk:1, twr:1, hpr:1, swm:1, bki:1, stw:1, bwc:1, wpl:1, pgb:1, wdp:1
+};
+function isTimeEx(name, id) {
+  if (id && TIMED_IDS[id]) return true;
+  if (id) { var e = getEx(id); if (e && e.muscle === 'Cardio') return true; }
   return name && name.toLowerCase().indexOf('plank') >= 0;
 }
 
